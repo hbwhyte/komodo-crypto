@@ -1,4 +1,4 @@
-package co.codingnomads.bali2018.komodocrypto;
+package komodocrypto;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
