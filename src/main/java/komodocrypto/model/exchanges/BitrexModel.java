@@ -1,4 +1,4 @@
 package komodocrypto.model.exchanges;
 
-public class Bitrex {
+public class BitrexModel {
 }
