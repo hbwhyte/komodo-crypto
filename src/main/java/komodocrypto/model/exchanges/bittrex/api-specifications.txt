@@ -1,0 +1,19 @@
+Bittrex Exchange API specification
+================================
+
+DOCUMENTATION
+-------------
+https://bittrex.com/home/api
+
+Bittrex provides a simple and powerful REST API to allow you to programatically perform
+nearly all actions you can from our web interface. All requests use the application/json
+content type and go over https. The base url is https://bittrex.com/api/{version}/.
+
+All requests are GET requests and all responses come in a default response object with
+the result in the result field. Always check the success flag to ensure that your API
+call succeeded.
+
+
+REQUEST LIMITS
+------
+Currently restricting orders to 500 open orders and 200,000 orders a day.
