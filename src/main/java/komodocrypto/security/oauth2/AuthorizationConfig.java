@@ -1,6 +1,6 @@
 package komodocrypto.security.oauth2;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 
+import javax.sql.DataSource;
+
 
 /**
  * Configuration for Authorization Server
@@ -18,50 +20,21 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 @EnableAuthorizationServer
 public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
-    private static final int EXPIRATION = 3600;
-
-    @Value("${komodo.client_id}")
-    private String komodo_id;
-
-    @Value("${komodo.client_secret}")
-    private String komodo_secret;
-
-    @Value("${external.client_id}")
-    private String external_id;
-
-    @Value("${external.client_secret}")
-    private String external_secret;
+    @Autowired
+    DataSource dataSource;
 
     /**
-     * Configures client credentials
+     * Configure client credentials
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 
-        // client credentials for Komodo MVC
-        clients.inMemory()
+        clients
+                // gets client credentials from DB
+                .jdbc(dataSource)
 
-            // set client_id, encoded client_secret and token expiration
-            .withClient(komodo_id).secret(passwordEncoder().encode(komodo_secret)).accessTokenValiditySeconds(EXPIRATION)
-
-            // client has read/write access
-            .scopes("read", "write")
-
-            // allows client to obtain access tokens via user authentication and refresh token
-            .authorizedGrantTypes("password", "refresh_token");
-
-        // client credentials for 3rd Party Developer using Komodo API
-        clients.inMemory()
-
-            // set client_id, encoded client_secret and token expiration
-            .withClient("third-party").secret(passwordEncoder().encode("temp-secret")).accessTokenValiditySeconds(EXPIRATION)
-//            .autoApprove(true)
-
-            // client has read only access
-            .scopes("read", "write")
-
-            // allows client to obtain access tokens via client credentials only
-            .authorizedGrantTypes("client_credentials");
+                // encode with BCrypt
+                .passwordEncoder(passwordEncoder());
     }
 
     /**

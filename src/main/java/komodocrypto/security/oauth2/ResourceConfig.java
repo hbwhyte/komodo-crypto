@@ -20,6 +20,7 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
         http
             // disable cross site risk forgery (vulnerability for now)
             .csrf().disable()
+
             // determine security for endpoints
             .authorizeRequests()
                 .antMatchers("/test-security").authenticated();
