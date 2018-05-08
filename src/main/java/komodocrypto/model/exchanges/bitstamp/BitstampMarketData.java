@@ -13,7 +13,7 @@ import org.knowm.xchange.service.marketdata.MarketDataService;
 /**
  * Demonstrate requesting Trades at Bitstamp
  */
-public class BitstampTrade {
+public class BitstampMarketData {
 
     public static void main(String[] args) throws IOException {
 
