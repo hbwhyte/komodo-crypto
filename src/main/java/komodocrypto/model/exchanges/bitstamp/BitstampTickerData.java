@@ -9,7 +9,7 @@ import org.knowm.xchange.service.marketdata.MarketDataService;
 
 import java.io.IOException;
 
-public class Bitstamp {
+public class BitstampTickerData {
 
         public static void main(String[] args) throws IOException {
 
