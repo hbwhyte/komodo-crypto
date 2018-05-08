@@ -23,3 +23,21 @@ https://www.bitstamp.net/api/transactions/
 REQUEST LIMITS
 ------
 Do not make more than 600 request per 10 minutes or they will ban your IP address.
+
+COINS
+------
+BTC - Bitcoin
+XRP - Ripple
+LTC - Litecoin
+ETH - Ethereum
+BCH - Bitcoin Cash
+
+CRYPTO/CRYPTO PAIRS
+------
+XRP / BTC (XRP_BTC)
+LTC / BTC (LTC_BTC)
+ETH / BTC (ETH_BTC)
+BCH / BTC (BCH_BTC)
+
+Supported values for currency_pair: btcusd, btceur, eurusd, xrpusd, xrpeur, xrpbtc,
+ltcusd, ltceur, ltcbtc, ethusd, etheur, ethbtc, bchusd, bcheur, bchbtc

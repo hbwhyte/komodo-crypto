@@ -25,6 +25,16 @@
 	</properties>
 
 	<dependencies>
+		<!-- Spring Dependencies -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -39,20 +49,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>1.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -61,11 +57,55 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Database Dependencies -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- MVC Dependencies -->
 		<dependency>
 			<groupId>net.sourceforge.nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>
 			<version>1.9.21</version>
 		</dependency>
+
+		<!-- Xchange Required Dependencies -->
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-core</artifactId>
+			<version>4.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-binance</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-bitstamp</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-bittrex</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-gdax</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-kraken</artifactId>
+			<version>4.3.5</version>
+		</dependency>
+
+		<!-- General Dependencies -->
+
 	</dependencies>
 
 	<build>
