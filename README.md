@@ -24,8 +24,8 @@ create table oauth_client_details (
 The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
 credentials for an access token.
 
-You can register client credentials by making a POST request to the Authorization Server with the
-client_id and client_secret of your choosing.
+You can register client credentials by making a POST request to the Authorization Server with your email as the
+client_id and a client_secret of your choosing.
 
 ```
 curl -X POST -H 'Content-Type: application/json' -d '{"client_id": "third-party", "client_secret": "temp-secret", "authorized_grant_types":"client_credentials"}' http://localhost:8080/oauth/client
