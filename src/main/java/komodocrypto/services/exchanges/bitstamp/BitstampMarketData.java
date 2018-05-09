@@ -1,4 +1,4 @@
-package komodocrypto.model.exchanges.bitstamp;
+package komodocrypto.services.exchanges.bitstamp;
 
 import java.io.IOException;
 

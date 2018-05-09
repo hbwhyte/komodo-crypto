@@ -1,6 +1,8 @@
-package komodocrypto.model.exchanges.bitstamp;
+package komodocrypto.services.exchanges.bitstamp;
 
 import java.io.IOException;
+
+import komodocrypto.configuration.exchange_utils.BitstampUtil;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.bitstamp.dto.trade.BitstampUserTransaction;
 import org.knowm.xchange.bitstamp.service.BitstampTradeHistoryParams;

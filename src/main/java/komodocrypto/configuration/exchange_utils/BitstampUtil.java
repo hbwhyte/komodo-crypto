@@ -1,4 +1,4 @@
-package komodocrypto.model.exchanges.bitstamp;
+package komodocrypto.configuration.exchange_utils;
 
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
