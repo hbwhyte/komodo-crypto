@@ -6,9 +6,11 @@ import org.knowm.xchange.bitstamp.BitstampExchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+@Service
 public class BitstampTickerData {
 
         public static void main(String[] args) throws IOException {

@@ -9,10 +9,12 @@ import org.knowm.xchange.bitstamp.service.BitstampMarketDataServiceRaw;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.springframework.stereotype.Service;
 
 /**
  * Demonstrate requesting Trades at Bitstamp
  */
+@Service
 public class BitstampMarketData {
 
     public static void main(String[] args) throws IOException {

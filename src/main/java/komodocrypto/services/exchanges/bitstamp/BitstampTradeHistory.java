@@ -10,6 +10,7 @@ import org.knowm.xchange.bitstamp.service.BitstampTradeServiceRaw;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Trades;
 import org.knowm.xchange.service.trade.TradeService;
+import org.springframework.stereotype.Service;
 
 /**
  * Example showing the following:
@@ -19,14 +20,15 @@ import org.knowm.xchange.service.trade.TradeService;
  *   <li>get user trade history
  * </ul>
  */
+@Service
 public class BitstampTradeHistory {
 
     public static void main(String[] args) throws IOException {
 
-        Exchange bitstamp = BitstampUtil.createExchange();
-        TradeService tradeService = bitstamp.getTradeService();
-
-        generic(tradeService);
+//        Exchange bitstamp = BitstampUtil.createExchange();
+//        TradeService tradeService = bitstamp.getTradeService();
+//
+//        generic(tradeService);
     }
 
     private static void generic(TradeService tradeService) throws IOException {

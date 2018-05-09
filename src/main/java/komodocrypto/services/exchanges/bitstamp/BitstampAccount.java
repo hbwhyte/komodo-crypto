@@ -11,6 +11,7 @@ import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
+import org.springframework.stereotype.Service;
 
 /**
  * Example showing the following:
@@ -24,17 +25,18 @@ import org.knowm.xchange.service.trade.params.TradeHistoryParams;
  *   <li>Withdraw a small amount of BTC
  * </ul>
  */
+@Service
 public class BitstampAccount {
 
-    public static void main(String[] args) throws IOException {
-
-        Exchange bitstamp = BitstampUtil.createExchange();
+    public void accountInfo() throws IOException {
+        BitstampUtil obj = new BitstampUtil();
+        Exchange bitstamp = obj.createExchange();
         AccountService accountService = bitstamp.getAccountService();
 
         generic(accountService);
     }
 
-    private static void generic(AccountService accountService) throws IOException {
+    private void generic(AccountService accountService) throws IOException {
 
         // Get the account information
         AccountInfo accountInfo = accountService.getAccountInfo();
