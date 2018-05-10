@@ -2,6 +2,8 @@ package komodocrypto.model.cryptocompare.historical_data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
+
 public class Data {
 
     int id;
@@ -9,15 +11,15 @@ public class Data {
     String fromCurrency;
     String toCurrency;
     String exchange;
-    double close;
-    double high;
-    double low;
-    double open;
-    double average;
+    BigDecimal close;
+    BigDecimal high;
+    BigDecimal low;
+    BigDecimal open;
+    BigDecimal average;
     @JsonProperty("volumefrom")
-    double volumeFrom;
+    BigDecimal volumeFrom;
     @JsonProperty("volumeto")
-    double volumeTo;
+    BigDecimal volumeTo;
 
     // There is no setter for id as it is auto-incremented in the MySQL database.
     public int getId() {
@@ -56,59 +58,59 @@ public class Data {
         this.exchange = exchange;
     }
 
-    public double getClose() {
+    public BigDecimal getClose() {
         return close;
     }
 
     public void setClose(double close) {
-        this.close = close;
+        this.close = BigDecimal.valueOf(close);
     }
 
-    public double getHigh() {
+    public BigDecimal getHigh() {
         return high;
     }
 
     public void setHigh(double high) {
-        this.high = high;
+        this.high = BigDecimal.valueOf(high);
     }
 
-    public double getLow() {
+    public BigDecimal getLow() {
         return low;
     }
 
     public void setLow(double low) {
-        this.low = low;
+        this.low = BigDecimal.valueOf(low);
     }
 
-    public double getOpen() {
+    public BigDecimal getOpen() {
         return open;
     }
 
     public void setOpen(double open) {
-        this.open = open;
+        this.open = BigDecimal.valueOf(open);
     }
 
-    public double getAverage() {
+    public BigDecimal getAverage() {
         return average;
     }
 
-    public void setAverage(double average) {
+    public void setAverage(BigDecimal average) {
         this.average = average;
     }
 
-    public double getVolumeFrom() {
+    public BigDecimal getVolumeFrom() {
         return volumeFrom;
     }
 
     public void setVolumeFrom(double volumeFrom) {
-        this.volumeFrom = volumeFrom;
+        this.volumeFrom = BigDecimal.valueOf(volumeFrom);
     }
 
-    public double getVolumeTo() {
+    public BigDecimal getVolumeTo() {
         return volumeTo;
     }
 
     public void setVolumeTo(double volumeTo) {
-        this.volumeTo = volumeTo;
+        this.volumeTo = BigDecimal.valueOf(volumeTo);
     }
 }
