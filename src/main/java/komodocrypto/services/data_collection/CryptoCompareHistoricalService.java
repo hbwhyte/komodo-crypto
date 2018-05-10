@@ -205,7 +205,8 @@ public class CryptoCompareHistoricalService {
         }
 
         // Adds the missing data to the proper table.
-        if (missingTimestamps.size() > 0) queryMissingHistoricalData(missingTimestamps, period, fromCurrency, toCurrency, exchange);
+        if (missingTimestamps.size() > 0) queryMissingHistoricalData(missingTimestamps, period, fromCurrency,
+                toCurrency, exchange);
     }
 
     // Averages the high and low price.
