@@ -18,10 +18,13 @@ public class CryptoCompareHistoricalService {
     RestTemplate restTemplate;
 
     @Autowired
+    ScheduledTasks scheduledTasks;
+
+    @Autowired
     CryptoMapper cryptoMapper;
 
     // The list of trading pairs
-    private String[][] tradingPairs = {
+    private static String[][] tradingPairs = {
             {"ETH", "BTC"},
             {"BCH", "BTC"},
             {"LTC", "BTC"},
@@ -29,7 +32,7 @@ public class CryptoCompareHistoricalService {
     };
 
     // The list of exchanges
-    private String[] exchanges = {
+    private static String[] exchanges = {
             "Binance",
             "Bitstamp",
             "Bittrex",
@@ -38,20 +41,21 @@ public class CryptoCompareHistoricalService {
     };
 
     // The time periods to query for
-    private String[] periods = {
+    private static String[] periods = {
             "day",
             "hour",
             "minute"
     };
 
-    final int HOURS_IN_DAY = 24;
-    final int MIN_IN_HOUR = 60;
-    final int SEC_IN_MIN = 60;
+    final static int HOURS_IN_DAY = 24;
+    final static int MIN_IN_HOUR = 60;
+    final static int SEC_IN_MIN = 60;
 
     // The number of records to return. Initialized at 1, using daily as the default period.
     private int numDailyRecords = 1;
 
     // Switches between data operations for each pair/exchange combo depending on specified conditions.
+    // This method is the core of all operations regarding data collection.
     public GeneralResponse switchDataOperations() {
 
         // The object to return
@@ -59,12 +63,21 @@ public class CryptoCompareHistoricalService {
 
         // Queries for historical data for each trading pair from each exchange.
         // NOTE: Coinbase does not support XRP/BTC, so it is skipped for this pair.
+
+        // Cycles through each trading pair.
         for (String[] pair : tradingPairs) {
 
+            // Cycles through each exchange.
             for (String exchange : exchanges) {
 
                 // Skips Coinbase for the XRP/BTC pair.
-                if ((pair[0].equals("XRP") || pair[1].equals("XRP")) && exchange.equals("Coinbase")) continue;
+                if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
+                        && exchange.equals("Coinbase")) continue;
+
+                // Queries for historical data generated on a schedule if the scheduled task has run.
+                if (scheduledTasks.isCronHit() == true) {
+                    queryMissingHistoricalData(scheduledTasks.getTimestampsMinutely(), "minute", pair[0], pair[1], exchange);
+                }
 
                 // Queries for daily, hourly, and minutely data
                 for (String period : periods) {
@@ -132,12 +145,13 @@ public class CryptoCompareHistoricalService {
             String query = "https://min-api.cryptocompare.com/data/histo" + period + "?" +
                     "fsym=" + fromCurrency +
                     "&tsym=" + toCurrency +
+                    "&e=" + exchange +
                     "&toTs=" + timestamp +
                     "&aggregate=1&limit=" + numRecords;
             PriceHistorical historicalData = restTemplate.getForObject(query, PriceHistorical.class);
 
-            // The Data object being acted upon. Want the first one because the CryptoCompare API returns at
-            // least 2, even if the limit is set to 1.
+            // The Data object being acted upon. Want the second element in the Data array because the CryptoCompare
+            // API returns at least 2, even if the limit is set to 1, and the second is the desired element.
             Data data = historicalData.getData()[1];
 
             // Adds the data to the database.

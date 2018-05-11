@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 public interface CryptoMapper {
 
     String fieldsValuesPeriodData =
-            "(`time`, `from_currency`, `to_currency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volume_from`, `volume_to`) " +
+            "(`time`, `fromCurrency`, `toCurrency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volumeFrom`, `volumeTo`) " +
             "VALUES (#{time}, #{fromCurrency}, #{toCurrency}, #{exchange}, #{open}, #{low}, #{high}, #{close}, #{average}, #{volumeFrom}, #{volumeTo});";
 
     String INSERT_PRICE_DAILY = "INSERT INTO `komodo_crypto`.`daily` " + fieldsValuesPeriodData;
@@ -17,17 +17,17 @@ public interface CryptoMapper {
     String INSERT_PRICE_MINUTELY = "INSERT INTO `komodo_crypto`.`minutely` " + fieldsValuesPeriodData;
 
     String SELECT_PRICE_DAILY = "SELECT * FROM komodo_crypto.daily;";
-    String SELECT_PRICE_HOURLY = "SELECT * FROM komodo_crypto.daily;";
-    String SELECT_PRICE_MINUTELY = "SELECT * FROM komodo_crypto.daily;";
+    String SELECT_PRICE_HOURLY = "SELECT * FROM komodo_crypto.hourly;";
+    String SELECT_PRICE_MINUTELY = "SELECT * FROM komodo_crypto.minutely;";
 
     String SELECT_TIME_DAILY = "SELECT time FROM komodo_crypto.daily " +
-            "WHERE from_currency = #{fromCurrency} AND to_currency = #{toCurrency} AND exchange = #{exchange} " +
+            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
             "ORDER BY time ASC;";
     String SELECT_TIME_HOURLY = "SELECT time FROM komodo_crypto.hourly " +
-            "WHERE from_currency = #{fromCurrency} AND to_currency = #{toCurrency} AND exchange = #{exchange} " +
+            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
             "ORDER BY time ASC;";
     String SELECT_TIME_MINUTELY = "SELECT time FROM komodo_crypto.minutely " +
-            "WHERE from_currency = #{fromCurrency} AND to_currency = #{toCurrency} AND exchange = #{exchange} " +
+            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
             "ORDER BY time ASC;";
 
     // Adds historical data by time period.
