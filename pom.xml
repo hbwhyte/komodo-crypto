@@ -93,6 +93,19 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Salesforce -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
