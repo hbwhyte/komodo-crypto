@@ -18,5 +18,4 @@ public class CryptoController {
     public void getAccountInfo() throws IOException{
         bitstampAccount.accountInfo();
     }
-
 }
