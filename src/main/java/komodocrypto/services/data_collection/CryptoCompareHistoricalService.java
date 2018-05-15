@@ -112,6 +112,15 @@ public class CryptoCompareHistoricalService {
                         findHistoricalGaps(period, pair[0], pair[1], exchange);
                     }
                 }
+
+                scheduledTasks.setDailyCronHit(false);
+                scheduledTasks.setHourlyCronHit(false);
+                scheduledTasks.setMinutelyCronHit(false);
+                scheduledTasks.setWeeklyCronHit(false);
+
+                scheduledTasks.timestampDaily.clear();
+                scheduledTasks.timestampHourly.clear();
+                scheduledTasks.timestampMinutely.clear();
             }
         }
 

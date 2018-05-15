@@ -12,26 +12,32 @@ public class ScheduledTasks {
     @Autowired
     CryptoCompareHistoricalService cryptoCompareHistoricalService;
 
-    private boolean cronHit = false;
-    private ArrayList<Integer> timestampsMinutely;
+    private boolean weeklyCronHit = false;
+    private boolean dailyCronHit = false;
+    private boolean hourlyCronHit = false;
+    private boolean minutelyCronHit = false;
+
+    protected ArrayList<Integer> timestampDaily;
+    protected ArrayList<Integer> timestampHourly;
+    protected ArrayList<Integer> timestampMinutely;
+
+    private int weeklyTimestamp;
 
     // Generates a timestamp at 0:01 for previous day's data.
-    @Scheduled(cron = "0 */5 * * * *", zone = "GMT")
-    private void queryTimestampMinutely() {
+    @Scheduled(cron = "0 1 0 * * *", zone = "GMT")
+    private void queryTimestampDaily() {
 
-        cronHit = false;
         int now = (int) (System.currentTimeMillis() / 1000);
-        int secInMin = CryptoCompareHistoricalService.SEC_IN_MIN;
-        int limit = now - secInMin;
+        int secInDay = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR *
+                CryptoCompareHistoricalService.HOURS_IN_DAY;
+        int limit = now - secInDay;
         boolean found = false;
 
         for (int i = now; i > limit || found == true; i--) {
 
-            if (i % secInMin == 0) {
-
-                for (int j = 0; j < 5; j++)
-                timestampsMinutely.add(i - secInMin * j);
-                cronHit = true;
+            if (i % secInDay == 0) {
+                timestampDaily.add(i);
+                dailyCronHit = true;
                 found = true;
             }
         }
@@ -41,18 +47,132 @@ public class ScheduledTasks {
         cryptoCompareHistoricalService.switchDataOperations();
     }
 
-    // Determines whether the scheduled task at midnight has run.
-    public boolean isCronHit() {
+    // Generates a timestamp in the first minute of every hour for the previous hour's data.
+    @Scheduled(cron = "0 1 * * *", zone = "GMT")
+    private void queryTimestampHourly() {
 
-        if (cronHit == true) {
-            return true;
-        } else {
-            return false;
+        int now = (int) (System.currentTimeMillis() / 1000);
+        int secInHour = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR;
+        int limit = now - secInHour;
+        boolean found = false;
+
+        for (int i = now; i > limit || found == true; i--) {
+
+            if (i % secInHour == 0) {
+                timestampHourly.add(i);
+                hourlyCronHit = true;
+                found = true;
+            }
         }
+
+        cryptoCompareHistoricalService.switchDataOperations();
     }
 
-    // Getter method for timestamp generated for queryDaily scheduled task.
-    public ArrayList<Integer> getTimestampsMinutely() {
-        return timestampsMinutely;
+    // Generates an array list of timestamps every five minutes for the previous five minutes.
+    @Scheduled(cron = "0 */5 * * *", zone = "GMT")
+    private void queryTimestampMinutely() {
+
+        int now = (int) (System.currentTimeMillis() / 1000);
+        int secInMin = CryptoCompareHistoricalService.SEC_IN_MIN;
+        int limit = now - secInMin;
+        boolean found = false;
+
+        for (int i = now; i > limit || found == true; i--) {
+
+            if (i % secInMin == 0) {
+
+                for (int j = 0; j < 5; j++) {
+                    timestampHourly.add(i - secInMin * j);
+                    minutelyCronHit = true;
+                    found = true;
+                }
+            }
+        }
+
+        cryptoCompareHistoricalService.switchDataOperations();
+    }
+
+    @Scheduled(cron = "0 0 0 */7 *", zone = "GMT")
+    private void queryTimestampWeekly() {
+
+        int now = (int) (System.currentTimeMillis() / 1000);
+        int secInHour = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR;
+        int secInWeek = secInHour * CryptoCompareHistoricalService.HOURS_IN_DAY * 7;
+        int limit = now - secInWeek;
+        boolean found = false;
+        int weeklyTs = 0;
+
+        for (int i = now; i > limit || found == true; i--) {
+
+            if (i % secInHour == 0) {
+                weeklyTs = i;
+                weeklyCronHit = true;
+                found = true;
+            }
+        }
+
+        weeklyTimestamp = weeklyTs;
+    }
+
+    public boolean isWeeklyCronHit() {
+        return weeklyCronHit;
+    }
+
+    // Determines whether the scheduled task at midnight has run.
+    public boolean isDailyCronHit() {
+
+        if (dailyCronHit == true) return true;
+        else return false;
+    }
+
+    // Determines whether the hourly scheduled task has run.
+    public boolean isHourlyCronHit() {
+
+        if (hourlyCronHit == true) return true;
+        else return false;
+    }
+
+    // Determines whether the minutely scheduled task has run.
+    public boolean isMinutelyCronHit() {
+
+        if (minutelyCronHit == true) return true;
+        else return false;
+    }
+
+    public void setWeeklyCronHit(boolean weeklyCronHit) {
+        this.weeklyCronHit = weeklyCronHit;
+    }
+
+    public void setDailyCronHit(boolean dailyCronHit) {
+        this.dailyCronHit = dailyCronHit;
+    }
+
+    public void setHourlyCronHit(boolean hourlyCronHit) {
+        this.hourlyCronHit = hourlyCronHit;
+    }
+
+    public void setMinutelyCronHit(boolean minutelyCronHit) {
+        this.minutelyCronHit = minutelyCronHit;
+    }
+
+
+    public void setWeeklyTimestamp(int weeklyTimestamp) {
+        this.weeklyTimestamp = weeklyTimestamp;
+    }
+
+    public ArrayList<Integer> getTimestampDaily() {
+        return timestampDaily;
+    }
+
+    public ArrayList<Integer> getTimestampHourly() {
+        return timestampHourly;
+    }
+
+    public ArrayList<Integer> getTimestampMinutely() {
+        return timestampMinutely;
+    }
+
+    public int getWeeklyTimestamp() {
+        return weeklyTimestamp;
     }
 }
