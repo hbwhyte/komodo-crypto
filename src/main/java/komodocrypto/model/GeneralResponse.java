@@ -14,6 +14,12 @@ public class GeneralResponse {
         this.data = data;
     }
 
+    public GeneralResponse(Object data) {
+        this.status = "Success";
+        this.response_code = HttpStatus.OK;
+        this.data = data;
+    }
+
     public GeneralResponse() {
         status = "Success";
         response_code = HttpStatus.OK;

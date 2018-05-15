@@ -4,12 +4,17 @@ import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.GeneralResponse;
 import komodocrypto.model.cryptocompare.historical_data.Data;
 import komodocrypto.model.cryptocompare.historical_data.PriceHistorical;
+import komodocrypto.model.cryptocompare.social_stats.Facebook;
+import komodocrypto.model.cryptocompare.social_stats.Reddit;
+import komodocrypto.model.cryptocompare.social_stats.SocialStats;
+import komodocrypto.model.cryptocompare.social_stats.Twitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class CryptoCompareHistoricalService {
@@ -74,13 +79,28 @@ public class CryptoCompareHistoricalService {
                 if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
                         && exchange.equals("Coinbase")) continue;
 
-                // Queries for historical data generated on a schedule if the scheduled task has run.
-                if (scheduledTasks.isCronHit() == true) {
-                    queryMissingHistoricalData(scheduledTasks.getTimestampsMinutely(), "minute", pair[0], pair[1], exchange);
+                // Aggregates hourly data into a weekly entry.
+                if (scheduledTasks.isWeeklyCronHit() == true) {
+                    aggregateWeekly(pair[0], pair[1], exchange);
                 }
 
                 // Queries for daily, hourly, and minutely data
                 for (String period : periods) {
+
+                    // Queries for historical data generated on a schedule if the scheduled task has run.
+                    if (scheduledTasks.isDailyCronHit() == true) {
+                        queryMissingHistoricalData(scheduledTasks.getTimestampDaily(), period, pair[0], pair[1], exchange);
+                    }
+
+                    // Queries for historical data generated on a schedule if the scheduled task has run.
+                    if (scheduledTasks.isHourlyCronHit() == true) {
+                        queryMissingHistoricalData(scheduledTasks.getTimestampHourly(), period, pair[0], pair[1], exchange);
+                    }
+
+                    // Queries for historical data generated on a schedule if the scheduled task has run.
+                    if (scheduledTasks.isMinutelyCronHit() == true) {
+                        queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), period, pair[0], pair[1], exchange);
+                    }
 
                     // Determines whether the database table referencing this period is empty.
                     Data[] dataByPeriod = getDataByPeriod(period);
@@ -234,6 +254,52 @@ public class CryptoCompareHistoricalService {
         average = sum.divide(divisor);
 
         return average;
+    }
+
+    // Aggregates daily data into weekly data.
+    public void aggregateWeekly(String fromCurrency, String toCurrency, String exchange) {
+
+        int weeklyTimestamp = scheduledTasks.getWeeklyTimestamp();
+        int secInWeek = SEC_IN_MIN * MIN_IN_HOUR * HOURS_IN_DAY * 7;
+        int secInHour = SEC_IN_MIN * MIN_IN_HOUR;
+
+        cryptoMapper.aggregateWeekly(weeklyTimestamp - secInWeek, weeklyTimestamp, fromCurrency, toCurrency, exchange);
+    }
+
+    // Adds social data.
+    // This will look a bit different when integrated with switcher method.
+    public GeneralResponse addSocial() {
+
+        // Use a hash map when integrating with the switcher method. For current purposes, an array is preferable.
+//        HashMap<String, Integer> currencyIds = new HashMap<>();
+//        currencyIds.put("ETH", 7605);
+//        currencyIds.put("BCH", 202330);
+//        currencyIds.put("LTC", 3808);
+//        currencyIds.put("XRP", 5031);
+
+        int[] currencyIds = {7605, 202330, 3808, 5031};
+
+        for (int i = 0; i < currencyIds.length; i++) {
+            String query = "https://www.cryptocompare.com/api/data/socialstats/?id=" + currencyIds[i];
+            SocialStats social = restTemplate.getForObject(query, SocialStats.class);
+
+            Twitter twitterStats = social.getData().getTwitter();
+            Reddit redditStats = social.getData().getReddit();
+            Facebook facebookStats = social.getData().getFacebook();
+
+            twitterStats.setCurrency(tradingPairs[i][0]);
+            redditStats.setCurrency(tradingPairs[i][0]);
+            facebookStats.setCurrency(tradingPairs[i][0]);
+        }
+
+        komodocrypto.model.cryptocompare.social_stats.Data socialStats = new komodocrypto.model.cryptocompare.social_stats.Data();
+        socialStats.setTwitter(cryptoMapper.getTwitter());
+        socialStats.setReddit(cryptoMapper.getReddit());
+        socialStats.setFacebook(cryptoMapper.getFacebook());
+
+        GeneralResponse response = new GeneralResponse(socialStats);
+
+        return response;
     }
 
     // Gets an array of price data depending on the pair/exchange combination.

@@ -1,6 +1,9 @@
 package komodocrypto.mappers;
 
 import komodocrypto.model.cryptocompare.historical_data.Data;
+import komodocrypto.model.cryptocompare.social_stats.Facebook;
+import komodocrypto.model.cryptocompare.social_stats.Reddit;
+import komodocrypto.model.cryptocompare.social_stats.Twitter;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -30,6 +33,35 @@ public interface CryptoMapper {
             "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
             "ORDER BY time ASC;";
 
+    String INSERT_PRICE_AGGREGATED_WEEKLY = "INSERT INTO komodo_crypto.weekly " +
+            "(`time`, `fromCurrency`, `toCurrency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volumeFrom`, `volumeTo`) " +
+            "VALUES (" +
+                "#{arg1}, " +
+                "#{arg2}, " +
+                "#{arg3}, " +
+                "#{arg4}, " +
+                "(SELECT open FROM komodo_crypto.hourly WHERE time = #{arg0}), " +
+                "(SELECT MIN(low) FROM komodo_crypto.hourly WHERE (time >= #{arg0} AND time <= #{arg1})), " +
+                "(SELECT MAX(high) FROM komodo_crypto.hourly WHERE (time >= #{arg0} AND time <= #{arg1})), " +
+                "(SELECT close FROM komodo_crypto.hourly WHERE time = #{arg1}), " +
+                "(SELECT AVG(average) FROM komodo_crypto.hourly WHERE (time >= #{arg0} AND time <= #{arg1})), " +
+                "(SELECT volumeFrom FROM komodo_crypto.hourly WHERE time = #{arg0}), " +
+                "(SELECT volumeTo FROM komodo_crypto.hourly WHERE time = #{arg1}) " +
+            ");";
+
+    String INSERT_TWITTER_DATA = "INSERT INTO `komodo_crypto`.`twitter` " +
+            "(`currency`, `statuses`, `followers`, `favorites`, `lists`, `following`, `points`) " +
+            "VALUES (#{currency}, #{statuses}, #{followers}, #{favorites}, #{lists}, #{following}, #{points});";
+    String INSERT_REDDIT_DATA = "INSERT INTO `komodo_crypto`.`reddit` " +
+            "(`currency`, `subscribers`, `commentsPerDay`, `commentsPerHour`, `activeUsers`, `postsPerDay`, `postsPerHour`, `points`) " +
+            "VALUES (#{currency}, #{subscribers}, #{commentsPerDay}, #{commentsPerHour}, #{activeUsers}, #{postsPerDay}, #{postsPerHour}, #{points});";
+    String INSERT_FACEBOOK_DATA = "INSERT INTO `komodo_crypto`.facebook` " +
+            "(`currency`, `talkingAbout`, `likes`, `points`);";
+
+    String SELECT_TWITTER_DATA = "SELECT * FROM komodo_crypto.twitter;";
+    String SELECT_REDDIT_DATA = "SELECT * FROM komodo_crypto.reddit;";
+    String SELECT_FACEBOOK_DATA = "SELECT * FROM komodo_crypto.facebook;";
+
     // Adds historical data by time period.
     @Insert(INSERT_PRICE_DAILY)
     public int addPriceDaily(Data data);
@@ -39,6 +71,30 @@ public interface CryptoMapper {
 
     @Insert(INSERT_PRICE_MINUTELY)
     public int addPriceMinutely(Data data);
+
+    // Gets hourly data between two specified timestamps
+    @Insert(INSERT_PRICE_AGGREGATED_WEEKLY)
+    public int aggregateWeekly(int startTime, int endTime, String fromCurrency, String toCurrency, String exchange);
+
+    // Adds social media stats.
+    @Insert(INSERT_TWITTER_DATA)
+    public int addTwitter(Twitter twitterData);
+
+    @Insert(INSERT_REDDIT_DATA)
+    public int addReddit(Reddit redditData);
+
+    @Insert(INSERT_FACEBOOK_DATA)
+    public int addFacebook(Facebook facebookData);
+
+    // Gets social media stats.
+    @Select(SELECT_TWITTER_DATA)
+    public Twitter getTwitter();
+
+    @Select(SELECT_REDDIT_DATA)
+    public Reddit getReddit();
+
+    @Select(SELECT_FACEBOOK_DATA)
+    public Facebook getFacebook();
 
     // Gets historical data by time period.
     @Select(SELECT_PRICE_DAILY)
@@ -59,4 +115,5 @@ public interface CryptoMapper {
 
     @Select(SELECT_TIME_MINUTELY)
     public Integer[] getTimeMinutely(String fromCurrency, String toCurrency, String exchange);
+
 }

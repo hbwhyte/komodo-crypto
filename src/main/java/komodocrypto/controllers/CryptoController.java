@@ -17,4 +17,7 @@ public class CryptoController {
         return historicalService.switchDataOperations();
     }
 
+    @RequestMapping("/getsocialdata")
+    public GeneralResponse addSocialData() { return historicalService.addSocial();}
+
 }
