@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" href="/komodo-crypto/src/main/resources/static/css/home.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="col-md-3"></div>
+
+
+    <div class="col-sm-5 center-block" id="main">
+        <h1 id="errortitle" class="text-center">Exception Found</h1>
+
+        <!--display error message in page using thymeleaf-->
+        <p class="text-center" id="reason" th:text="${reason}" style="padding-top:10px"></p>
+        <p class="text-center" id="message" th:text="${message}"></p>
+
+
+
+        <div id="buttons" class="container">
+
+            <form ><!--th:action="@{/home}" will be changed when we know landing page endpoint in controller -->
+
+                <button class="btn" type="submit" style="color:white">Back to Homepage
+                </button>
+            </form>
+        </div>
+
+
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+
+
+</body>
+</html>

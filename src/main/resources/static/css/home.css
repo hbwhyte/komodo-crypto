@@ -1,0 +1,136 @@
+html, body{
+  background: rgba(249, 233, 184);
+  margin:0px;
+  padding:0px;
+}
+
+#header, .navbar, .registration, ul li a, #footer{
+  background:#686F29;
+  color: #F2C94C;
+  text-shadow: 1px 1px 1px black;
+  font-weight:bold;
+}
+.title{
+  margin-top:4%;
+}
+.navbar, .registration{
+  border:none;
+  border-radius:0;
+}
+.container{
+  width:100%;
+}
+form{
+  margin:10px;
+}
+input{
+  color:black;
+  background: rgba(249, 233, 184, 0.38);
+  margin:3px;
+}
+.btn-main {
+ border-radius: 3px;
+ text-shadow: 1px 1px 2px #000000;
+ box-shadow: 1px 2px 1px black;
+ font-family: Arial;
+ color: #fcd158;
+ background: #686f29;
+ border: outset #686f29 1px;
+ font-weight: bold;
+ padding:5px 10px 5px 10px;
+}
+.btn-main:hover, .navbar-nav li a:hover {
+ background: #de3410;
+ color: #fcd158;
+}
+
+.registration:hover{
+  color:rgba(249, 233, 184, 0.85);
+}
+#login-btn{
+  margin-top:5px;
+  margin-left:3px;
+}
+.registration{
+  padding-right:25px;
+  z-index:2
+}
+#username, #password{
+  z-index:;
+}
+.table{
+margin-top: 55px;
+z-index:2;
+}
+.table-responsive{
+  z-index:3;
+}
+#arbithead th{
+  border-bottom: 3px solid #de3410;
+  color:#686f29;
+  z-index:2;
+}
+#arbithead th, #arbitbody td{
+  padding-left:30px;
+  font-size: 17px;
+}
+#arbitbody td{
+  border-bottom: 1px solid #de3410;
+  color:#464a1c;
+}
+#arbitbody tr:hover{
+   background:rgba(104, 111, 41, 0.5);
+  box-shadow: 1px 1px 2px rgba(222, 52, 16, 0.7);
+}
+#arbitbody td:hover{
+  text-shadow: .5px .5px 0px #fcd158;
+ }
+#footer ul{
+  list-style-type:none;
+  margin:5px;
+  padding:15px;
+}
+#footer li{
+  padding:3px;
+}
+.polygon{
+  width:186.78px;
+  height;160.43px;
+position: absolute;
+background: rgba(249, 233, 184, 0.47);
+-webkit-transform: skew(150deg); -moz-transform: skew(150deg); -o-transform: skew(150deg);
+  z-index:1;
+}
+#polygon1{
+left: 25.63%;
+right: -15.07%;
+top: -10.06%;
+bottom: -68.03%;
+
+}
+#polygon2{
+left: 30.63%;
+right: -15.07%;
+top: -10.06%;
+bottom: -68.03%;
+}
+/*will probably have to be changed when content is dynamic*/
+#footer{
+   clear: both;
+    position: relative;
+    z-index: 10;
+    height: 170px;
+    margin-top: -170px;
+}
+#main{
+  min-height:100%;
+  height:700px;
+  z-index:3;
+}
+/*for smaller screens*/
+@media only screen and (max-width: 950px){
+  .polygon{
+    display:none;
+  }
+
+}
