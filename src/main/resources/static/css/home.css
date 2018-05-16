@@ -5,9 +5,8 @@ html, body{
 }
 
 #header, .navbar, .registration, ul li a, #footer{
-  background:#686F29;
-  color: #F2C94C;
-  text-shadow: 1px 1px 1px black;
+  background:#002949;
+  color: #E0C387;
   font-weight:bold;
 }
 .title{
@@ -30,18 +29,17 @@ input{
 }
 .btn-main {
  border-radius: 3px;
- text-shadow: 1px 1px 2px #000000;
- box-shadow: 1px 2px 1px black;
+ box-shadow: 1px 2px 1px grey;
  font-family: Arial;
- color: #fcd158;
- background: #686f29;
- border: outset #686f29 1px;
- font-weight: bold;
+ color: #E0C387;
+ background: #002949;
+ border: outset #002949 1px;
+ font-weight: regular;
  padding:5px 10px 5px 10px;
 }
 .btn-main:hover, .navbar-nav li a:hover {
  background: #de3410;
- color: #fcd158;
+ color: #E0C387;
 }
 
 .registration:hover{
@@ -67,7 +65,7 @@ z-index:2;
 }
 #arbithead th{
   border-bottom: 3px solid #de3410;
-  color:#686f29;
+  color:#002949;
   z-index:2;
 }
 #arbithead th, #arbitbody td{
