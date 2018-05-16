@@ -34,5 +34,4 @@ public class CryptoController {
             throws TableEmptyException {
         return historicalService.getNews(categories);
     }
-
 }
