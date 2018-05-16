@@ -48,7 +48,7 @@ public class ScheduledTasks {
     }
 
     // Generates a timestamp in the first minute of every hour for the previous hour's data.
-    @Scheduled(cron = "0 1 * * *", zone = "GMT")
+    @Scheduled(cron = "0 1 * * * *", zone = "GMT")
     private void queryTimestampHourly() {
 
         int now = (int) (System.currentTimeMillis() / 1000);
@@ -69,7 +69,7 @@ public class ScheduledTasks {
     }
 
     // Generates an array list of timestamps every five minutes for the previous five minutes.
-    @Scheduled(cron = "0 */5 * * *", zone = "GMT")
+    @Scheduled(cron = "0 */5 * * * *", zone = "GMT")
     private void queryTimestampMinutely() {
 
         int now = (int) (System.currentTimeMillis() / 1000);
@@ -92,7 +92,7 @@ public class ScheduledTasks {
         cryptoCompareHistoricalService.switchDataOperations();
     }
 
-    @Scheduled(cron = "0 0 0 */7 *", zone = "GMT")
+    @Scheduled(cron = "0 0 0 */7 * *", zone = "GMT")
     private void queryTimestampWeekly() {
 
         int now = (int) (System.currentTimeMillis() / 1000);

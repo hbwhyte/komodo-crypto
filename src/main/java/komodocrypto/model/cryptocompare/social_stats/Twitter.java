@@ -12,7 +12,8 @@ public class Twitter {
     String name;
     int lists;
     int statuses;
-    int favourites;
+    @JsonProperty("favourites")
+    int favorites;
     int followers;
     @JsonProperty("Points")
     int points;
@@ -77,12 +78,12 @@ public class Twitter {
         this.statuses = statuses;
     }
 
-    public int getFavourites() {
-        return favourites;
+    public int getFavorites() {
+        return favorites;
     }
 
-    public void setFavourites(int favourites) {
-        this.favourites = favourites;
+    public void setFavorites(int favorites) {
+        this.favorites = favorites;
     }
 
     public int getFollowers() {

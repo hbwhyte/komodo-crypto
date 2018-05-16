@@ -2,6 +2,8 @@ package komodocrypto.exceptions;
 
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @ControllerAdvice
@@ -20,5 +22,14 @@ public class ControllerAdviceClass {
         c.setErrorName(e.toString());
         c.setReason(e.getMessage());
         return c;
+    }
+
+    @ExceptionHandler(TableEmptyException.class)
+    public @ResponseBody
+    TableEmptyException tableEmpty(TableEmptyException e) {
+        TableEmptyException error = new TableEmptyException();
+        error.setMessage("No data found.");
+        error.setStatus(204);
+        return error;
     }
 }

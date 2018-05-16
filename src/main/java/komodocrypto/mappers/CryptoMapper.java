@@ -50,17 +50,25 @@ public interface CryptoMapper {
             ");";
 
     String INSERT_TWITTER_DATA = "INSERT INTO `komodo_crypto`.`twitter` " +
-            "(`currency`, `statuses`, `followers`, `favorites`, `lists`, `following`, `points`) " +
-            "VALUES (#{currency}, #{statuses}, #{followers}, #{favorites}, #{lists}, #{following}, #{points});";
+            "(`time`, `currency`, `statuses`, `followers`, `favorites`, `lists`, `following`, `points`) " +
+            "VALUES (#{time}, #{currency}, #{statuses}, #{followers}, #{favorites}, #{lists}, #{following}, #{points});";
     String INSERT_REDDIT_DATA = "INSERT INTO `komodo_crypto`.`reddit` " +
-            "(`currency`, `subscribers`, `commentsPerDay`, `commentsPerHour`, `activeUsers`, `postsPerDay`, `postsPerHour`, `points`) " +
-            "VALUES (#{currency}, #{subscribers}, #{commentsPerDay}, #{commentsPerHour}, #{activeUsers}, #{postsPerDay}, #{postsPerHour}, #{points});";
-    String INSERT_FACEBOOK_DATA = "INSERT INTO `komodo_crypto`.facebook` " +
-            "(`currency`, `talkingAbout`, `likes`, `points`);";
+            "(`time`, `currency`, `subscribers`, `commentsPerDay`, `commentsPerHour`, `activeUsers`, `postsPerDay`, `postsPerHour`, `points`) " +
+            "VALUES (#{time}, #{currency}, #{subscribers}, #{commentsPerDay}, #{commentsPerHour}, #{activeUsers}, #{postsPerDay}, #{postsPerHour}, #{points});";
+    String INSERT_FACEBOOK_DATA = "INSERT INTO `komodo_crypto`.`facebook` " +
+            "(`time`, `currency`, `talkingAbout`, `likes`, `points`) " +
+            "VALUES (#{time}, #{currency}, #{talkingAbout}, #{likes}, #{points});";
 
     String SELECT_TWITTER_DATA = "SELECT * FROM komodo_crypto.twitter;";
     String SELECT_REDDIT_DATA = "SELECT * FROM komodo_crypto.reddit;";
     String SELECT_FACEBOOK_DATA = "SELECT * FROM komodo_crypto.facebook;";
+
+    String INSERT_NEWS_DATA = "INSERT IGNORE INTO `komodo_crypto`.`news` " +
+            "(`articleId`, `publishedOn`, `title`, `url`, `body`, `tags`, `categories`) " +
+            "VALUES (#{articleId}, #{publishedOn}, #{title}, #{url}, #{body}, #{tags}, #{categories});";
+    String SELECT_ALL_NEWS_DATA = "SELECT * FROM `komodo_crypto`.`news`;";
+    String SELECT_NEWS_BY_CATEGORY = "SELECT * FROM `komodo_crypto`.`news` WHERE categories LIKE CONCAT('\'%', ${category}, '%\');";
+
 
     // Adds historical data by time period.
     @Insert(INSERT_PRICE_DAILY)
@@ -72,9 +80,11 @@ public interface CryptoMapper {
     @Insert(INSERT_PRICE_MINUTELY)
     public int addPriceMinutely(Data data);
 
+
     // Gets hourly data between two specified timestamps
     @Insert(INSERT_PRICE_AGGREGATED_WEEKLY)
     public int aggregateWeekly(int startTime, int endTime, String fromCurrency, String toCurrency, String exchange);
+
 
     // Adds social media stats.
     @Insert(INSERT_TWITTER_DATA)
@@ -86,15 +96,17 @@ public interface CryptoMapper {
     @Insert(INSERT_FACEBOOK_DATA)
     public int addFacebook(Facebook facebookData);
 
+
     // Gets social media stats.
     @Select(SELECT_TWITTER_DATA)
-    public Twitter getTwitter();
+    public Twitter[] getTwitter();
 
     @Select(SELECT_REDDIT_DATA)
-    public Reddit getReddit();
+    public Reddit[] getReddit();
 
     @Select(SELECT_FACEBOOK_DATA)
-    public Facebook getFacebook();
+    public Facebook[] getFacebook();
+
 
     // Gets historical data by time period.
     @Select(SELECT_PRICE_DAILY)
@@ -106,6 +118,7 @@ public interface CryptoMapper {
     @Select(SELECT_PRICE_MINUTELY)
     public Data[] getPriceMinutely();
 
+
     // Gets timestamp by period
     @Select(SELECT_TIME_DAILY)
     public Integer[] getTimeDaily(String fromCurrency, String toCurrency, String exchange);
@@ -115,5 +128,16 @@ public interface CryptoMapper {
 
     @Select(SELECT_TIME_MINUTELY)
     public Integer[] getTimeMinutely(String fromCurrency, String toCurrency, String exchange);
+
+
+    // Adds and retrieves unique news data.
+    @Insert(INSERT_NEWS_DATA)
+    public int addNews(komodocrypto.model.cryptocompare.news.Data newsData);
+
+    @Select(SELECT_ALL_NEWS_DATA)
+    public komodocrypto.model.cryptocompare.news.Data[] getNews();
+
+//    @Select(SELECT_NEWS_BY_CATEGORY)
+//    public komodocrypto.model.cryptocompare.news.Data[] getNewsByCategory(String category);
 
 }

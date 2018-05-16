@@ -1,20 +1,21 @@
 package komodocrypto.services.data_collection;
 
+import komodocrypto.exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.GeneralResponse;
 import komodocrypto.model.cryptocompare.historical_data.Data;
 import komodocrypto.model.cryptocompare.historical_data.PriceHistorical;
-import komodocrypto.model.cryptocompare.social_stats.Facebook;
-import komodocrypto.model.cryptocompare.social_stats.Reddit;
-import komodocrypto.model.cryptocompare.social_stats.SocialStats;
-import komodocrypto.model.cryptocompare.social_stats.Twitter;
+import komodocrypto.model.cryptocompare.news.News;
+import komodocrypto.model.cryptocompare.social_stats.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class CryptoCompareHistoricalService {
@@ -286,6 +287,7 @@ public class CryptoCompareHistoricalService {
 //        currencyIds.put("LTC", 3808);
 //        currencyIds.put("XRP", 5031);
 
+        int time = (int) (System.currentTimeMillis() / 1000);
         int[] currencyIds = {7605, 202330, 3808, 5031};
 
         for (int i = 0; i < currencyIds.length; i++) {
@@ -297,18 +299,85 @@ public class CryptoCompareHistoricalService {
             Facebook facebookStats = social.getData().getFacebook();
 
             twitterStats.setCurrency(tradingPairs[i][0]);
+            twitterStats.setTime(time);
+
             redditStats.setCurrency(tradingPairs[i][0]);
+            redditStats.setTime(time);
+
             facebookStats.setCurrency(tradingPairs[i][0]);
+            facebookStats.setTime(time);
+
+            cryptoMapper.addTwitter(twitterStats);
+            cryptoMapper.addReddit(redditStats);
+            cryptoMapper.addFacebook(facebookStats);
         }
 
-        komodocrypto.model.cryptocompare.social_stats.Data socialStats = new komodocrypto.model.cryptocompare.social_stats.Data();
-        socialStats.setTwitter(cryptoMapper.getTwitter());
-        socialStats.setReddit(cryptoMapper.getReddit());
-        socialStats.setFacebook(cryptoMapper.getFacebook());
+        SocialResponse socialResponse = new SocialResponse();
+        socialResponse.setTwitter(cryptoMapper.getTwitter());
+        socialResponse.setReddit(cryptoMapper.getReddit());
+        socialResponse.setFacebook(cryptoMapper.getFacebook());
 
-        GeneralResponse response = new GeneralResponse(socialStats);
+        GeneralResponse response = new GeneralResponse(socialResponse);
 
         return response;
+    }
+
+    // Gets news stories.
+    public GeneralResponse addNews(String categories) {
+
+        // Maps even if categories is empty or nonsense.
+        String query = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN&categories=" + categories;
+        News news = restTemplate.getForObject(query, News.class);
+        komodocrypto.model.cryptocompare.news.Data[] newsData = news.getData();
+
+        for (komodocrypto.model.cryptocompare.news.Data story : newsData) {
+            cryptoMapper.addNews(story);
+        }
+
+        return new GeneralResponse(cryptoMapper.getNews());
+    }
+
+    public GeneralResponse getNews(String categories) throws TableEmptyException {
+
+        /*  check if db is empty
+                if so, return db empty error
+            check if categories is empty
+                if so, select all news items
+                else
+                    select all news items by category
+        */
+        if (cryptoMapper.getNews().length == 0) {
+
+            throw new TableEmptyException();
+
+        } else /*if (categories == null)*/{
+
+            komodocrypto.model.cryptocompare.news.Data[] newsData = cryptoMapper.getNews();
+            return new GeneralResponse(newsData);
+
+//        } else {
+//
+//            // Gets a list of news stories by each of the user-input categories.
+//            // NOTE: Can only query the database for one category at a time for now, not because multiple categories
+//            // aren't possible, but because I'm not sure how to do it at the moment. Will look into it though.
+//
+//            // Holds the arrays of news stories by category.
+//            ArrayList<komodocrypto.model.cryptocompare.news.Data[]> newsData = new ArrayList<>();
+//
+//            // Splits the user-input category string along commas. If the string was not delimited by commas or contained
+//            // nonsense, a set of news articles will still be returned, just not the desired ones.
+//            // NOTE: Look at MySQL stored procedures.
+//            String[] categoryArray = categories.split(",");
+//            for (String category : categoryArray) {
+//
+//                newsData.add(cryptoMapper.getNewsByCategory(category));
+//            }
+//
+//            // Removes duplicate elements.
+//            // Do this later.
+//
+//            return new GeneralResponse(newsData);
+        }
     }
 
     // Gets an array of price data depending on the pair/exchange combination.
