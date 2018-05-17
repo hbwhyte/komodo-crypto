@@ -8,40 +8,40 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<div class="container" id="header">
-    <div class="polygon" id="polygon1"></div>
-    <div class="polygon" id="polygon2">.</div>
-    <div class="row"> <div class="col-sm-9">
-        <h1 class="title" >KOMODO CRYPTO</h1></div> <div class="col-sm-3 login"> <form method="POST" class="form-signin" > <!-- th:action="@{/end point here}">-->
-
-        <input type="text" id="username"   placeholder="Username"
-        />
-        <input type="password"  placeholder="Password"
-               id="password" />
+    <div class="container" id="header">
+        <div class="row">
+            <div class="col-sm-9">
+                <h1 class="title" >KOMODO CRYPTO</h1>
+            </div>
+            <div class="col-sm-3 login">
+                <form method="POST" class="form-signin" > <!-- th:action="@{/end point here}">-->
+                    <input type="text" id="username" placeholder="Username"/>
+                    <input type="password" id="password" placeholder="Password" />
 
         <!-- error messaage for when oauth is added
 <div align="center" th:if="${param.error}">
             <p>Email or Password invalid, please verify</p>
         </div>-->
-        <br>
-        <button class="btn-main" id="login-btn" value="Login" type="Submit" >Login</button>
-    </form>
+                    <br>
+                    <button class="btn-main" id="login-btn" value="Login" type="Submit" >Login</button>
+                </form>
+            </div>
+        </div>
 
-        </form>
-    </div></div></div> <nav class="navbar  navbar-fixed">
-    <div class="container-fluid">
-
-        <ul class="nav navbar-nav">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">FAQ</a></li>
-        </ul>
-        <form method="get"> <!-- th:action="@{/end point here}">-->
-            <button class="navbar-right registration" type="Submit">Don't have an Account? Register Here</button>
+    <nav class="navbar  navbar-fixed">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+            <form method="get"> <!-- th:action="@{/end point here}">-->
+                <button class="navbar-right registration" type="Submit">Don't have an Account? Register Here</button>
+            </form>
+        </div>
+    </nav>
     </div>
-</nav>
 
 <div class="container" id="main">
     <div class="row"> <div class="col-sm-1"></div>
@@ -49,7 +49,7 @@
             <table class="table">
                 <thead id="arbithead">
                 <tr>
-                    <th>Coin</th>
+                    <th>Coin Pair</th>
                     <th>Highest</th>
                     <th>Lowest</th>
                     <th>Spread</th>
@@ -58,28 +58,28 @@
                 <tbody id="arbitbody">
                 <!-- will be filled with data by thymeleaf. these are just temp values-->
                 <tr>
-                    <td>Bali Coin</td>
-                    <td> 0.00</td>
-                    <td> 0.00</td>
-                    <td>Unicorns</td>
+                    <td th:utext="${currencyPair}"></td>
+                    <td th:utext="${highBid}"></td>
+                    <td th:utext="${lowAsk}"></td>
+                    <td th:utext="${difference}"></td>
                 </tr>
                 <tr>
-                    <td>Bali Coin</td>
-                    <td> 0.00</td>
-                    <td> 0.00</td>
-                    <td>Unicorns</td>
+                    <td th:utext="${currencyPair}"></td>
+                    <td th:utext="${highBid}"></td>
+                    <td th:utext="${lowAsk}"></td>
+                    <td th:utext="${difference}"></td>
                 </tr>
                 <tr>
-                    <td>Bali Coin</td>
-                    <td> 0.00</td>
-                    <td> 0.00</td>
-                    <td>Unicorns</td>
+                    <td th:utext="${currencyPair}"></td>
+                    <td th:utext="${highBid}"></td>
+                    <td th:utext="${lowAsk}"></td>
+                    <td th:utext="${difference}"></td>
                 </tr>
                 <tr>
-                    <td>Bali Coin</td>
-                    <td> 0.00</td>
-                    <td> 0.00</td>
-                    <td>Unicorns</td>
+                    <td th:utext="${currencyPair}"></td>
+                    <td th:utext="${highBid}"></td>
+                    <td th:utext="${lowAsk}"></td>
+                    <td th:utext="${difference}"></td>
                 </tr>
                 </tbody>
             </table>
