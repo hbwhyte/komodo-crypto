@@ -13,8 +13,8 @@ public class KomodoCryptoApplication extends SpringBootServletInitializer {
 		SpringApplication.run(KomodoCryptoApplication.class, args);
 
 		SalesforceService.authenticate();
-		SalesforceService.queryKomodoUsers();
-		SalesforceService.createKomodoUser();
+		//SalesforceService.queryKomodoUsers();
+		SalesforceService.createKomodoUserRyan();
 		//SalesforceService.updateKomodoUser();
 	}
 }

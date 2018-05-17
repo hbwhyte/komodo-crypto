@@ -21,24 +21,27 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONException;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SalesforceService {
 
-        static final String USERNAME     = "";
-        static final String PASSWORD     = "";
+        static final String USERNAME     = "jbudreski@codingnomads.co";
+        static final String PASSWORD     = "codingnomads0";
         static final String LOGINURL     = "https://login.salesforce.com";
         static final String GRANTSERVICE = "/services/oauth2/token?grant_type=password";
-        static final String CLIENTID     = "";
-        static final String CLIENTSECRET = "";
+        static final String CLIENTID     = "3MVG9d8..z.hDcPIDPRSQ6j6WmOZQTVF_vGrR3NoWdSvvvbkb35RpF8C8z7bhVb7a8dY6uG7B26rfOmuutOyW";
+        static final String CLIENTSECRET = "5036308529578685178";
         private static String REST_ENDPOINT = "/services/data" ;
         private static String API_VERSION = "/v32.0" ;
         private static String baseUri;
         private static Header oauthHeader;
         private static Header prettyPrintHeader = new BasicHeader("X-PrettyPrint", "1");
         private static String komodoUserSFID ;
-        //private static String baseUrl = "https://ap5.lightning.force.com/one/one.app#";
+        private static String loginAccessToken = null;
 
     public static Header getOauthHeader() {
         return oauthHeader;
@@ -90,7 +93,6 @@ public class SalesforceService {
         }
 
         JSONObject jsonObject = null;
-        String loginAccessToken = null;
         String loginInstanceUrl = null;
 
         try {
@@ -161,6 +163,35 @@ public class SalesforceService {
 
     // Create Leads using REST HttpPost
 
+    public static void createKomodoUserRyan(){
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String baseURL = baseUri;
+        String uri = baseUri + "/sobjects/Komodo_User__c/";
+        // create new header with authorization String
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("Authorization", "OAuth " + loginAccessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        SalesForceObject obj = new SalesForceObject("CodingNomads", "ryan@codingnomads.co", "Ryan Desmond", "password", 5);
+
+        HttpEntity<?> httpEntity = new HttpEntity<Object>(obj, headers);
+
+        // make API call
+        try {
+            ResponseEntity<String> fullResponse = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, String.class);
+            //SalesForceObject response = fullResponse.getBody();
+            System.out.println("test");
+        }
+        // catch bad API call
+        catch (HttpClientErrorException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
     public static void createKomodoUser() {
         System.out.println("\n_______________ Komodo User INSERT _______________");
 
@@ -170,11 +201,11 @@ public class SalesforceService {
 
             //create the JSON object containing the new lead details.
             JSONObject komodoUser = new JSONObject();
-            komodoUser.put("Name", "moneyluvaa");
-            komodoUser.put("email__c", "luloo@hotmail.com");
-            komodoUser.put("name__c", "laura loo");
-            komodoUser.put("password__c", "isuckatpasswords100");
-            komodoUser.put("userSettings_id__c", 5);
+            komodoUser.put("Name", "CodingNomads");
+            komodoUser.put("email__c", "ryan@codingnomads.co");
+            komodoUser.put("name__c", "ryan desmond");
+            komodoUser.put("password__c", "password");
+            komodoUser.put("userSettings_id__c", 4);
             komodoUser.put("user_id__c", 11);
 
 
@@ -187,8 +218,10 @@ public class SalesforceService {
             httpPost.addHeader(oauthHeader);
             httpPost.addHeader(prettyPrintHeader);
             // The message we are going to post
-            StringEntity body = new StringEntity(komodoUser.toString(1));
+            //System.out.println(komodoUser.toString());
+            StringEntity body = new StringEntity(komodoUser.toString());
             body.setContentType("application/json");
+            body.setChunked(true);
             httpPost.setEntity(body);
 
             //Make the request
