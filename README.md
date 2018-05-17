@@ -20,8 +20,11 @@ create table oauth_client_details (
 );
 ```
 
-## Security
-The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
+## MVC Security
+The Komodo MVC is secured with OAuth2 Password Grants. 
+
+## API Security
+The Komodo API is secured with OAuth2 Client Credentials Grants. To access secure endpoints you need to exchange your client
 credentials for an access token.
 
 You can register client credentials by making a POST request to the Authorization Server with your email as the

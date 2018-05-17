@@ -12,21 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * Configuration for User Filter (Komodo MVC)
  */
-//@Configuration
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-//public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-//
-//    /**
-//     * Configure endpoints that require user authentication
-//     */
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().anyRequest().permitAll();
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//}
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    /**
+     * Configure endpoints that require user authentication
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().anyRequest().permitAll();
+    }
+}
