@@ -1,4 +1,4 @@
-package komodocrypto.exceptions;
+package komodocrypto.exceptions.custom_exceptions;
 
 public class TableEmptyException extends Exception {
 

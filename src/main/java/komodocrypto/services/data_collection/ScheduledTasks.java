@@ -10,16 +10,16 @@ import java.util.ArrayList;
 public class ScheduledTasks {
 
     @Autowired
-    CryptoCompareHistoricalService cryptoCompareHistoricalService;
+    CryptoCompareHistoricalService historicalService;
 
     private boolean weeklyCronHit = false;
     private boolean dailyCronHit = false;
     private boolean hourlyCronHit = false;
     private boolean minutelyCronHit = false;
 
-    protected ArrayList<Integer> timestampDaily;
-    protected ArrayList<Integer> timestampHourly;
-    protected ArrayList<Integer> timestampMinutely;
+    protected ArrayList<Integer> timestampDaily = new ArrayList<>();
+    protected ArrayList<Integer> timestampHourly = new ArrayList<>();
+    protected ArrayList<Integer> timestampMinutely = new ArrayList<>();
 
     private int weeklyTimestamp;
 
@@ -30,10 +30,10 @@ public class ScheduledTasks {
         int now = (int) (System.currentTimeMillis() / 1000);
         int secInDay = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR *
                 CryptoCompareHistoricalService.HOURS_IN_DAY;
-        int limit = now - secInDay;
+//        int limit = now - secInDay;
         boolean found = false;
 
-        for (int i = now; i > limit || found == true; i--) {
+        for (int i = now; found == false; i--) {
 
             if (i % secInDay == 0) {
                 timestampDaily.add(i);
@@ -44,7 +44,7 @@ public class ScheduledTasks {
 
         // Calls the switcher method which cycles through pair/exchange combos and directs the proper method to query
         // for timestampDaily.
-        cryptoCompareHistoricalService.switchDataOperations();
+        historicalService.switchDataOperations();
     }
 
     // Generates a timestamp in the first minute of every hour for the previous hour's data.
@@ -53,10 +53,10 @@ public class ScheduledTasks {
 
         int now = (int) (System.currentTimeMillis() / 1000);
         int secInHour = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR;
-        int limit = now - secInHour;
+//        int limit = now - secInHour;
         boolean found = false;
 
-        for (int i = now; i > limit || found == true; i--) {
+        for (int i = now; found == false; i--) {
 
             if (i % secInHour == 0) {
                 timestampHourly.add(i);
@@ -65,7 +65,7 @@ public class ScheduledTasks {
             }
         }
 
-        cryptoCompareHistoricalService.switchDataOperations();
+        historicalService.switchDataOperations();
     }
 
     // Generates an array list of timestamps every five minutes for the previous five minutes.
@@ -74,22 +74,16 @@ public class ScheduledTasks {
 
         int now = (int) (System.currentTimeMillis() / 1000);
         int secInMin = CryptoCompareHistoricalService.SEC_IN_MIN;
-        int limit = now - secInMin;
+//        int limit = now - secInMin;
         boolean found = false;
 
-        for (int i = now; i > limit || found == true; i--) {
-
-            if (i % secInMin == 0) {
-
-                for (int j = 0; j < 5; j++) {
-                    timestampHourly.add(i - secInMin * j);
-                    minutelyCronHit = true;
-                    found = true;
-                }
-            }
+        for (int j = 0; j < 5; j++) {
+            timestampMinutely.add(now - secInMin * j);
+            found = true;
         }
 
-        cryptoCompareHistoricalService.switchDataOperations();
+        minutelyCronHit = true;
+        historicalService.switchDataOperations();
     }
 
     @Scheduled(cron = "0 0 0 */7 * *", zone = "GMT")
@@ -98,11 +92,10 @@ public class ScheduledTasks {
         int now = (int) (System.currentTimeMillis() / 1000);
         int secInHour = CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR;
         int secInWeek = secInHour * CryptoCompareHistoricalService.HOURS_IN_DAY * 7;
-        int limit = now - secInWeek;
-        boolean found = false;
-        int weeklyTs = 0;
+//        int limit = now - secInWeek;
+        boolean found = false;        int weeklyTs = 0;
 
-        for (int i = now; i > limit || found == true; i--) {
+        for (int i = now; found == false; i--) {
 
             if (i % secInHour == 0) {
                 weeklyTs = i;

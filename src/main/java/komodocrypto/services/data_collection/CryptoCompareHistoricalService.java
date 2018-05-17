@@ -1,21 +1,20 @@
 package komodocrypto.services.data_collection;
 
-import komodocrypto.exceptions.TableEmptyException;
+import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.GeneralResponse;
+import komodocrypto.model.RootResponse;
 import komodocrypto.model.cryptocompare.historical_data.Data;
 import komodocrypto.model.cryptocompare.historical_data.PriceHistorical;
 import komodocrypto.model.cryptocompare.news.News;
 import komodocrypto.model.cryptocompare.social_stats.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Service
 public class CryptoCompareHistoricalService {
@@ -24,10 +23,10 @@ public class CryptoCompareHistoricalService {
     RestTemplate restTemplate;
 
     @Autowired
-    ScheduledTasks scheduledTasks;
+    CryptoMapper cryptoMapper;
 
     @Autowired
-    CryptoMapper cryptoMapper;
+    ScheduledTasks scheduledTasks;
 
     // The list of trading pairs
     private static String[][] tradingPairs = {
@@ -56,6 +55,9 @@ public class CryptoCompareHistoricalService {
     final static int HOURS_IN_DAY = 24;
     final static int MIN_IN_HOUR = 60;
     final static int SEC_IN_MIN = 60;
+    
+    // The number of times a cron job has run.
+    private static int countCronjobExecutions = 0;
 
     // The number of records to return. Initialized at 1, using daily as the default period.
     private int numDailyRecords = 1;
@@ -85,26 +87,37 @@ public class CryptoCompareHistoricalService {
                     aggregateWeekly(pair[0], pair[1], exchange);
                 }
 
+                // Queries for historical data generated on a schedule if the scheduled task has run.
+                if (scheduledTasks.isDailyCronHit() == true) {
+                    queryMissingHistoricalData(scheduledTasks.getTimestampDaily(), "day", pair[0], pair[1], exchange);
+                }
+
+                // Queries for historical data generated on a schedule if the scheduled task has run.
+                if (scheduledTasks.isHourlyCronHit() == true) {
+                    queryMissingHistoricalData(scheduledTasks.getTimestampHourly(), "hour", pair[0], pair[1], exchange);
+                }
+
+                // Queries for historical data generated on a schedule if the scheduled task has run.
+                if (scheduledTasks.isMinutelyCronHit() == true) {
+                    queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), "minute", pair[0], pair[1], exchange);
+                }
+
+                // Resets the booleans indicating that the time period scheduled tasks have run to false.
+                scheduledTasks.setDailyCronHit(false);
+                scheduledTasks.setHourlyCronHit(false);
+                scheduledTasks.setMinutelyCronHit(false);
+                scheduledTasks.setWeeklyCronHit(false);
+
+                // Clears the array lists containing the timestamps for the scheduled tasks.
+                scheduledTasks.timestampDaily.clear();
+                scheduledTasks.timestampHourly.clear();
+                scheduledTasks.timestampMinutely.clear();
+
                 // Queries for daily, hourly, and minutely data
                 for (String period : periods) {
 
-                    // Queries for historical data generated on a schedule if the scheduled task has run.
-                    if (scheduledTasks.isDailyCronHit() == true) {
-                        queryMissingHistoricalData(scheduledTasks.getTimestampDaily(), period, pair[0], pair[1], exchange);
-                    }
-
-                    // Queries for historical data generated on a schedule if the scheduled task has run.
-                    if (scheduledTasks.isHourlyCronHit() == true) {
-                        queryMissingHistoricalData(scheduledTasks.getTimestampHourly(), period, pair[0], pair[1], exchange);
-                    }
-
-                    // Queries for historical data generated on a schedule if the scheduled task has run.
-                    if (scheduledTasks.isMinutelyCronHit() == true) {
-                        queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), period, pair[0], pair[1], exchange);
-                    }
-
-                    // Determines whether the database table referencing this period is empty.
-                    Data[] dataByPeriod = getDataByPeriod(period);
+                    // Determines whether the database table referencing this period, trading pair, and exchange is empty.
+                    Data[] dataByPeriod = getDataByPeriodConditional(period, pair[0], pair[1], exchange);
 
                     // If the table is empty, backfill. Otherwise, find gaps in the data.
                     if (dataByPeriod.length == 0) {
@@ -113,15 +126,6 @@ public class CryptoCompareHistoricalService {
                         findHistoricalGaps(period, pair[0], pair[1], exchange);
                     }
                 }
-
-                scheduledTasks.setDailyCronHit(false);
-                scheduledTasks.setHourlyCronHit(false);
-                scheduledTasks.setMinutelyCronHit(false);
-                scheduledTasks.setWeeklyCronHit(false);
-
-                scheduledTasks.timestampDaily.clear();
-                scheduledTasks.timestampHourly.clear();
-                scheduledTasks.timestampMinutely.clear();
             }
         }
 
@@ -132,7 +136,7 @@ public class CryptoCompareHistoricalService {
         return response;
     }
 
-    // Queries for historical data.
+    // Queries for historical data in the background.
     public void queryHistoricalData(String period, String fromCurrency, String toCurrency, String exchange) {
 
         // This keeps the value of the master period unchanged.
@@ -380,16 +384,17 @@ public class CryptoCompareHistoricalService {
         }
     }
 
+    
     // Gets an array of price data depending on the pair/exchange combination.
-    public Data[] getDataByPeriod(String period) {
+    public Data[] getDataByPeriodConditional(String period, String fromCurrency, String toCurrency, String exchange) {
 
         switch (period) {
             case "day":
-                return cryptoMapper.getPriceDaily();
+                return cryptoMapper.getPriceDailyConditional(fromCurrency, toCurrency, exchange);
             case "hour":
-                return cryptoMapper.getPriceHourly();
+                return cryptoMapper.getPriceHourlyConditional(fromCurrency, toCurrency, exchange);
             default:
-                return cryptoMapper.getPriceMinutely();
+                return cryptoMapper.getPriceMinutelyConditional(fromCurrency, toCurrency, exchange);
         }
     }
 
@@ -430,5 +435,50 @@ public class CryptoCompareHistoricalService {
         }
 
         return historicalData;
+    }
+    
+    public RootResponse getDataByPeriod(String period) {
+        switch (period) {
+            case "day":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getPriceDaily());
+            case "hour":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getPriceHourly());
+            default:
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getPriceMinutely());
+        }
+    }
+
+    public RootResponse getDataByCurrency(String currency) {
+        return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataByCurrency(currency));
+    }
+
+    public RootResponse getDataByExchange(String exchange) {
+        return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataByExchange(exchange));
+    }
+
+    public RootResponse getDataByPeriodAndCurrency(String period, String currency) {
+        switch (period) {
+            case "day":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataDailyByCurrency(currency));
+            case "hour":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataHourlyByCurrency(currency));
+            default:
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataMinutelyByCurrency(currency));
+        }
+    }
+
+    public RootResponse getDataByPeriodAndExchange(String period, String exchange) {
+        switch (period) {
+            case "day":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataDailyByExchange(exchange));
+            case "hour":
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataHourlyByExchange(exchange));
+            default:
+                return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataMinutelyByExchange(exchange));
+        }
+    }
+
+    public RootResponse getDataByCurrencyAndExchange(String currency, String exchange) {
+        return new RootResponse(HttpStatus.OK, "Query successful", cryptoMapper.getDataByCurrencyAndExchange(currency, exchange));
     }
 }
