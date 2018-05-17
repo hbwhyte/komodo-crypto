@@ -8,10 +8,10 @@ import komodocrypto.configuration.exchange_utils.BittrexUtil;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,42 +29,63 @@ import org.springframework.stereotype.Service;
 @Service
 public class BittrexAccount {
 
+    private AccountService accountService;
+    private AccountInfo accountInfo;
 
-    @Autowired
-    BittrexUtil bittrexUtil;
+    public BittrexAccount() {
+        this.accountService = setupAccountService();
+        try {
+            this.accountInfo = accountService.getAccountInfo();
+        } catch (IOException e) {
+            System.out.println("IOException at BittrexAccount()");
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) throws IOException {
         BittrexAccount bittrexAccount = new BittrexAccount();
-        bittrexAccount.accountInfo();
-
+        System.out.println("Username: " + bittrexAccount.getUsername() );
+        System.out.println("Deposit Address for BTC: " + bittrexAccount.getDepositAddress(Currency.BTC));
+        System.out.println("Trading fee: " + bittrexAccount.getTradingFee());
+        //bittrexAccount.generic(bittrexAccount.setupAccountService());
+        System.out.println("USDT Balance : " + bittrexAccount.getBalance(Currency.USDT));
     }
-    public void accountInfo() throws IOException {
 
+    public AccountService setupAccountService(){
+        BittrexUtil bittrexUtil = new BittrexUtil();
         Exchange bittrex = bittrexUtil.createExchange();
         AccountService accountService = bittrex.getAccountService();
 
-        getUsername(accountService);
-        getDepositAddress(accountService, Currency.BTC);
-        //generic(accountService);
+        return accountService;
+    }
+    public AccountInfo accountInfo() throws IOException {
+        AccountService accountService = setupAccountService();
+        return accountService.getAccountInfo();
     }
 
-    public String getUsername(AccountService accountService) throws IOException {
-        String username = accountService.getAccountInfo().getUsername();
-        System.out.println(username);
+    public String getUsername() throws IOException {
+        String username = this.accountInfo.getUsername();
         return username;
     }
 
-    public String getAccountInfo(AccountService accountService) throws IOException {
-        String accountInfo = accountService.getAccountInfo().toString();
-        System.out.println(accountInfo);
-        return accountInfo;
-
+    public BigDecimal getTradingFee() throws IOException {
+        BigDecimal tradingFee = this.accountInfo.getTradingFee();
+        return tradingFee;
     }
-    public String getDepositAddress(AccountService accountService, Currency currency) throws IOException {
-        String depositAddress = accountService.requestDepositAddress(currency);
-        System.out.println("Deposit address: " + depositAddress);
+
+
+    public String getDepositAddress(Currency currency) throws IOException {
+        String depositAddress = this.accountService.requestDepositAddress(currency);
         return depositAddress;
     }
+
+
+    public Balance getBalance(Currency currency) throws IOException {
+        Balance balance = accountInfo.getWallet().getBalance(currency);
+
+        return balance;
+    }
+
     private void generic(AccountService accountService) throws IOException {
 
         // Get the account information
@@ -89,5 +110,22 @@ public class BittrexAccount {
         String withdrawResult =
                 accountService.withdrawFunds(Currency.BTC, new BigDecimal(1).movePointLeft(4), "XXX");
         System.out.println("withdrawResult = " + withdrawResult);
+    }
+
+
+    public AccountService getAccountService() {
+        return accountService;
+    }
+
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    public AccountInfo getAccountInfo() {
+        return accountInfo;
+    }
+
+    public void setAccountInfo(AccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 }

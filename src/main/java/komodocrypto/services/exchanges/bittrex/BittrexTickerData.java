@@ -6,11 +6,20 @@ import org.knowm.xchange.bittrex.BittrexExchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class BittrexTickerData {
+
+    MarketDataService marketDataService;
+
+    @Autowired
+    BittrexMarketData bittrexMarketData;
+
+
     public static void main(String[] args) throws IOException {
 
         // Use the factory to get Bitstamp exchange API using default settings
@@ -20,6 +29,41 @@ public class BittrexTickerData {
         MarketDataService marketDataService = bittrex.getMarketDataService();
         getCurrencyPairTicker(marketDataService, CurrencyPair.ETH_BTC);
     }
+
+    public BittrexTickerData() {
+        this.marketDataService = bittrexMarketData.getDefaultMarketDataService();
+    }
+
+
+    public Ticker getCurrencyPairTicker(CurrencyPair currencyPair) throws IOException {
+        return this.marketDataService.getTicker(currencyPair);
+    }
+
+    public BigDecimal getCurrencyPairDailyHigh(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getHigh();
+    }
+
+    public BigDecimal getCurrencyPairDailyLow(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getLow();
+    }
+
+    public BigDecimal getCurrencyPairDailyOpen(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getOpen();
+    }
+
+    public BigDecimal getCurrencyPairLastPrice(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getLast();
+    }
+
+    public BigDecimal getCurrencyPairAsk(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getAsk();
+    }
+
+    public BigDecimal getCurrencyPairBid(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getBid();
+    }
+
+
 
     private static Ticker getCurrencyPairTicker(MarketDataService marketDataService, CurrencyPair currencyPair)
             throws IOException {
