@@ -7,15 +7,16 @@ import com.binance.api.client.BinanceApiWebSocketClient;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-@Configuration
+
 public class BinanceUtil {
 
     @Value("${binance.apiKey}")
-    private String apiKey;
+    private static String apiKey;
 
     @Value("${binance.secretKey}")
-    private String secretKey;
+    private static String secretKey;
 
     /**
      * Rest API: a synchronous/blocking Binance API client
@@ -44,5 +45,14 @@ public class BinanceUtil {
     public BinanceApiWebSocketClient createStreamExchange() {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
         return factory.newWebSocketClient();
+    }
+
+    public static void main(String[] args) {
+        BinanceUtil obj = new BinanceUtil();
+        BinanceApiAsyncRestClient client = obj.createAsyncExchange();
+
+        // Test connectivity
+        client.ping(response -> System.out.println("Ping succeeded."));
+
     }
 }
