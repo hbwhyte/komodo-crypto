@@ -1,14 +1,48 @@
 package komodocrypto.configuration.exchange_utils;
 
-import org.knowm.xchange.Exchange;
-import org.knowm.xchange.ExchangeFactory;
-import org.knowm.xchange.binance.BinanceExchange;
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.BinanceApiWebSocketClient;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class BinanceUtil {
 
-  public static Exchange createExchange() {
+    @Value("${binance.apiKey}")
+    private String apiKey;
 
-    Exchange exchange = ExchangeFactory.INSTANCE.createExchange(BinanceExchange.class.getName());
-    return exchange;
-  }
+    @Value("${binance.secretKey}")
+    private String secretKey;
+
+    /**
+     * Rest API: a synchronous/blocking Binance API client
+     *
+     * @return BinanceApiRestClient object
+     */
+    public BinanceApiRestClient createExchange() {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
+        return factory.newRestClient();
+    }
+
+    /**
+     * Async Rest API: an asynchronous/non-blocking Binance API client
+     *
+     * @return BinanceApiAsyncRestClient object
+     */
+    public BinanceApiAsyncRestClient createAsyncExchange() {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
+        return factory.newAsyncRestClient();
+    }
+
+    /**
+     * Websocket API: a data streaming client using Binance WebSocket API.
+     * @return BinanceApiWebSocketClient
+     */
+    public BinanceApiWebSocketClient createStreamExchange() {
+        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
+        return factory.newWebSocketClient();
+    }
 }
