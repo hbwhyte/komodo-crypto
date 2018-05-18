@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Komodo Crypto</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/user.css}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -21,20 +21,30 @@
     <div class="container-fluid">
 
         <ul class="nav navbar-nav">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">FAQ</a></li>
+            <li><a th:href="@{/komodo/home}">Home</a></li>
+            <li><a th:href="@{/komodo/services}">Services</a></li>
+            <li><a th:href="@{/komodo/about}">About</a></li>
+            <li><a th:href="@{/komodo/faq}">FAQ</a></li>
         </ul>
         <form method="get"> <!-- th:action="@{/end point here}">-->
-            <button class="navbar-right registration" type="Submit">Sign out</button>
+            <button class="navbar-right signout" type="Submit" th:action="@{/komodo/logout}" method="get">Sign out</button>
         </form>
     </div>
 </nav>
 
 <div class="container" id="main">
-    <div class="row"> <div class="col-sm-1"></div>
-        <div class=" col-sm-10 table-responsive">
+    <div class="row"> <div class="col-sm-3 sidebar">
+        <ul class="sidebar">
+            <li th:text="${userWelcome}"></li>
+            <li><a th:href="@{/komodo/user}">Dashboard</a></li>
+            <li><a th:href="@{/komodo/profile}">Profile</a></li>
+            <li><a th:href="@{/komodo/wallet}">Wallet</a></li>
+            <li><a th:href="@{/komodo/history}">Trade History</a></li>
+            <li><a th:href="@{/komodo/settings}">Settings</a></li>
+        </ul>
+
+    </div>
+        <div class=" col-sm-8 table-responsive">
             <table class="table">
                 <thead id="arbithead">
                 <tr>
@@ -61,7 +71,7 @@
                 </th:block>
                 </tbody>
             </table>
-        </div></div><div class="col-sm-1"></div></div>
+        </div></div></div>
 <footer>
     <div id="footer">
         <ul>

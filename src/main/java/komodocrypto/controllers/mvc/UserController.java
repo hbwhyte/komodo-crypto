@@ -49,6 +49,9 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         ArrayList<ArbitrageModel> arbitrage = arbitrageService.getArbitrageData();
         modelAndView.addObject("arbitrage", arbitrage);
+        /*will need to work with ouath to get username*/
+        String username= "imaginary temp user";
+        modelAndView.addObject("userWelcome", "Welcome " + username);
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
     }
