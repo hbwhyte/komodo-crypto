@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class BittrexTickerData {
+public class BittrexTicker {
 
     MarketDataService marketDataService;
 
     @Autowired
     BittrexMarketData bittrexMarketData;
-
 
     public static void main(String[] args) throws IOException {
 
@@ -29,7 +28,7 @@ public class BittrexTickerData {
         getCurrencyPairTicker(marketDataService, CurrencyPair.ETH_BTC);
     }
 
-    public BittrexTickerData() {
+    public BittrexTicker() {
         this.marketDataService = bittrexMarketData.getDefaultMarketDataService();
     }
 
