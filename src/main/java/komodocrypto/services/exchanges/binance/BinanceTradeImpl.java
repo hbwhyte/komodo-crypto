@@ -104,7 +104,7 @@ public class BinanceTradeImpl {
      * @param orderId Long orderId to be cancelled
      * @throws BinanceApiException if cancel is unsuccessful
      */
-    public void cancelOrder(String pair, long orderId) throws BinanceApiException {
+    public void cancelOrder(String pair, Long orderId) throws BinanceApiException {
         // Connect to Exchange
         BinanceApiRestClient client = binanceUtil.createExchange();
 

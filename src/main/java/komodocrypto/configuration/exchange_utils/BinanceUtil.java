@@ -6,9 +6,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.BinanceApiWebSocketClient;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class BinanceUtil {
@@ -25,35 +23,37 @@ public class BinanceUtil {
      * @return BinanceApiRestClient object
      */
     public BinanceApiRestClient createExchange() {
+        // Connect to Exchange
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
-        return factory.newRestClient();
+        BinanceApiRestClient client = factory.newRestClient();
+
+        // Test connection
+        client.ping();
+
+        return client;
     }
 
     /**
-     * Async Rest API: an asynchronous/non-blocking Binance API client
+     * [NOT ACTIVE] Async Rest API: an asynchronous/non-blocking Binance API client
      *
      * @return BinanceApiAsyncRestClient object
      */
     public BinanceApiAsyncRestClient createAsyncExchange() {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
-        return factory.newAsyncRestClient();
+        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+
+        // Test connectivity
+        client.ping(response -> System.out.println("Ping succeeded."));
+
+        return client;
     }
 
     /**
-     * Websocket API: a data streaming client using Binance WebSocket API.
+     * [NOT ACTIVE] Websocket API: a data streaming client using Binance WebSocket API.
      * @return BinanceApiWebSocketClient
      */
     public BinanceApiWebSocketClient createStreamExchange() {
         BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey,secretKey);
         return factory.newWebSocketClient();
-    }
-
-    public static void main(String[] args) {
-        BinanceUtil obj = new BinanceUtil();
-        BinanceApiAsyncRestClient client = obj.createAsyncExchange();
-
-        // Test connectivity
-        client.ping(response -> System.out.println("Ping succeeded."));
-
     }
 }
