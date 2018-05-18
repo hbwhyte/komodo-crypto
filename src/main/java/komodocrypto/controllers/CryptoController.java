@@ -13,22 +13,28 @@ public class CryptoController {
     @Autowired
     CryptoCompareHistoricalService historicalService;
 
-    @GetMapping("/historicaldata/day/{numRecords}")
-    public RootResponse backloadDaily(@PathVariable(value = "numRecords") int numRecords) {
-        return historicalService.backloadDailyData(numRecords);
-    }
+//    // Get historical data by specified criteria, if any.
+//    @GetMapping("/historicaldata")
+//    public GeneralResponse addPriceHistorical() {
+//        return historicalService.switchDataOperations();
+//    }
 
-    // Get historical data by specified criteria, if any.
-    @GetMapping("/historicaldata")
-    public GeneralResponse addPriceHistorical() {
-        return historicalService.switchDataOperations();
-    }
-    
+
+    // Gets historical data by period.
     @GetMapping("/historicaldata/byperiod/{period}")
     public RootResponse getDataByPeriod(@PathVariable(value = "period") String period) {
         return historicalService.getDataByPeriod(period);
     }
-    
+
+    // Adds historical data by period and/or number of periods.
+    @PostMapping(value = {"historicaldata/byperiod/{period}", "historicaldata/byperiod/{period}/{numRecords}"})
+    public RootResponse backloadData(@PathVariable(value = "period") String period,
+                                     @PathVariable(value = "numRecords", required = false) Integer numRecords) {
+        if (numRecords == null) numRecords = Integer.MAX_VALUE;
+        return historicalService.backloadData(period, numRecords);
+    }
+
+
     @GetMapping("/historicaldata/bycurrency/{currency}")
     public RootResponse getDataByCurrency(@PathVariable(value = "currency") String currency) {
         return historicalService.getDataByCurrency(currency);

@@ -9,7 +9,9 @@ import komodocrypto.model.cryptocompare.historical_data.PriceHistorical;
 import komodocrypto.model.cryptocompare.news.News;
 import komodocrypto.model.cryptocompare.social_stats.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +29,9 @@ public class CryptoCompareHistoricalService {
 
     @Autowired
     ScheduledTasks scheduledTasks;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     // The list of trading pairs
     private static String[][] tradingPairs = {
@@ -55,33 +60,52 @@ public class CryptoCompareHistoricalService {
     final static int HOURS_IN_DAY = 24;
     final static int MIN_IN_HOUR = 60;
     final static int SEC_IN_MIN = 60;
-    
-    // The number of times a cron job has run.
-    private static int countCronjobExecutions = 0;
 
     // The number of records to return. Initialized at 1, using daily as the default period.
     private int numDailyRecords = 1;
 
-    public RootResponse backloadDailyData(int numRecords) {
+    // Loads a specified number of records from the CryptoCompare API into the database by period.
+    public RootResponse backloadData(String period, int numRecords) {
 
-        for (String[] pair : tradingPairs) {
+        // As the CryptoCompare API calls take some time, this is executed as a background task in a new thread.
+        taskExecutor.execute(new Runnable() {
 
-            // Cycles through each exchange.
-            for (String exchange : exchanges) {
+            @Override
+            public void run() {
 
-                // Skips Coinbase for the XRP/BTC pair.
-                if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
-                        && exchange.equals("Coinbase")) continue;
+                // Cycles through each trading pair.
+                for (String[] pair : tradingPairs) {
 
-                for (int i = numRecords; i > 0; i--) {
-                    queryHistoricalData("day", pair[0], pair[1], exchange);
+                    // Cycles through each exchange.
+                    for (String exchange : exchanges) {
+
+                        // Skips Coinbase for the XRP/BTC pair.
+                        if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
+                                && exchange.equals("Coinbase")) continue;
+
+                        // Executes the query i number of times, where i = numRecords.
+                        for (int i = numRecords; i > 0; i--) {
+
+                            // Queries by the period specified in the method signature.
+                            switch (period) {
+                                case "day":
+                                    queryHistoricalData("day", pair[0], pair[1], exchange);
+                                    break;
+                                case "hour":
+                                    queryHistoricalData("hour", pair[0], pair[1], exchange);
+                                    break;
+                                case "minute":
+                                    queryHistoricalData("minute", pair[0], pair[1], exchange);
+                            }
+                        }
+                    }
                 }
             }
-        }
+        });
 
-        return new RootResponse(HttpStatus.OK, "Success", cryptoMapper.getPriceDaily());
+        return new RootResponse(HttpStatus.OK, "Loading data into the database. This is the data currently available.",
+                getResponseData());
     }
-
 
     // Switches between data operations for each pair/exchange combo depending on specified conditions.
     // This method is the core of all operations regarding data collection.
@@ -123,32 +147,33 @@ public class CryptoCompareHistoricalService {
                     queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), "minute", pair[0], pair[1], exchange);
                 }
 
-                // Resets the booleans indicating that the time period scheduled tasks have run to false.
-                scheduledTasks.setDailyCronHit(false);
-                scheduledTasks.setHourlyCronHit(false);
-                scheduledTasks.setMinutelyCronHit(false);
-                scheduledTasks.setWeeklyCronHit(false);
 
-                // Clears the array lists containing the timestamps for the scheduled tasks.
-                scheduledTasks.timestampDaily.clear();
-                scheduledTasks.timestampHourly.clear();
-                scheduledTasks.timestampMinutely.clear();
-
-                // Queries for daily, hourly, and minutely data
-                for (String period : periods) {
-
-                    // Determines whether the database table referencing this period, trading pair, and exchange is empty.
-                    Data[] dataByPeriod = getDataByPeriodConditional(period, pair[0], pair[1], exchange);
-
-                    // If the table is empty, backfill. Otherwise, find gaps in the data.
-                    if (dataByPeriod.length == 0) {
-                        queryHistoricalData(period, pair[0], pair[1], exchange);
-                    } else {
-                        findHistoricalGaps(period, pair[0], pair[1], exchange);
-                    }
-                }
+//                // Queries for daily, hourly, and minutely data
+//                for (String period : periods) {
+//
+//                    // Determines whether the database table referencing this period, trading pair, and exchange is empty.
+//                    Data[] dataByPeriod = getDataByPeriodConditional(period, pair[0], pair[1], exchange);
+//
+//                    // If the table is empty, backfill. Otherwise, find gaps in the data.
+//                    if (dataByPeriod.length == 0) {
+//                        queryHistoricalData(period, pair[0], pair[1], exchange);
+//                    } else {
+//                        findHistoricalGaps(period, pair[0], pair[1], exchange);
+//                    }
+//                }
             }
         }
+
+        // Resets the booleans indicating that the time period scheduled tasks have run to false.
+        scheduledTasks.setDailyCronHit(false);
+        scheduledTasks.setHourlyCronHit(false);
+        scheduledTasks.setMinutelyCronHit(false);
+        scheduledTasks.setWeeklyCronHit(false);
+
+        // Clears the array lists containing the timestamps for the scheduled tasks.
+        scheduledTasks.timestampDaily.clear();
+        scheduledTasks.timestampHourly.clear();
+        scheduledTasks.timestampMinutely.clear();
 
         // Combines the data from daily, hourly, and minutely tables into a large Data array and adds to a response
         // object for display purposes.
@@ -157,7 +182,10 @@ public class CryptoCompareHistoricalService {
         return response;
     }
 
+    // Finds and fills gaps in the database.
+
     // Queries for historical data in the background.
+//    @Async
     public void queryHistoricalData(String period, String fromCurrency, String toCurrency, String exchange) {
 
         // This keeps the value of the master period unchanged.

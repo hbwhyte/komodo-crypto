@@ -17,6 +17,8 @@ public class ScheduledTasks {
     private boolean hourlyCronHit = false;
     private boolean minutelyCronHit = false;
 
+    private boolean cronHit = false;
+
     protected ArrayList<Integer> timestampDaily = new ArrayList<>();
     protected ArrayList<Integer> timestampHourly = new ArrayList<>();
     protected ArrayList<Integer> timestampMinutely = new ArrayList<>();
@@ -86,7 +88,7 @@ public class ScheduledTasks {
         historicalService.switchDataOperations();
     }
 
-    @Scheduled(cron = "0 0 0 */7 * *", zone = "GMT")
+    @Scheduled(cron = "0 3 0 */7 * *", zone = "GMT")
     private void queryTimestampWeekly() {
 
         int now = (int) (System.currentTimeMillis() / 1000);
@@ -167,5 +169,14 @@ public class ScheduledTasks {
 
     public int getWeeklyTimestamp() {
         return weeklyTimestamp;
+    }
+
+
+    public boolean isCronHit() {
+        return cronHit;
+    }
+
+    public void setCronHit(boolean cronHit) {
+        this.cronHit = cronHit;
     }
 }
