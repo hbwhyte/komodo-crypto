@@ -7,16 +7,17 @@ import com.binance.api.client.BinanceApiWebSocketClient;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-
+@Component
 public class BinanceUtil {
 
     @Value("${binance.apiKey}")
-    private static String apiKey;
+    private String apiKey;
 
     @Value("${binance.secretKey}")
-    private static String secretKey;
+    private String secretKey;
 
     /**
      * Rest API: a synchronous/blocking Binance API client

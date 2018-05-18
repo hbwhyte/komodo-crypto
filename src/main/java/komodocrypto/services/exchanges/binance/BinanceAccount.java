@@ -4,25 +4,29 @@ import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.account.DepositAddress;
 import com.binance.api.client.domain.account.Trade;
 
+import com.binance.api.client.domain.account.WithdrawResult;
+import komodocrypto.configuration.exchange_utils.BinanceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class BinanceAccount {
 
-    public static String apiKey = "wUvk98wSzeu1Xbr5FTx438h1vjvR5rBsRkEUCfAVi55K65Tal5wINEjnWULpYenf";
+    @Autowired
+    BinanceUtil binanceUtil;
 
-    public static String secretKey = "RzvvWGZGWEMMgAUxs6ZykV548V3gnL1nKikvTQs2WYpkznuFuP1Mx59hCFciH6am";
-
-
+    /**
+     * Prints out potentailly relevant account info
+     */
     public Account getAccountInfo() {
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, secretKey);
-        BinanceApiRestClient client = factory.newRestClient();
+        BinanceApiRestClient client = binanceUtil.createExchange();
 
         // Get account balances
         Account account = client.getAccount(6000000L, System.currentTimeMillis());
@@ -42,9 +46,6 @@ public class BinanceAccount {
         // Get deposit address
         System.out.println(client.getDepositAddress("ETH"));
 
-        // Withdraw
-        client.withdraw("ETH", "0x123", "0.1", null, null);
-
         // Get update time
         System.out.println(client.getAccount().getUpdateTime());
 
@@ -57,11 +58,46 @@ public class BinanceAccount {
         return account;
 
     }
+    /**
+     * Submit a withdraw request.
+     *
+     * Enable Withdrawals option has to be active in the API settings.
+     *
+     * @param asset Sting asset symbol to withdraw
+     * @param address address to withdraw to
+     * @param amount amount to withdraw
+     */
+    public WithdrawResult makeWithdrawl(String asset, String address, String amount) {
+        // create exchange instance
+        BinanceApiRestClient client = binanceUtil.createExchange();
 
+        // Make withdrawl, return result
+        return client.withdraw(asset, address, amount, null, null); // s3 is address alias, s4 is secondary address identifier
+    }
+
+    /**
+     * Get the deposit address for a given asset, on Binance for the
+     * connected account.
+     *
+     * @param asset String asset symbol
+     * @return DepositAddress
+     */
+    public DepositAddress getDepositAddress(String asset) {
+        // create exchange instance
+        BinanceApiRestClient client = binanceUtil.createExchange();
+
+        // Return deposit address for given asset
+        return client.getDepositAddress(asset);
+    }
+
+    /**
+     *  Async version of account info/withdrawls
+     *
+     * @throws InterruptedException
+     */
     public void getAsyncAccountInfo() throws InterruptedException {
 
-        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, secretKey);
-        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+        BinanceApiAsyncRestClient client = binanceUtil.createAsyncExchange();
 
         // Test connectivity
         client.ping(response -> System.out.println("Ping succeeded."));
