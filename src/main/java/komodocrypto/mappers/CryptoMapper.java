@@ -47,6 +47,11 @@ public interface CryptoMapper {
             "UNION SELECT * FROM komodoDB.hourly WHERE fromCurrency = #{arg0} AND exchange = #{arg1}" +
             "UNION SELECT * FROM komodoDB.minutely WHERE fromCurrency = #{arg0} AND exchange = #{arg1};";
 
+
+    String SELECT_DATA_DAILY_BY_PAIR_SORTED = "SELECT * FROM komodoDB.daily WHERE fromCurrency = '${fromCurrency}' AND toCurrency= '${toCurrency}' " +
+                                              "GROUP BY time ORDER BY time ASC ;";
+
+
     String SELECT_TIME_DAILY = "SELECT time FROM komodoDB.daily " +
             "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
             "ORDER BY time ASC;";
@@ -203,4 +208,8 @@ public interface CryptoMapper {
 
     @Select(SELECT_DATA_BY_CURRENCY_AND_EXCHANGE)
     public Data[] getDataByCurrencyAndExchange(String currency, String exchange);
+
+    @Select(SELECT_DATA_DAILY_BY_PAIR_SORTED)
+    public Data[] getDataDailyByPairSorted(@Param("fromCurrency") String fromCurrency,@Param("toCurrency") String toCurrency);
+
 }
