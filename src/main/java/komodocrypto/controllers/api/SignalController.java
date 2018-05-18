@@ -32,9 +32,9 @@ public class SignalController {
     public RootResponse indicator(@RequestParam(value="type") String type,
                                   @RequestParam(value="fromcurrency") String fromCurrency,
                                   @RequestParam(value="tocurrency") String toCurrency,
-                                  @RequestParam(value="trailing") int trailing) throws IndicatorException, TableEmptyException {
+                                  @RequestParam(value="trailing") int trailing) throws IndicatorException {
 
-        logger.info("API Call: /indicators?type=" + type + "&fromcurrency=" +
+        logger.info("API Call: /dailyindicator?type=" + type + "&fromcurrency=" +
                     fromCurrency + "&tocurrency=" + toCurrency + "&count=" + trailing);
 
         // ensure proper trailing input

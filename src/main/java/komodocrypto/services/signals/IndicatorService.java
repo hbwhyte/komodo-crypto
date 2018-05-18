@@ -16,7 +16,6 @@ import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import java.time.*;
-import java.util.Set;
 
 @Service
 public class IndicatorService {
@@ -34,13 +33,14 @@ public class IndicatorService {
      * @return a pair with the indicator type and the calculated indicator as Decimal
      */
     public Pair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
-            throws IndicatorException, TableEmptyException {
+            throws IndicatorException {
 
         TimeSeries series = buildDailySeries(fromCurrency, toCurrency);
 
         // not enough data trailing data
         if (series.getBarCount() < trailing) {
-            throw new IndicatorException("insufficient daily historical data", HttpStatus.BAD_REQUEST);
+            logger.error("insufficient daily historical data for " + fromCurrency + toCurrency);
+            throw new IndicatorException("insufficient daily historical data for " + fromCurrency + toCurrency, HttpStatus.BAD_REQUEST);
         }
 
         ClosePriceIndicator last = new ClosePriceIndicator(series);
@@ -58,7 +58,8 @@ public class IndicatorService {
                 break;
 
             default:
-                throw new IllegalArgumentException();
+                logger.error(type + "is an invalid indicator type");
+                throw new IndicatorException(type + "is an invalid indicator type", HttpStatus.BAD_REQUEST);
         }
 
         Decimal output = indicator.getValue(series.getEndIndex());
@@ -67,13 +68,14 @@ public class IndicatorService {
         return new Pair<>(type, output);
     }
 
-    private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws TableEmptyException {
+    private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws IndicatorException {
 
         Data[] dataArray = cryptoMapper.getDataDailyByPairSorted(fromCurrency, toCurrency);
 
         // no data found
         if (dataArray.length <= 0) {
-            throw new TableEmptyException();
+            logger.error("insufficient daily historical data for " + fromCurrency + toCurrency);
+            throw new IndicatorException("insufficient daily historical data for " + fromCurrency + toCurrency, HttpStatus.BAD_REQUEST);
         }
 
         TimeSeries series = new BaseTimeSeries(fromCurrency + toCurrency);
