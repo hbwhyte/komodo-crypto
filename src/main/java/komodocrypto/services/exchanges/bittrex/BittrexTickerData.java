@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 public class BittrexTickerData {
 
@@ -33,7 +32,6 @@ public class BittrexTickerData {
     public BittrexTickerData() {
         this.marketDataService = bittrexMarketData.getDefaultMarketDataService();
     }
-
 
     public Ticker getCurrencyPairTicker(CurrencyPair currencyPair) throws IOException {
         return this.marketDataService.getTicker(currencyPair);
@@ -63,6 +61,13 @@ public class BittrexTickerData {
         return this.marketDataService.getTicker(currencyPair).getBid();
     }
 
+    public BigDecimal getCurrencyPairVwap(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getVwap();
+    }
+
+    public BigDecimal getCurrencyPairVolume(CurrencyPair currencyPair) throws IOException{
+        return this.marketDataService.getTicker(currencyPair).getVolume();
+    }
 
 
     private static Ticker getCurrencyPairTicker(MarketDataService marketDataService, CurrencyPair currencyPair)

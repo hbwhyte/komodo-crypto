@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import komodocrypto.configuration.exchange_utils.BittrexUtil;
+import komodocrypto.services.exchanges.interfaces.ExchangeAccountService;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service;
  * </ul>
  */
 @Service
-public class BittrexAccount {
+public class BittrexAccount implements ExchangeAccountService{
 
     private AccountService accountService;
     private AccountInfo accountInfo;
@@ -48,7 +49,7 @@ public class BittrexAccount {
         System.out.println("Deposit Address for BTC: " + bittrexAccount.getDepositAddress(Currency.BTC));
         System.out.println("Trading fee: " + bittrexAccount.getTradingFee());
         //bittrexAccount.generic(bittrexAccount.setupAccountService());
-        System.out.println("USDT Balance : " + bittrexAccount.getBalance(Currency.USDT));
+        System.out.println("USDT Balance : " + bittrexAccount.getCurrencyBalance(Currency.USDT));
     }
 
     public AccountService setupAccountService(){
@@ -73,17 +74,34 @@ public class BittrexAccount {
         return tradingFee;
     }
 
-
-    public String getDepositAddress(Currency currency) throws IOException {
-        String depositAddress = this.accountService.requestDepositAddress(currency);
+    @Override
+    public String getDepositAddress(Currency currency) {
+        String depositAddress = null;
+        try {
+            depositAddress = this.accountService.requestDepositAddress(currency);
+        } catch (IOException e) {
+            System.out.println("IOException while trying to get the deposit address");
+            e.printStackTrace();
+        }
         return depositAddress;
     }
 
-
-    public Balance getBalance(Currency currency) throws IOException {
+    @Override
+    public Balance getCurrencyBalance(Currency currency) {
         Balance balance = accountInfo.getWallet().getBalance(currency);
-
         return balance;
+    }
+
+    @Override
+    public String withdrawFunds(Currency currency, BigDecimal quantity, String address) {
+        String transactionID = null;
+        try {
+            transactionID = this.accountService.withdrawFunds(currency, quantity, address);
+        } catch (IOException e) {
+            System.out.println("IOException while withdrawing funds");
+            e.printStackTrace();
+        }
+        return transactionID;
     }
 
     private void generic(AccountService accountService) throws IOException {

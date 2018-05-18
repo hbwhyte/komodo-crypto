@@ -23,12 +23,31 @@ package komodocrypto.services.exchanges.bittrex;
 @Service
 public class BittrexTradeHistory {
 
+    private TradeService tradeService;
+
+    public BittrexTradeHistory() {
+        this.setupTradeService();
+    }
+
+    private void setupTradeService(){
+        Exchange bittrex = BittrexUtil.createExchange();
+        this.tradeService = bittrex.getTradeService();
+    }
+
+    private void getTradesHistory(){
+        //this.tradeService.getTradeHistory();
+    }
+
     public static void main(String[] args) throws IOException {
 
-//        Exchange bitstamp = BitstampUtil.createExchange();
-//        TradeService tradeService = bitstamp.getTradeService();
-//
-//        generic(tradeService);
+        Exchange bitstamp = BittrexUtil.createExchange();
+        TradeService tradeService = bitstamp.getTradeService();
+
+        generic(tradeService);
+    }
+
+    public void getAccountTradeHistory(){
+
     }
 
     private static void generic(TradeService tradeService) throws IOException {

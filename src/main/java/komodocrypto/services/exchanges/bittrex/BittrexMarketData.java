@@ -18,8 +18,6 @@ public class BittrexMarketData {
     MarketDataService marketDataService;
 
     public static void main(String[] args) throws IOException {
-
-
         Exchange bittrex = ExchangeFactory.INSTANCE.createExchange(BittrexExchange.class.getName());
 
         // Interested in the public market data feed (no authentication)
@@ -27,7 +25,6 @@ public class BittrexMarketData {
 
         generic(marketDataService);
     }
-
 
     public BittrexMarketData() {
         this.marketDataService = this.getDefaultMarketDataService();

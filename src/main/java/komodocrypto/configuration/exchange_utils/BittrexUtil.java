@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BittrexUtil {
+public final class BittrexUtil {
 
     @Value("${bittrex.username}")
     private String username;
@@ -20,7 +20,7 @@ public class BittrexUtil {
     @Value("${bittrex.secretKey}")
     private String secretKey;
 
-    public Exchange createExchange() {
+    public static Exchange createExchange() {
         String username = "kanjtrader@gmail.com";
         String apiKey = "2affb155c90e4e648d5dad7baa853dc4";
         String secretKey = "fe6354bd79464e07812ed76204d6bfab";
@@ -30,5 +30,6 @@ public class BittrexUtil {
         exSpec.setApiKey(apiKey);
         exSpec.setSecretKey(secretKey);
         return ExchangeFactory.INSTANCE.createExchange(exSpec);
+
     }
 }
