@@ -13,6 +13,11 @@ public class CryptoController {
     @Autowired
     CryptoCompareHistoricalService historicalService;
 
+    @GetMapping("/historicaldata/day/{numRecords}")
+    public RootResponse backloadDaily(@PathVariable(value = "numRecords") int numRecords) {
+        return historicalService.backloadDailyData(numRecords);
+    }
+
     // Get historical data by specified criteria, if any.
     @GetMapping("/historicaldata")
     public GeneralResponse addPriceHistorical() {

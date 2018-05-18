@@ -62,6 +62,27 @@ public class CryptoCompareHistoricalService {
     // The number of records to return. Initialized at 1, using daily as the default period.
     private int numDailyRecords = 1;
 
+    public RootResponse backloadDailyData(int numRecords) {
+
+        for (String[] pair : tradingPairs) {
+
+            // Cycles through each exchange.
+            for (String exchange : exchanges) {
+
+                // Skips Coinbase for the XRP/BTC pair.
+                if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
+                        && exchange.equals("Coinbase")) continue;
+
+                for (int i = numRecords; i > 0; i--) {
+                    queryHistoricalData("day", pair[0], pair[1], exchange);
+                }
+            }
+        }
+
+        return new RootResponse(HttpStatus.OK, "Success", cryptoMapper.getPriceDaily());
+    }
+
+
     // Switches between data operations for each pair/exchange combo depending on specified conditions.
     // This method is the core of all operations regarding data collection.
     public GeneralResponse switchDataOperations() {

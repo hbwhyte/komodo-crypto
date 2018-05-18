@@ -48,13 +48,13 @@ public interface CryptoMapper {
             "UNION SELECT * FROM komodoDB.minutely WHERE fromCurrency = #{arg0} AND exchange = #{arg1};";
 
     String SELECT_TIME_DAILY = "SELECT time FROM komodoDB.daily " +
-            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
+            "WHERE fromCurrency = #{param1} AND toCurrency = #{param2} AND exchange = #{param3} " +
             "ORDER BY time ASC;";
     String SELECT_TIME_HOURLY = "SELECT time FROM komodoDB.hourly " +
-            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
+            "WHERE fromCurrency = #{param1} AND toCurrency = #{param2} AND exchange = #{param3} " +
             "ORDER BY time ASC;";
     String SELECT_TIME_MINUTELY = "SELECT time FROM komodoDB.minutely " +
-            "WHERE fromCurrency = #{arg0} AND toCurrency = #{arg1} AND exchange = #{arg2} " +
+            "WHERE fromCurrency = #{param1} AND toCurrency = #{param2} AND exchange = #{param3} " +
             "ORDER BY time ASC;";
 
     String INSERT_PRICE_AGGREGATED_WEEKLY = "INSERT IGNORE INTO komodoDB.weekly " +
