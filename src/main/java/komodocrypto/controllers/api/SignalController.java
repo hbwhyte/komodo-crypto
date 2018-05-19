@@ -38,8 +38,8 @@ public class SignalController {
                     fromCurrency + "&tocurrency=" + toCurrency + "&count=" + trailing);
 
         // ensure proper trailing input
-        if (trailing <= 0 || trailing > 250) {
-            throw new IndicatorException("trailing days must be between 1 and 250", HttpStatus.BAD_REQUEST);
+        if (trailing <= 0) {
+            throw new IndicatorException("trailing days must be greater than zero", HttpStatus.BAD_REQUEST);
         }
 
         return new RootResponse(HttpStatus.OK, "OK",

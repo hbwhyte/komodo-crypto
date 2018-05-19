@@ -58,8 +58,8 @@ public class IndicatorService {
                 break;
 
             default:
-                logger.error(type + "is an invalid indicator type");
-                throw new IndicatorException(type + "is an invalid indicator type", HttpStatus.BAD_REQUEST);
+                logger.error(type + " is an invalid indicator type");
+                throw new IndicatorException(type + " is an invalid indicator type", HttpStatus.BAD_REQUEST);
         }
 
         Decimal output = indicator.getValue(series.getEndIndex());
