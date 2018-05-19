@@ -4,6 +4,7 @@ import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.DepositAddress;
 import com.binance.api.client.domain.account.WithdrawResult;
 import com.binance.api.client.domain.market.BookTicker;
+import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.TickerPrice;
 import komodocrypto.model.RootResponse;
 import komodocrypto.services.exchanges.binance.BinanceAccount;
@@ -127,6 +128,11 @@ public class ExchangeController {
     public void cancelBinanceTrade(@QueryParam(value = "pair") String pair,
                                    @QueryParam(value = "id") Long orderId) {
         binanceTrade.cancelOrder(pair, orderId);
+    }
+
+    @GetMapping("/binance/backfill")
+    public List<Candlestick> getHistoricalCandlestick(@QueryParam(value = "pair") String pair) {
+        return binanceTicker.getHistorical(pair);
     }
 
 }

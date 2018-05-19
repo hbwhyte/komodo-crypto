@@ -22,14 +22,16 @@ public class BinanceTicker {
 
     /**
      * Get latest ticker price for a given asset pair on Binance
+     *
+     * @param pair String of asset pair to be traded e.g. BTCLTC, BTCETH, ETHBTC (order matters)
      */
-    public TickerPrice getTickerInfo(String assetPair) {
+    public TickerPrice getTickerInfo(String pair) {
         // Connect to exchange
         BinanceApiRestClient client = binanceUtil.createExchange();
 
         // Return latest price for specific pair
-        logger.info("Querying latest ticker info for " + assetPair);
-        return client.getPrice(assetPair);
+        logger.info("Querying latest ticker info for " + pair);
+        return client.getPrice(pair);
     }
 
     /**
@@ -46,25 +48,27 @@ public class BinanceTicker {
 
     /**
      * Prints out potentailly relevant trade info
+     *
+     * @param pair String of asset pair to be traded e.g. BTCLTC, BTCETH, ETHBTC (order matters)
      */
-    public void getMarketInfo(String assetPair) {
+    public void getMarketInfo(String pair) {
         // Connect to exchange
         BinanceApiRestClient client = binanceUtil.createExchange();
 
         // Getting depth of a symbol
-        OrderBook orderBook = client.getOrderBook(assetPair, 10);
+        OrderBook orderBook = client.getOrderBook(pair, 10);
         System.out.println(orderBook.getAsks());
 
         // Getting latest price of a symbol
-        TickerStatistics tickerStatistics = client.get24HrPriceStatistics(assetPair);
+        TickerStatistics tickerStatistics = client.get24HrPriceStatistics(pair);
         System.out.println(tickerStatistics);
 
         // Getting agg trades
-        List<AggTrade> aggTrades = client.getAggTrades(assetPair);
+        List<AggTrade> aggTrades = client.getAggTrades(pair);
         System.out.println(aggTrades);
 
         // Weekly candlestick bars for a symbol
-        List<Candlestick> candlesticks = client.getCandlestickBars(assetPair, CandlestickInterval.WEEKLY);
+        List<Candlestick> candlesticks = client.getCandlestickBars(pair, CandlestickInterval.WEEKLY);
         System.out.println(candlesticks);
 
         // Getting all book tickers
@@ -78,6 +82,31 @@ public class BinanceTicker {
             System.out.println(e.getError().getCode()); // -1121
             System.out.println(e.getError().getMsg());  // Invalid symbol
         }
+    }
+
+    /**
+     * Temp method to test the backfill data.
+     *
+     * @param pair String of asset pair to be traded e.g. BTCLTC, BTCETH, ETHBTC (order matters)
+     * @return List of candlestick tickers
+     */
+    public List<Candlestick> getHistorical(String pair) {
+        // Connect to exchange
+        BinanceApiRestClient client = binanceUtil.createExchange();
+
+
+        // Weekly candlestick bars for a symbol
+        List<Candlestick> candlesticks = client.getCandlestickBars(pair, CandlestickInterval.DAILY);
+        System.out.println(candlesticks);
+
+        // Specific candlestick bar
+        List<Candlestick> specific = client.getCandlestickBars(
+                "ETHBTC", CandlestickInterval.DAILY,500,1499990400000L,1501199999999L);
+
+        System.out.println(specific);
+
+
+        return candlesticks;
     }
 
 }

@@ -91,7 +91,7 @@ public class BinanceAccount {
     }
 
     /**
-     *  Async version of account info/withdrawls
+     * Async version of account info/withdrawls
      *
      * @throws InterruptedException
      */
