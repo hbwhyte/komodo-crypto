@@ -6,9 +6,10 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.bittrex.BittrexExchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public final class BittrexUtil {
 
     @Value("${bittrex.username}")
@@ -20,10 +21,10 @@ public final class BittrexUtil {
     @Value("${bittrex.secretKey}")
     private String secretKey;
 
-    public static Exchange createExchange() {
-        String username = "kanjtrader@gmail.com";
-        String apiKey = "2affb155c90e4e648d5dad7baa853dc4";
-        String secretKey = "fe6354bd79464e07812ed76204d6bfab";
+    public Exchange createExchange() {
+//        String username = ;
+//        String apiKey = ;
+//        String secretKey = ;
         ExchangeSpecification exSpec = new BittrexExchange().getDefaultExchangeSpecification();
         // Put in your own information from Bittrex here
         exSpec.setUserName(username);
