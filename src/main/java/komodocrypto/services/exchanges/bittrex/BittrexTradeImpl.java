@@ -12,11 +12,13 @@ import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.service.trade.TradeService;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Service
 public class BittrexTradeImpl {
 
     TradeService bittrexTradeService;
@@ -28,11 +30,22 @@ public class BittrexTradeImpl {
         bittrexTradeImpl.cancelAllOrders();
     }
     public BittrexTradeImpl() {
-        Exchange bittrexExchange = BittrexUtil.createExchange();
+        BittrexUtil bittrexUtil = new BittrexUtil();
+        Exchange bittrexExchange = bittrexUtil.createExchange();
         bittrexTradeService = bittrexExchange.getTradeService();
     }
 
-    /** Buying order (the trader is providing the counter currency) */
+
+    /**
+     * Buying order (the trader is providing the counter currency)
+     * Places a limit order on the Bittrex exchange.
+     * @param originalAmount the amount of currency to be bought
+     * @param currencyPair the currency pair
+     * @param limitPrice the price at which the order is intended to be filled
+     * @param id an id for the transaction (So far it seems it has importance,
+     *           as the exchange ends up assigning the order its own id)
+     * @return the order ID if the order was placed, null otherwise
+     */
     public String placeBuyLimitOrder(double originalAmount, CurrencyPair currencyPair, double limitPrice,
                                      String id){
         String orderID = null;
@@ -51,7 +64,17 @@ public class BittrexTradeImpl {
         return orderID;
     }
 
-    /** Selling order (the trader is providing the base currency) */
+
+    /**
+     * Selling order (the trader is providing the base currency)
+     * Places a limit order on the Bittrex exchange.
+     * @param originalAmount the amount of currency to be bought
+     * @param currencyPair the currency pair
+     * @param limitPrice the price at which the order is intended to be filled
+     * @param id an id for the transaction (So far it seems it has importance,
+     *           as the exchange ends up assigning the order its own id)
+     * @return the order ID if the order was placed, null otherwise
+     */
     public String placeSellLimitOrder(double originalAmount, CurrencyPair currencyPair, double limitPrice,
                                       String id){
         String orderID = null;
@@ -68,6 +91,10 @@ public class BittrexTradeImpl {
         return orderID;
     }
 
+    /**
+     * Returns an OpenOrders obj that contains a list of the open orders
+     * @return an OpenOrders obj
+     */
     public OpenOrders getOpenOrders(){
         OpenOrders openOrders = null;
         try {
@@ -78,6 +105,11 @@ public class BittrexTradeImpl {
         return openOrders;
     }
 
+    /**
+     * Cancels an order with the given id
+     * @param orderId the id of the order given by the exchange
+     * @return true if the order was cancelled, false if not
+     */
     public boolean cancelOrder(String orderId){
         boolean orderStatus = false;
         try {
@@ -90,6 +122,10 @@ public class BittrexTradeImpl {
         return orderStatus;
     }
 
+    /**
+     * Cancels all the open orders
+     * @return true if the orders were cancelled, false if not
+     */
     public boolean cancelAllOrders(){
         boolean ordersCancelled = false;
         OpenOrders openOrders = this.getOpenOrders();

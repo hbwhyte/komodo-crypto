@@ -52,6 +52,10 @@ public class BittrexAccount implements ExchangeAccountService{
         System.out.println("USDT Balance : " + bittrexAccount.getCurrencyBalance(Currency.USDT));
     }
 
+    /**
+     * Creates an AccountService object of an exchange with the credentials used by the BittrexUtil
+     * @return an AccountService obj.
+     */
     public AccountService setupAccountService(){
         BittrexUtil bittrexUtil = new BittrexUtil();
         Exchange bittrex = bittrexUtil.createExchange();
@@ -59,10 +63,17 @@ public class BittrexAccount implements ExchangeAccountService{
 
         return accountService;
     }
+
+    /**
+     * Creates an AccountInfo object of an exchange with the credential used in setupAccountService()
+     * @return an AccountInfo obj
+     * @throws IOException
+     */
     public AccountInfo accountInfo() throws IOException {
         AccountService accountService = setupAccountService();
         return accountService.getAccountInfo();
     }
+
 
     public String getUsername() throws IOException {
         String username = this.accountInfo.getUsername();
@@ -74,6 +85,11 @@ public class BittrexAccount implements ExchangeAccountService{
         return tradingFee;
     }
 
+    /**
+     * Gets the deposit address of an exchange wallet for the given crypto currency
+     * @param currency A currency obj
+     * @return the deposit address of a wallet in String format
+     */
     @Override
     public String getDepositAddress(Currency currency) {
         String depositAddress = null;
@@ -86,12 +102,26 @@ public class BittrexAccount implements ExchangeAccountService{
         return depositAddress;
     }
 
+    /**
+     * Returns a Balance obj containing the information regarding the balance of
+     * a given currency. This includes the total balance, as well as the
+     * available, borrowed, loaned and frozen balance.
+     * @param currency
+     * @return a Balance obj.
+     */
     @Override
     public Balance getCurrencyBalance(Currency currency) {
         Balance balance = accountInfo.getWallet().getBalance(currency);
         return balance;
     }
 
+    /**
+     * Withdraws a given ammount of crypto currency to the given address.
+     * @param currency the currency to withdraw
+     * @param quantity the amount to withdraw
+     * @param address the address of the wallet to sent it to
+     * @return
+     */
     @Override
     public String withdrawFunds(Currency currency, BigDecimal quantity, String address) {
         String transactionID = null;

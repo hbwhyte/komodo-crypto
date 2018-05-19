@@ -26,7 +26,6 @@ public final class BittrexUtil {
 //        String apiKey = ;
 //        String secretKey = ;
         ExchangeSpecification exSpec = new BittrexExchange().getDefaultExchangeSpecification();
-        // Put in your own information from Bittrex here
         exSpec.setUserName(username);
         exSpec.setApiKey(apiKey);
         exSpec.setSecretKey(secretKey);
