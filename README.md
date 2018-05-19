@@ -11,7 +11,7 @@ An indicator can be the following:
 * SMA - Simple Moving Average
 * EMA - Exponential Moving Average
 
-The trailing days must be between one and the historical daily data.
+The trailing days must be between one and the historical daily data available.
 
 ## Security
 The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
