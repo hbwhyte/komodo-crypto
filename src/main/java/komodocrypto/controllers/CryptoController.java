@@ -13,12 +13,6 @@ public class CryptoController {
     @Autowired
     CryptoCompareHistoricalService historicalService;
 
-//    // Get historical data by specified criteria, if any.
-//    @GetMapping("/historicaldata")
-//    public GeneralResponse addPriceHistorical() {
-//        return historicalService.switchDataOperations();
-//    }
-
 
     // Gets historical data by period.
     @GetMapping("/historicaldata/byperiod/{period}")
@@ -34,50 +28,54 @@ public class CryptoController {
         return historicalService.backloadData(period, numRecords);
     }
 
-
+    // Gets historical data by currency.
     @GetMapping("/historicaldata/bycurrency/{currency}")
     public RootResponse getDataByCurrency(@PathVariable(value = "currency") String currency) {
         return historicalService.getDataByCurrency(currency);
     }
-    
+
+    // Gets historical data by exchange.
     @GetMapping("/historicaldata/byexchange/{exchange}")
     public RootResponse getDataByExchange(@PathVariable(value = "exchange") String exchange) {
         return historicalService.getDataByExchange(exchange);
     }
-    
+
+    // Gets historical data by period and by currency.
     @GetMapping("historicaldata/byperiodandcurrency/{period}/{currency}")
     public RootResponse getDataByPeriodAndCurrency(@PathVariable(value = "period") String period,
                                                       @PathVariable(value = "currency") String currency) {
         return historicalService.getDataByPeriodAndCurrency(period, currency);
     }
-    
+
+    // Gets historical data by period and by exchange.
     @GetMapping("historicaldata/byperiodandexchange/{period}/{exchange}")
     public RootResponse getDataByPeriodAndExchange(@PathVariable(value = "period") String period,
                                                       @PathVariable(value = "exchange") String exchange) {
         return historicalService.getDataByPeriodAndExchange(period, exchange);
     }
-    
+
+    // Gets historical data by currency and exchange.
     @GetMapping("historicaldata/bycurrencyandexchange/{currency}/{exchange}")
     public RootResponse getDataByCurrencyAndExchange(@PathVariable(value = "currency") String currency,
                                                         @PathVariable(value = "exchange") String exchange) {
         return historicalService.getDataByCurrencyAndExchange(currency, exchange);
     }
-    
-    
+
+
     // Adds and retrieves social media data.
-    @RequestMapping("/socialdata")
-    public GeneralResponse addSocialData() { return historicalService.addSocial(); }
+    @GetMapping("/socialdata")
+    public RootResponse addSocialData() { return historicalService.addSocial(); }
 
     
     // Adds news by category.
     @PostMapping(value = {"/news/{categories}", "/news/"})
-    public GeneralResponse addNews(@PathVariable(value = "categories", required = false) String categories) {
+    public RootResponse addNews(@PathVariable(value = "categories", required = false) String categories) {
         return historicalService.addNews(categories);
     }
 
     // Gets news by specified categories. Returns all news items if categories not included.
     @GetMapping(value = {"/news/{categories}", "/news/"})
-    public GeneralResponse getNews(@PathVariable(value = "categories", required = false) String categories)
+    public RootResponse getNews(@PathVariable(value = "categories", required = false) String categories)
             throws TableEmptyException {
         return historicalService.getNews(categories);
     }

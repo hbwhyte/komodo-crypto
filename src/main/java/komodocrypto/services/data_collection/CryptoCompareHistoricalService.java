@@ -2,7 +2,6 @@ package komodocrypto.services.data_collection;
 
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
-import komodocrypto.model.GeneralResponse;
 import komodocrypto.model.RootResponse;
 import komodocrypto.model.cryptocompare.historical_data.Data;
 import komodocrypto.model.cryptocompare.historical_data.PriceHistorical;
@@ -11,7 +10,6 @@ import komodocrypto.model.cryptocompare.social_stats.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -83,32 +81,61 @@ public class CryptoCompareHistoricalService {
                         if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
                                 && exchange.equals("Coinbase")) continue;
 
-                        // Queries by the period specified in the method signature.
-                        switch (period) {
-                            case "day":
-                                queryHistoricalData("day", pair[0], pair[1], exchange, numRecords);
-                                break;
-                            case "hour":
-                                queryHistoricalData("hour", pair[0], pair[1], exchange, numRecords);
-                                break;
-                            case "minute":
-                                queryHistoricalData("minute", pair[0], pair[1], exchange, numRecords);
+                        /*  if (query count(id)) >= numRecords
+                                continue
+                            else is count(id) < numRecords?
+                                what is the last timestamp where count(id) = numRecords? (last)
+                                for (i = 1; i <= numRecords - count(id); i++)
+                                    add i * last * secsInPeriod to an arraylist
+                                query for missing historcal data
+                         */
+
+                        // Queries by the period specified in the method signature if the number of time periods exceeds
+                        // the number of records for this particular period, pair, and exchange in the database.
+
+                        // Timestamps to query for
+                        ArrayList<Integer> missingTimestamps = new ArrayList<>();
+
+                        // The number of records in the database for this period, pair, and exchange.
+                        int countRecords = countRecordsByPeriod(period, pair[0], pair[1], exchange);
+
+                        // Checks if the number of records in the database exceeds the number of records requested.
+                        if (countRecords >= numRecords) continue;
+                        else {
+
+                            // Gets the last timestamp in the database table.
+                            int lastTimestamp = getLastTimestampByPeriod(period, pair[0], pair[1], exchange);
+
+                            // The difference between the number of records requested and the number of records in the DB.
+                            int diffNumRecords = numRecords - countRecords;
+
+                            // Adds the timestamps for the net number of requested records for an array list.
+                            for (int i = 1; i <= diffNumRecords; i++) {
+
+                                int missingTimestamp = lastTimestamp - i * getPeriodLength(period);
+                                missingTimestamps.add(missingTimestamp);
+                            }
                         }
+
+                        // Queries for the missing timestamps, adds the results to the database.
+                        queryMissingHistoricalData(missingTimestamps, period, pair[0], pair[1], exchange);
+
+                        // Clears the array list of missing timestamps.
+                        missingTimestamps.clear();
+
+                        // Finds and fills any gaps in the data.
+                        findHistoricalGaps(period, pair[0], pair[1], exchange);
                     }
                 }
             }
         });
 
-        return new RootResponse(HttpStatus.OK, "Loading data into the database. This is the data currently available.",
+        return new RootResponse(HttpStatus.OK, "Loading into the database. This is the data currently available.",
                 getResponseData());
     }
 
-    // Switches between data operations for each pair/exchange combo depending on specified conditions.
-    // This method is the core of all operations regarding data collection.
-    public GeneralResponse switchDataOperations() {
-
-        // The object to return
-        GeneralResponse response = new GeneralResponse();
+    // Executes the appropriate tasks depending on which cron job has just run.
+    public RootResponse switchCronOps(String period) {
 
         // Queries for historical data for each trading pair from each exchange.
         // NOTE: Coinbase does not support XRP/BTC, so it is skipped for this pair.
@@ -123,73 +150,31 @@ public class CryptoCompareHistoricalService {
                 if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
                         && exchange.equals("Coinbase")) continue;
 
-                // Aggregates hourly data into a weekly entry.
-                if (scheduledTasks.isWeeklyCronHit() == true) {
-                    aggregateWeekly(pair[0], pair[1], exchange);
+                if (scheduledTasks.isCronHit() == true) {
+
+                    switch (period) {
+                        case "week":
+                            aggregateWeekly(pair[0], pair[1], exchange);
+                            continue;
+                        case "day":
+                            queryMissingHistoricalData(scheduledTasks.getTimestampDaily(), period, pair[0], pair[1], exchange);
+                            continue;
+                        case "hour":
+                            queryMissingHistoricalData(scheduledTasks.getTimestampHourly(), period, pair[0], pair[1], exchange);
+                            continue;
+                        case "minute":
+                            queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), period, pair[0], pair[1], exchange);
+                            continue;
+                    }
                 }
-
-                // Queries for historical data generated on a schedule if the scheduled task has run.
-                if (scheduledTasks.isDailyCronHit() == true) {
-                    queryMissingHistoricalData(scheduledTasks.getTimestampDaily(), "day", pair[0], pair[1], exchange);
-                }
-
-                // Queries for historical data generated on a schedule if the scheduled task has run.
-                if (scheduledTasks.isHourlyCronHit() == true) {
-                    queryMissingHistoricalData(scheduledTasks.getTimestampHourly(), "hour", pair[0], pair[1], exchange);
-                }
-
-                // Queries for historical data generated on a schedule if the scheduled task has run.
-                if (scheduledTasks.isMinutelyCronHit() == true) {
-                    queryMissingHistoricalData(scheduledTasks.getTimestampMinutely(), "minute", pair[0], pair[1], exchange);
-                }
-
-
-//                // Queries for daily, hourly, and minutely data
-//                for (String period : periods) {
-//
-//                    // Determines whether the database table referencing this period, trading pair, and exchange is empty.
-//                    Data[] dataByPeriod = getDataByPeriodConditional(period, pair[0], pair[1], exchange);
-//
-//                    // If the table is empty, backfill. Otherwise, find gaps in the data.
-//                    if (dataByPeriod.length == 0) {
-//                        queryHistoricalData(period, pair[0], pair[1], exchange);
-//                    } else {
-//                        findHistoricalGaps(period, pair[0], pair[1], exchange);
-//                    }
-//                }
             }
         }
 
-        // Resets the booleans indicating that the time period scheduled tasks have run to false.
-        scheduledTasks.setDailyCronHit(false);
-        scheduledTasks.setHourlyCronHit(false);
-        scheduledTasks.setMinutelyCronHit(false);
-        scheduledTasks.setWeeklyCronHit(false);
-
-        // Clears the array lists containing the timestamps for the scheduled tasks.
-        scheduledTasks.timestampDaily.clear();
-        scheduledTasks.timestampHourly.clear();
-        scheduledTasks.timestampMinutely.clear();
-
-        // Combines the data from daily, hourly, and minutely tables into a large Data array and adds to a response
-        // object for display purposes.
-        response.setData(getResponseData());
-
-        return response;
+        return new RootResponse(HttpStatus.OK, "Data successfully added.", getResponseData());
     }
 
-    // Finds and fills gaps in the database.
-
-    // Queries for historical data in the background.
-//    @Async
+    // Queries for historical data.
     public void queryHistoricalData(String period, String fromCurrency, String toCurrency, String exchange, int numRecords) {
-
-//        // This keeps the value of the master period unchanged.
-//        int numRecords = numDailyRecords;
-//
-//        // Ensures that records for each hour and minute are returned for each day.
-//        if (period.equals("hour")) numRecords *= HOURS_IN_DAY;
-//        else if (period.equals("minute")) numRecords *= HOURS_IN_DAY * MIN_IN_HOUR;
 
         String query = "https://min-api.cryptocompare.com/data/histo" + period + "?" +
                 "fsym=" + fromCurrency +
@@ -269,16 +254,7 @@ public class CryptoCompareHistoricalService {
         // Gets an array of timestamps depending on the pair/exchange combination.
         Integer[] timestamps = getTimestampsByPeriod(period, fromCurrency, toCurrency, exchange);
 
-        switch (period) {
-            case "day":
-                periodLength = HOURS_IN_DAY * MIN_IN_HOUR * SEC_IN_MIN;
-                break;
-            case "hour":
-                periodLength = MIN_IN_HOUR * SEC_IN_MIN;
-                break;
-            default:
-                periodLength = MIN_IN_HOUR;
-        }
+        periodLength = getPeriodLength(period);
 
         // Finds missing timestamps and adds them to an array list.
         for (int i = 0; i < timestamps.length - 1; i++) {
@@ -318,23 +294,14 @@ public class CryptoCompareHistoricalService {
     // Aggregates daily data into weekly data.
     public void aggregateWeekly(String fromCurrency, String toCurrency, String exchange) {
 
-        int weeklyTimestamp = scheduledTasks.getWeeklyTimestamp();
+        int weeklyTimestamp = scheduledTasks.getTimestampWeekly();
         int secInWeek = SEC_IN_MIN * MIN_IN_HOUR * HOURS_IN_DAY * 7;
-        int secInHour = SEC_IN_MIN * MIN_IN_HOUR;
 
         cryptoMapper.aggregateWeekly(weeklyTimestamp - secInWeek, weeklyTimestamp, fromCurrency, toCurrency, exchange);
     }
 
     // Adds social data.
-    // This will look a bit different when integrated with switcher method.
-    public GeneralResponse addSocial() {
-
-        // Use a hash map when integrating with the switcher method. For current purposes, an array is preferable.
-//        HashMap<String, Integer> currencyIds = new HashMap<>();
-//        currencyIds.put("ETH", 7605);
-//        currencyIds.put("BCH", 202330);
-//        currencyIds.put("LTC", 3808);
-//        currencyIds.put("XRP", 5031);
+    public RootResponse addSocial() {
 
         int time = (int) (System.currentTimeMillis() / 1000);
         int[] currencyIds = {7605, 202330, 3808, 5031};
@@ -366,13 +333,37 @@ public class CryptoCompareHistoricalService {
         socialResponse.setReddit(cryptoMapper.getReddit());
         socialResponse.setFacebook(cryptoMapper.getFacebook());
 
-        GeneralResponse response = new GeneralResponse(socialResponse);
-
-        return response;
+        return new RootResponse(HttpStatus.OK, "Social media data successfully added.", socialResponse);
     }
 
-    // Gets news stories.
-    public GeneralResponse addNews(String categories) {
+    // Counts the number of records by period and other criteria.
+    public int countRecordsByPeriod(String period, String fromCurrency, String toCurrency, String exchange) {
+
+        switch(period) {
+            case "day":
+                return cryptoMapper.countRecordsDaily(fromCurrency, toCurrency, exchange);
+            case "hour":
+                return cryptoMapper.countRecordsHourly(fromCurrency, toCurrency, exchange);
+            default:
+                return cryptoMapper.countRecordsMinutely(fromCurrency, toCurrency, exchange);
+        }
+    }
+
+    // Gets the latest timestamp in the database table by time period and other criteria.
+    public int getLastTimestampByPeriod(String period, String fromCurrency, String toCurrency, String exchange) {
+
+        switch(period) {
+            case "day":
+                return cryptoMapper.getLastTimestampDaily(fromCurrency, toCurrency, exchange);
+            case "hour":
+                return cryptoMapper.getLastTimestampHourly(fromCurrency, toCurrency, exchange);
+            default:
+                return cryptoMapper.getLastTimestampMinutely(fromCurrency, toCurrency, exchange);
+        }
+    }
+
+    // Adds news stories to the database.
+    public RootResponse addNews(String categories) {
 
         // Maps even if categories is empty or nonsense.
         String query = "https://min-api.cryptocompare.com/data/v2/news/?lang=EN&categories=" + categories;
@@ -383,18 +374,12 @@ public class CryptoCompareHistoricalService {
             cryptoMapper.addNews(story);
         }
 
-        return new GeneralResponse(cryptoMapper.getNews());
+        return new RootResponse(HttpStatus.OK, "News data successfully added.", cryptoMapper.getNews());
     }
 
-    public GeneralResponse getNews(String categories) throws TableEmptyException {
+    // Gets news data from the database.
+    public RootResponse getNews(String categories) throws TableEmptyException {
 
-        /*  check if db is empty
-                if so, return db empty error
-            check if categories is empty
-                if so, select all news items
-                else
-                    select all news items by category
-        */
         if (cryptoMapper.getNews().length == 0) {
 
             throw new TableEmptyException();
@@ -402,7 +387,7 @@ public class CryptoCompareHistoricalService {
         } else /*if (categories == null)*/{
 
             komodocrypto.model.cryptocompare.news.Data[] newsData = cryptoMapper.getNews();
-            return new GeneralResponse(newsData);
+            return new RootResponse(HttpStatus.OK, "News data successfully queried.", newsData);
 
 //        } else {
 //
@@ -453,6 +438,19 @@ public class CryptoCompareHistoricalService {
                 return cryptoMapper.getTimeHourly(fromCurrency, toCurrency, exchange);
             default:
                 return cryptoMapper.getTimeMinutely(fromCurrency, toCurrency, exchange);
+        }
+    }
+
+    // Gets the number of seconds in a specified period.
+    public int getPeriodLength(String period) {
+
+        switch (period) {
+            case "day":
+                return HOURS_IN_DAY * MIN_IN_HOUR * SEC_IN_MIN;
+            case "hour":
+                return MIN_IN_HOUR * SEC_IN_MIN;
+            default:
+                return MIN_IN_HOUR;
         }
     }
 

@@ -57,6 +57,25 @@ public interface CryptoMapper {
             "WHERE fromCurrency = #{param1} AND toCurrency = #{param2} AND exchange = #{param3} " +
             "ORDER BY time ASC;";
 
+    String COUNT_DAILY_RECORDS = "SELECT COUNT(id) FROM `komodoDB`.`daily` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Bitstamp';";
+    String COUNT_HOURLY_RECORDS = "SELECT COUNT(id) FROM `komodoDB`.`hourly` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Bitstamp';";
+    String COUNT_MINUTELY_RECORDS = "SELECT COUNT(id) FROM `komodoDB`.`minutely` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Bitstamp';";
+
+
+    String GET_LAST_TIMESTAMP_DAILY = "SELECT `time` FROM `komodoDB`.`daily` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Binance' " +
+            "ORDER BY `time` ASC LIMIT 1;";
+    String GET_LAST_TIMESTAMP_HOURLY = "SELECT `time` FROM `komodoDB`.`hourly` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Binance' " +
+            "ORDER BY `time` ASC LIMIT 1;";
+    String GET_LAST_TIMESTAMP_MINUTELY = "SELECT `time` FROM `komodoDB`.`minutely` " +
+            "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Binance' " +
+            "ORDER BY `time` ASC LIMIT 1;";
+
+
     String INSERT_PRICE_AGGREGATED_WEEKLY = "INSERT IGNORE INTO komodoDB.weekly " +
             "(`time`, `fromCurrency`, `toCurrency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volumeFrom`, `volumeTo`) " +
             "VALUES (" +
@@ -163,6 +182,28 @@ public interface CryptoMapper {
 
     @Select(SELECT_TIME_MINUTELY)
     public Integer[] getTimeMinutely(String fromCurrency, String toCurrency, String exchange);
+
+
+    // Counts the number of records by period
+    @Select(COUNT_DAILY_RECORDS)
+    public int countRecordsDaily(String fromCurrency, String toCurrency, String exchange);
+
+    @Select(COUNT_HOURLY_RECORDS)
+    public int countRecordsHourly(String fromCurrency, String toCurrency, String exchange);
+
+    @Select(COUNT_MINUTELY_RECORDS)
+    public int countRecordsMinutely(String fromCurrency, String toCurrency, String exchange);
+
+
+    // Gets the last timestamp in a time period table.
+    @Select(GET_LAST_TIMESTAMP_DAILY)
+    public int getLastTimestampDaily(String fromCurrency, String toCurrency, String exchange);
+
+    @Select(GET_LAST_TIMESTAMP_HOURLY)
+    public int getLastTimestampHourly(String fromCurrency, String toCurrency, String exchange);
+
+    @Select(GET_LAST_TIMESTAMP_MINUTELY)
+    public int getLastTimestampMinutely(String fromCurrency, String toCurrency, String exchange);
 
 
     // Adds and retrieves unique news data.
