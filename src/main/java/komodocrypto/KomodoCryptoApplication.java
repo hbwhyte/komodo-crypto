@@ -34,6 +34,7 @@ public class KomodoCryptoApplication /*extends SpringBootServletInitializer*/ {
 		threadPoolTaskExecutor.setMaxPoolSize(5);
 		return threadPoolTaskExecutor;
 	}
+
 //	@Override
 //	protected SpringApplicationBuilder configure (SpringApplicationBuilder application){
 //		return application.sources(komodocrypto.KomodoCryptoApplication.class);

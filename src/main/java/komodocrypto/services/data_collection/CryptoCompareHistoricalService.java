@@ -83,20 +83,16 @@ public class CryptoCompareHistoricalService {
                         if ((pair[0].equals("XRP") || pair[1].equals("XRP"))
                                 && exchange.equals("Coinbase")) continue;
 
-                        // Executes the query i number of times, where i = numRecords.
-                        for (int i = numRecords; i > 0; i--) {
-
-                            // Queries by the period specified in the method signature.
-                            switch (period) {
-                                case "day":
-                                    queryHistoricalData("day", pair[0], pair[1], exchange);
-                                    break;
-                                case "hour":
-                                    queryHistoricalData("hour", pair[0], pair[1], exchange);
-                                    break;
-                                case "minute":
-                                    queryHistoricalData("minute", pair[0], pair[1], exchange);
-                            }
+                        // Queries by the period specified in the method signature.
+                        switch (period) {
+                            case "day":
+                                queryHistoricalData("day", pair[0], pair[1], exchange, numRecords);
+                                break;
+                            case "hour":
+                                queryHistoricalData("hour", pair[0], pair[1], exchange, numRecords);
+                                break;
+                            case "minute":
+                                queryHistoricalData("minute", pair[0], pair[1], exchange, numRecords);
                         }
                     }
                 }
@@ -186,14 +182,14 @@ public class CryptoCompareHistoricalService {
 
     // Queries for historical data in the background.
 //    @Async
-    public void queryHistoricalData(String period, String fromCurrency, String toCurrency, String exchange) {
+    public void queryHistoricalData(String period, String fromCurrency, String toCurrency, String exchange, int numRecords) {
 
-        // This keeps the value of the master period unchanged.
-        int numRecords = numDailyRecords;
-
-        // Ensures that records for each hour and minute are returned for each day.
-        if (period.equals("hour")) numRecords *= HOURS_IN_DAY;
-        else if (period.equals("minute")) numRecords *= HOURS_IN_DAY * MIN_IN_HOUR;
+//        // This keeps the value of the master period unchanged.
+//        int numRecords = numDailyRecords;
+//
+//        // Ensures that records for each hour and minute are returned for each day.
+//        if (period.equals("hour")) numRecords *= HOURS_IN_DAY;
+//        else if (period.equals("minute")) numRecords *= HOURS_IN_DAY * MIN_IN_HOUR;
 
         String query = "https://min-api.cryptocompare.com/data/histo" + period + "?" +
                 "fsym=" + fromCurrency +
