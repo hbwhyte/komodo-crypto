@@ -35,7 +35,19 @@ create table oauth_client_details (
   additional_information VARCHAR(4096),
   autoapprove VARCHAR(256)
 );
+=======
+
+## Indicators
+
 ```
+/dailyindicator?type={INDICATOR}&fromcurrency={BASE_CURRENCY}&tocurrency={COUNTER_CURRENCY}&trailing={DAYS}
+```
+
+An indicator can be the following:
+* SMA - Simple Moving Average
+* EMA - Exponential Moving Average
+
+The trailing days must be between one and the historical daily data available.
 
 ## Security
 The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
