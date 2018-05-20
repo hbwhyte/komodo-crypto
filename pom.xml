@@ -64,6 +64,13 @@
 			<version>1.3.2</version>
 		</dependency>
 
+		<!-- Technical Analysis -->
+		<dependency>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-core</artifactId>
+			<version>0.11</version>
+		</dependency>
+
 		<!-- Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
