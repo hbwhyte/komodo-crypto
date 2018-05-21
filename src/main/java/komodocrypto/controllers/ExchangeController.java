@@ -6,16 +6,19 @@ import com.binance.api.client.domain.account.WithdrawResult;
 import com.binance.api.client.domain.market.BookTicker;
 import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.TickerPrice;
+import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import komodocrypto.model.RootResponse;
 import komodocrypto.services.exchanges.binance.BinanceAccount;
 import komodocrypto.services.exchanges.binance.BinanceTicker;
 import komodocrypto.services.exchanges.binance.BinanceTradeImpl;
 import komodocrypto.services.exchanges.bitstamp.BitstampAccount;
+import org.knowm.xchange.currency.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.QueryParam;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -33,13 +36,9 @@ public class ExchangeController {
     @Autowired
     BinanceTradeImpl binanceTrade;
 
-    @GetMapping("/bitstamp")
-    public void getBitstampAccountInfo() throws IOException {
-        bitstampAccount.accountInfo();
-    }
-
     /**
      * Binance: [GET] Return account info
+     *
      * @return JSON of Account object
      */
     @GetMapping("/binance/account")
@@ -54,7 +53,7 @@ public class ExchangeController {
      * @return JSON of DepositAddress object
      */
     @GetMapping("/binance/deposit")
-    public DepositAddress getBinanceDepositInfo(@QueryParam(value = "asset") String asset) {
+    public DepositAddress getBinanceDepositInfo(@RequestParam(value = "asset") String asset) {
         return binanceAccount.getDepositAddress(asset);
     }
 
@@ -65,7 +64,7 @@ public class ExchangeController {
      * @return TickerPrice of the latest prices (JSON)
      */
     @GetMapping("/binance/ticker")
-    public TickerPrice getBinanceTickerInfo(@QueryParam(value = "pair") String pair) {
+    public TickerPrice getBinanceTickerInfo(@RequestParam(value = "pair") String pair) {
         return binanceTicker.getTickerInfo(pair);
     }
 
@@ -82,57 +81,78 @@ public class ExchangeController {
     /**
      * Binance: [POST] Withdraw funds
      *
-     * @param asset String asset symbol, case sensitive (e.g. ETH, BTC, LTC etc.)
+     * @param asset   String asset symbol, case sensitive (e.g. ETH, BTC, LTC etc.)
      * @param address String wallet address to withdraw money into
-     * @param amount String amount of asset to be withdrawn
+     * @param amount  String amount of asset to be withdrawn
      * @return WithdrawResult. If no withdrawl, returns nothing
      */
     @PostMapping("/binance/withdraw")
-    public WithdrawResult makeBinanceWithdrawl(@QueryParam(value = "asset") String asset,
-                                               @QueryParam(value = "address") String address,
-                                               @QueryParam(value = "amount") String amount) {
+    public WithdrawResult makeBinanceWithdrawl(@RequestParam(value = "asset") String asset,
+                                               @RequestParam(value = "address") String address,
+                                               @RequestParam(value = "amount") String amount) {
         return binanceAccount.makeWithdrawl(asset, address, amount);
     }
 
     /**
      * Binance: [POST] Test market trade
      *
-     * @param pair String asset pair, case & order sensitive (e.g. LTCBTC etc.)
+     * @param pair   String asset pair, case & order sensitive (e.g. LTCBTC etc.)
      * @param amount String amount of asset to be traded
      */
     @PostMapping("/binance/tradetest")
-    public void makeBinanceTradeTest(@QueryParam(value = "pair") String pair,
-                                               @QueryParam(value = "amount") String amount) {
+    public void makeBinanceTradeTest(@RequestParam(value = "pair") String pair,
+                                     @RequestParam(value = "amount") String amount) {
         binanceTrade.testMarketOrder(pair, amount);
     }
 
     /**
      * Binance: [POST] Live market trade
      *
-     * @param pair String asset pair, case & order sensitive (e.g. ETHBTC, BTCETH, LTCBTC etc.)
+     * @param pair   String asset pair, case & order sensitive (e.g. ETHBTC, BTCETH, LTCBTC etc.)
      * @param amount String amount of asset to be traded
      */
     @PostMapping("/binance/trade")
-    public void makeBinanceTrade(@QueryParam(value = "pair") String pair,
-                                     @QueryParam(value = "amount") String amount) {
+    public void makeBinanceTrade(@RequestParam(value = "pair") String pair,
+                                 @RequestParam(value = "amount") String amount) {
         binanceTrade.placeMarketOrder(pair, amount);
     }
 
     /**
      * Binance: [DELETE] Cancel trade order
      *
-     * @param pair String asset pair, case & order sensitive (e.g. ETHBTC, BTCETH, LTCBTC etc.)
+     * @param pair    String asset pair, case & order sensitive (e.g. ETHBTC, BTCETH, LTCBTC etc.)
      * @param orderId Long id of order to be cancelled
      */
     @DeleteMapping("/binance/trade")
-    public void cancelBinanceTrade(@QueryParam(value = "pair") String pair,
-                                   @QueryParam(value = "id") Long orderId) {
+    public void cancelBinanceTrade(@RequestParam(value = "pair") String pair,
+                                   @RequestParam(value = "id") Long orderId) {
         binanceTrade.cancelOrder(pair, orderId);
     }
 
     @GetMapping("/binance/backfill")
-    public List<Candlestick> getHistoricalCandlestick(@QueryParam(value = "pair") String pair) {
+    public List<Candlestick> getHistoricalCandlestick(@RequestParam(value = "pair") String pair) {
         return binanceTicker.getHistorical(pair);
     }
 
+
+    @GetMapping("/bitstamp")
+    public void getBitstampAccountInfo() throws IOException {
+        bitstampAccount.accountInfo();
+    }
+
+    /**
+     * Bitstamp: [POST] Withdraw funds
+     *
+     * @param asset   Currency asset symbol, case sensitive (e.g. ETH, BTC, LTC etc.)
+     * @param amount  BigDecimal amount of asset to be withdrawn
+     * @param address String wallet address to withdraw money into
+     * @return WithdrawResult. If no withdrawl, returns nothing
+     */
+    @PostMapping("/bitstamp/withdraw")
+    public String makeBitstampWithdrawl(@RequestParam(value = "asset") Currency asset,
+                                        @RequestParam(value = "address") String address,
+                                        @RequestParam(value = "amount") BigDecimal amount)
+            throws ExchangeConnectionException {
+        return bitstampAccount.makeWithdrawl(asset, amount, address);
+    }
 }

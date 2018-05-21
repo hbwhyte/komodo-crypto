@@ -2,15 +2,21 @@ package komodocrypto.services.exchanges.bitstamp;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
 import java.util.List;
 
 import komodocrypto.configuration.exchange_utils.BitstampUtil;
+import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,12 +34,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class BitstampAccount {
 
-    public void accountInfo() throws IOException {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    BitstampUtil bitstampUtil;
+
+    public AccountService accountInfo() throws IOException {
         BitstampUtil obj = new BitstampUtil();
         Exchange bitstamp = obj.createExchange();
         AccountService accountService = bitstamp.getAccountService();
 
         generic(accountService);
+        return accountService;
     }
 
     private void generic(AccountService accountService) throws IOException {
@@ -55,10 +67,36 @@ public class BitstampAccount {
             System.out.println(record.getInternalId());
         }
 
-        // WARNING: WILL WITHDRAW COINS IF THERE IS AN ADDRESS
-        // Address is set to "XXX" so will throw an error, but don't actually use this to withdraw money.
-        String withdrawResult =
-                accountService.withdrawFunds(Currency.BTC, new BigDecimal(1).movePointLeft(4), "XXX");
-        System.out.println("withdrawResult = " + withdrawResult);
     }
+
+    /**
+     * Submit a withdraw request.
+     *
+     * Enable Withdrawals option has to be active in the API settings.
+     *
+     * @param asset Currency asset symbol to withdraw
+     * @param amount BigDecimal amount of asset to be withdrawn
+     * @param address String deposit address to send withdraw funds into
+     * @return String
+     * @throws ExchangeConnectionException if unable to connect to exchange
+     */
+    public String makeWithdrawl(Currency asset, BigDecimal amount, String address) throws ExchangeConnectionException {
+        // Create Exchange
+        Exchange bitstamp = bitstampUtil.createExchange();
+        // Connect to account
+        AccountService accountService = bitstamp.getAccountService();
+        // Withdraw funds
+        logger.info("Withdrawing " + amount + " " + asset + " to " + address + "...");
+        try {
+            String withdrawResult = accountService.withdrawFunds(asset, amount, address);
+            logger.info("Withdrawl complete.");
+            return withdrawResult;
+        } catch (IOException e) {
+           throw new ExchangeConnectionException("Unable to withdraw funds at this time", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+
 }
