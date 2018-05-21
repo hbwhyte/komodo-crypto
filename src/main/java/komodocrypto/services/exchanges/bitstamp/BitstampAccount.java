@@ -2,11 +2,11 @@ package komodocrypto.services.exchanges.bitstamp;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
 import java.util.List;
 
 import komodocrypto.configuration.exchange_utils.BitstampUtil;
 import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
+import komodocrypto.model.exchanges.BitstampBalance;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
@@ -39,34 +39,64 @@ public class BitstampAccount {
     @Autowired
     BitstampUtil bitstampUtil;
 
-    public AccountService accountInfo() throws IOException {
-        BitstampUtil obj = new BitstampUtil();
-        Exchange bitstamp = obj.createExchange();
+    /**
+     * Returns account balance for a given asset from Bitstamp
+     *
+     * @return BitstampBalance object
+     * @throws ExchangeConnectionException if unable to connect to exchange
+     */
+    public BitstampBalance getBalance(Currency asset) throws ExchangeConnectionException {
+        // Create Exchange
+        Exchange bitstamp = bitstampUtil.createExchange();
+        // Connect to account
         AccountService accountService = bitstamp.getAccountService();
-
-        generic(accountService);
-        return accountService;
-    }
-
-    private void generic(AccountService accountService) throws IOException {
-
-        // Get the account information
-        AccountInfo accountInfo = accountService.getAccountInfo();
-        System.out.println("AccountInfo as String: " + accountInfo.toString());
-
-        String depositAddress = accountService.requestDepositAddress(Currency.BTC);
-        System.out.println("Deposit address: " + depositAddress);
-
-        TradeHistoryParams tradeHistoryParams = accountService.createFundingHistoryParams();
-        List<FundingRecord> fundingRecords = accountService.getFundingHistory(tradeHistoryParams);
-        // Only works if you have transaction history. I do not.
-        for (FundingRecord record : fundingRecords) {
-            System.out.println(record.getStatus());
-            System.out.println(record.getBlockchainTransactionHash());
-            System.out.println(record.getAddress());
-            System.out.println(record.getInternalId());
+        // Get account info object
+        AccountInfo accountInfo;
+        logger.info("Requesting Bitstamp account history...");
+        try {
+            accountInfo = accountService.getAccountInfo();
+            logger.info("Account info retrieved.");
+        } catch (IOException e) {
+            throw new ExchangeConnectionException("Unable to get account information", HttpStatus.BAD_GATEWAY);
         }
 
+        // Map raw to BitstampBalance object
+        BitstampBalance balance = new BitstampBalance();
+        balance.setCurrency(asset.toString());
+        balance.setTotal(accountInfo.getWallet().getBalance(asset).getTotal());
+        balance.setAvailable(accountInfo.getWallet().getBalance(asset).getAvailable());
+        balance.setFrozen(accountInfo.getWallet().getBalance(asset).getFrozen());
+        balance.setBorrowed(accountInfo.getWallet().getBalance(asset).getBorrowed());
+        balance.setLoaned(accountInfo.getWallet().getBalance(asset).getLoaned());
+        balance.setWithdrawing(accountInfo.getWallet().getBalance(asset).getWithdrawing());
+        balance.setDepositing(accountInfo.getWallet().getBalance(asset).getDepositing());
+
+        return balance;
+    }
+
+    /**
+     * Returns trade history from Bitstamp
+     *
+     * @return List of Funding Records
+     * @throws ExchangeConnectionException if unable to connect to exchange
+     */
+    public List<FundingRecord> getTradeHistory() throws ExchangeConnectionException {
+        // Create Exchange
+        Exchange bitstamp = bitstampUtil.createExchange();
+        // Connect to account
+        AccountService accountService = bitstamp.getAccountService();
+
+        // Get transaction history
+        // Only works if you have transaction history.
+        logger.info("Requesting Bitstamp trade history...");
+        TradeHistoryParams tradeHistoryParams = accountService.createFundingHistoryParams();
+        try {
+            List<FundingRecord> fundingRecords = accountService.getFundingHistory(tradeHistoryParams);
+            logger.info("Trade history retrieved.");
+            return fundingRecords;
+        } catch (IOException e) {
+            throw new ExchangeConnectionException("Unable to get trade history", HttpStatus.BAD_GATEWAY);
+        }
     }
 
     /**
@@ -92,11 +122,34 @@ public class BitstampAccount {
             logger.info("Withdrawl complete.");
             return withdrawResult;
         } catch (IOException e) {
-           throw new ExchangeConnectionException("Unable to withdraw funds at this time", HttpStatus.BAD_REQUEST);
+           throw new ExchangeConnectionException("Unable to withdraw funds", HttpStatus.BAD_REQUEST);
         }
     }
 
 
+    /**
+     * Get the deposit address for a given asset, on Bitstamp for the
+     * connected account.
+     *
+     * @param asset Currency asset symbol
+     * @return String of the deposit address for a given asset
+     * @throws ExchangeConnectionException if unable to connect to exchange
+     */
+    public String getDepositAddress(Currency asset) throws ExchangeConnectionException {
+        // Create Exchange
+        Exchange bitstamp = bitstampUtil.createExchange();
+        // Connect to account
+        AccountService accountService = bitstamp.getAccountService();
 
+        // Return deposit address for given asset
+        logger.info("Requesting Bitstamp deposit address for " + asset + "...");
+        try {
+            String depositAddress = accountService.requestDepositAddress(asset);
+            logger.info("Deposit address retrieved.");
+            return depositAddress;
+        } catch (IOException e) {
+            throw new ExchangeConnectionException("Unable to generate deposit address", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

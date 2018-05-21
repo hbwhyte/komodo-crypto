@@ -8,11 +8,15 @@ import com.binance.api.client.domain.market.Candlestick;
 import com.binance.api.client.domain.market.TickerPrice;
 import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import komodocrypto.model.RootResponse;
+import komodocrypto.model.exchanges.BitstampBalance;
 import komodocrypto.services.exchanges.binance.BinanceAccount;
 import komodocrypto.services.exchanges.binance.BinanceTicker;
 import komodocrypto.services.exchanges.binance.BinanceTradeImpl;
 import komodocrypto.services.exchanges.bitstamp.BitstampAccount;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.account.FundingRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +24,7 @@ import javax.ws.rs.QueryParam;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ExchangeController {
@@ -134,10 +139,37 @@ public class ExchangeController {
         return binanceTicker.getHistorical(pair);
     }
 
+    /**
+     * Bitstamp: [GET] Account information from Bitstamp
+     *
+     * @return Account balance for a given asset in Bitstamp
+     */
+    @GetMapping("/bitstamp/balance")
+    public BitstampBalance getBitstampBalance(@RequestParam(value = "asset") Currency asset) throws ExchangeConnectionException {
+        return bitstampAccount.getBalance(asset);
+    }
 
-    @GetMapping("/bitstamp")
-    public void getBitstampAccountInfo() throws IOException {
-        bitstampAccount.accountInfo();
+    /**
+     * Bitstamp: [GET] Trade history from Bitstamp
+     *
+     * @return AccountInfo object (JSON)
+     */
+    @GetMapping("/bitstamp/mytrades")
+    public List<FundingRecord> getBitstampTradeHistory() throws ExchangeConnectionException {
+        return bitstampAccount.getTradeHistory();
+    }
+
+
+    /**
+     * Bitstamp: [GET] Return deposit address for rebalancing
+     *
+     * @param asset Currency asset you want to deposit
+     * @return String of deposit address for the given asset
+     */
+    @GetMapping("/bitstamp/deposit")
+    public String getBinanceDepositInfo(@RequestParam(value = "asset") Currency asset)
+            throws ExchangeConnectionException {
+        return bitstampAccount.getDepositAddress(asset);
     }
 
     /**
