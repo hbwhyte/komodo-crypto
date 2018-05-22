@@ -33,8 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //    }
 
     @ExceptionHandler(TableEmptyException.class)
-    public @ResponseBody
-    TableEmptyException tableEmpty(TableEmptyException e) {
+    public @ResponseBody TableEmptyException tableEmpty(TableEmptyException e) {
         TableEmptyException error = new TableEmptyException();
         error.setMessage("No data found.");
         error.setStatus(204);

@@ -20,7 +20,9 @@ public class ScheduledTasks {
     protected ArrayList<Integer> timestampHourly = new ArrayList<>();
     protected ArrayList<Integer> timestampMinutely = new ArrayList<>();
 
-    // Generates a timestamp at 0:02 for previous day's data.
+    /**
+     * Gets the timestamp of midnight of the current day at 0:02.
+     */
     @Scheduled(cron = "0 2 0 * * *", zone = "GMT")
     private void queryTimestampDaily() {
 
@@ -36,7 +38,10 @@ public class ScheduledTasks {
         timestampDaily.clear();
     }
 
-    // Generates a timestamp in the first minute of every hour for the previous hour's data.
+    /**
+     * Gets the timestamp of the previous hour in the first minute of every hour and adds social media data for the
+     * previous hour.
+     */
     @Scheduled(cron = "0 1 * * * *", zone = "GMT")
     private void queryTimestampHourly() {
 
@@ -46,18 +51,29 @@ public class ScheduledTasks {
 
         timestampHourly.add(hour);
         historicalService.switchCronOps("hour");
+        historicalService.addSocial();
 
         // Resets the global variables.
         cronHit = false;
         timestampHourly.clear();
     }
 
-    // Generates an array list of timestamps every five minutes for the previous five minutes.
+    /**
+     * Generates an array list of timestamps every five minutes for the previous five minutes.
+     */
     @Scheduled(cron = "0 */5 * * * *", zone = "GMT")
     private void queryTimestampMinutely() {
 
         int now = (int) (System.currentTimeMillis() / 1000);
         cronHit = true;
+
+        // Adds social data every hour.
+        // The reason this method call is here rather than in the hourly table is because the endpoint does not allow
+        // specifying a timestamp, and the hourly task actually runs 60 seconds after the hour has begun. Having it here
+        // allows more accurate data collection.
+        if (now % (CryptoCompareHistoricalService.SEC_IN_MIN * CryptoCompareHistoricalService.MIN_IN_HOUR) == 0) {
+            historicalService.addSocial();
+        }
 
         for (int j = 0; j < 5; j++) {
             timestampMinutely.add(now - CryptoCompareHistoricalService.SEC_IN_MIN * j);
@@ -70,6 +86,9 @@ public class ScheduledTasks {
         timestampMinutely.clear();
     }
 
+    /**
+     * Gets the timestamp of midnight of the start of the week at 0:03.
+     */
     @Scheduled(cron = "0 3 0 */7 * *", zone = "GMT")
     private void queryTimestampWeekly() {
 
