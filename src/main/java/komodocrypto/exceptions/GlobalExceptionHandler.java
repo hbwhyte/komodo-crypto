@@ -24,10 +24,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @param e Any exception to be formatted
      * @return CustomException Object
      */
-//    public CustomException generateCustomEx(Exception e) {
-//        CustomException c = new CustomException();
-//        c.setErrorName(e.toString());
-//        c.setReason(e.getMessage());
-//        return c;
-//    }
+ public CustomException generateCustomEx(Exception e) {
+       CustomException c = new CustomException();
+       c.setErrorName(e.toString());
+        c.setReason(e.getMessage());
+       return c;
+    }
 }
