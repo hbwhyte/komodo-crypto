@@ -14,4 +14,17 @@ public class UserController {
         modelAndView.setViewName("login");
         return modelAndView;
     }
+
+    /**
+     * Test Endpoint for MVC Security
+     * @return
+     */
+    @RequestMapping(value={"/user-dashboard"}, method = RequestMethod.GET)
+    public ModelAndView userDashboard() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user-dashboard");
+        return modelAndView;
+    }
+
+
 }
