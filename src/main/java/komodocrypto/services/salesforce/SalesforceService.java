@@ -163,35 +163,6 @@ public class SalesforceService {
 
     // Create Leads using REST HttpPost
 
-    public static void createKomodoUserRyan(){
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        String baseURL = baseUri;
-        String uri = baseUri + "/sobjects/Komodo_User__c/";
-        // create new header with authorization String
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.set("Authorization", "OAuth " + loginAccessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        SalesForceObject obj = new SalesForceObject("CodingNomads", "ryan@codingnomads.co", "Ryan Desmond", "password", 5);
-
-        HttpEntity<?> httpEntity = new HttpEntity<Object>(obj, headers);
-
-        // make API call
-        try {
-            ResponseEntity<String> fullResponse = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, String.class);
-            //SalesForceObject response = fullResponse.getBody();
-            System.out.println("test");
-        }
-        // catch bad API call
-        catch (HttpClientErrorException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
     public static void createKomodoUser() {
         System.out.println("\n_______________ Komodo User INSERT _______________");
 
