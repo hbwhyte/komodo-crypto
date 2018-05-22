@@ -12,9 +12,12 @@ public class KomodoCryptoApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(KomodoCryptoApplication.class, args);
 
-		SalesforceService.authenticate();
-		//SalesforceService.queryKomodoUsers();
-		SalesforceService.createKomodoUserRyan();
+		// Don't run it this way to test functional POST - run the TestController class in the salesforce/ryan_force_sdk package manually
+        // there's a main method in there
+
+//		SalesforceService.authenticate();
+//		SalesforceService.queryKomodoUsers();
+//		SalesforceService.createKomodoUser();
 		//SalesforceService.updateKomodoUser();
 	}
 }

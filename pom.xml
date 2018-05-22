@@ -43,6 +43,12 @@
 			<version>1.9.21</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.frejo</groupId>
+			<artifactId>force-rest-api</artifactId>
+			<version>0.0.40</version>
+		</dependency>
+
 		<!-- Database -->
 		<!--<dependency>-->
 			<!--<groupId>org.springframework.boot</groupId>-->
@@ -79,7 +85,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Test -->
+		<!-- TestController -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
