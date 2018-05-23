@@ -19,18 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-/**
- * Example showing the following:
- *
- * <ul>
- *   <li>Connect to Bitstamp exchange with authentication
- *   <li>View account balance
- *   <li>Get the bitcoin deposit address
- *   <li>List unconfirmed deposits (raw interface only)
- *   <li>List recent withdrawals (raw interface only)
- *   <li>Withdraw a small amount of BTC
- * </ul>
- */
+
 @Service
 public class BitstampAccount {
 
