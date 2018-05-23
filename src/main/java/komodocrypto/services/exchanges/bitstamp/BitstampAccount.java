@@ -90,11 +90,11 @@ public class BitstampAccount {
 
     /**
      * Submit a withdraw request.
-     *
+     * <p>
      * Enable Withdrawals option has to be active in the API settings.
      *
-     * @param asset Currency asset symbol to withdraw
-     * @param amount BigDecimal amount of asset to be withdrawn
+     * @param asset   Currency asset symbol to withdraw
+     * @param amount  BigDecimal amount of asset to be withdrawn
      * @param address String deposit address to send withdraw funds into
      * @return String
      * @throws ExchangeConnectionException if unable to connect to exchange
@@ -111,7 +111,7 @@ public class BitstampAccount {
             logger.info("Withdrawl complete.");
             return withdrawResult;
         } catch (IOException e) {
-           throw new ExchangeConnectionException("Unable to withdraw funds", HttpStatus.BAD_REQUEST);
+            throw new ExchangeConnectionException("Unable to withdraw funds", HttpStatus.BAD_REQUEST);
         }
     }
 

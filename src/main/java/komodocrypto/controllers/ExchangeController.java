@@ -13,10 +13,16 @@ import komodocrypto.services.exchanges.binance.BinanceAccount;
 import komodocrypto.services.exchanges.binance.BinanceTicker;
 import komodocrypto.services.exchanges.binance.BinanceTradeImpl;
 import komodocrypto.services.exchanges.bitstamp.BitstampAccount;
+import komodocrypto.services.exchanges.bitstamp.BitstampTicker;
+import komodocrypto.services.exchanges.bitstamp.BitstampTradeImpl;
 import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
+import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.trade.OpenOrders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +34,6 @@ import java.util.Map;
 
 @RestController
 public class ExchangeController {
-
-    @Autowired
-    BitstampAccount bitstampAccount;
 
     @Autowired
     BinanceAccount binanceAccount;
@@ -139,6 +142,17 @@ public class ExchangeController {
         return binanceTicker.getHistorical(pair);
     }
 
+
+    @Autowired
+    BitstampAccount bitstampAccount;
+
+    @Autowired
+    BitstampTicker bitstampTicker;
+
+    @Autowired
+    BitstampTradeImpl bitstampTradeImpl;
+
+
     /**
      * Bitstamp: [GET] Account information from Bitstamp
      *
@@ -167,7 +181,7 @@ public class ExchangeController {
      * @return String of deposit address for the given asset
      */
     @GetMapping("/bitstamp/deposit")
-    public String getBinanceDepositInfo(@RequestParam(value = "asset") Currency asset)
+    public String getBitstampDepositInfo(@RequestParam(value = "asset") Currency asset)
             throws ExchangeConnectionException {
         return bitstampAccount.getDepositAddress(asset);
     }
@@ -186,5 +200,57 @@ public class ExchangeController {
                                         @RequestParam(value = "amount") BigDecimal amount)
             throws ExchangeConnectionException {
         return bitstampAccount.makeWithdrawl(asset, amount, address);
+    }
+
+    /**
+     * Bitstamp: [GET] Return latest ticker info for a specific asset pair on Bitstamp
+     *
+     * @param pair CurrencyPair asset symbol requested (ETH_BTC, XRP_BTC, LTC_BTC, BCH_BTC ONLY)
+     * @return Ticker object of the latest prices (JSON)
+     */
+    @GetMapping("/bitstamp/ticker")
+    public Ticker getBitstampTickerInfo(@RequestParam(value = "pair") CurrencyPair pair)
+            throws ExchangeConnectionException {
+        return bitstampTicker.getTickerInfo(pair);
+    }
+
+    /**
+     * Bitstamp: [POST] Place market order
+     *
+     * @param type   OrderType (BID or ASK ONLY)
+     * @param amount BigDecimal amount of asset to be traded
+     * @param pair   CurrencyPair asset symbol to be traded (ETH_BTC, XRP_BTC, LTC_BTC, BCH_BTC ONLY)
+     * @return String or market order return value (needed to attempt cancellation)
+     */
+    @PostMapping("/bitstamp/market")
+    public String makeBitstampMarketOrder(@RequestParam(value = "type") Order.OrderType type,
+                                          @RequestParam(value = "amount") BigDecimal amount,
+                                          @RequestParam(value = "pair") CurrencyPair pair)
+            throws ExchangeConnectionException {
+        return bitstampTradeImpl.placeMarketOrder(type, amount, pair);
+    }
+
+    /**
+     * Bitstamp: [DELETE] Cancel market order
+     *
+     * @param marketOrderReturnValue String identifying order to be cancelled,
+     *                               returned at time order is placed
+     * @return boolean if order was cancelled or not
+     */
+    @DeleteMapping("/bitstamp/market")
+    public Boolean cancelBitstampMarketOrder(@RequestParam(value = "id") String marketOrderReturnValue)
+            throws ExchangeConnectionException {
+        return bitstampTradeImpl.cancelMarketOrder(marketOrderReturnValue);
+    }
+
+    /**
+     * Bitstamp: [GET] Get open order list from Bitstamp
+     *
+     * @return OpenOrders object (JSON)
+     */
+    @GetMapping("/bitstamp/orders")
+    public OpenOrders getBitstampOpenOrders()
+            throws ExchangeConnectionException {
+        return bitstampTradeImpl.getOpenOrders();
     }
 }
