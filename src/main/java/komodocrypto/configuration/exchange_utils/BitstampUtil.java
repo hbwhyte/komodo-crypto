@@ -3,34 +3,30 @@ package komodocrypto.configuration.exchange_utils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
-import org.knowm.xchange.bittrex.BittrexExchange;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.knowm.xchange.bitstamp.BitstampExchange;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-@Component
-public final class BittrexUtil {
+@Configuration
+public class BitstampUtil {
 
-    @Value("${bittrex.username}")
+    @Value("${bitstamp.username}")
     private String username;
 
-    @Value("${bittrex.apiKey}")
+    @Value("${bitstamp.apiKey}")
     private String apiKey;
 
-    @Value("${bittrex.secretKey}")
+    @Value("${bitstamp.secretKey}")
     private String secretKey;
 
     public Exchange createExchange() {
-//        String username = ;
-//        String apiKey = ;
-//        String secretKey = ;
-        ExchangeSpecification exSpec = new BittrexExchange().getDefaultExchangeSpecification();
+
+        ExchangeSpecification exSpec = new BitstampExchange().getDefaultExchangeSpecification();
+        // Put in your own information from Bitstamp here
         exSpec.setUserName(username);
         exSpec.setApiKey(apiKey);
         exSpec.setSecretKey(secretKey);
         return ExchangeFactory.INSTANCE.createExchange(exSpec);
-
     }
-  
 }
