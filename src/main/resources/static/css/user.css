@@ -5,10 +5,11 @@ html, body{
 }
 
 #header, .navbar, .signout, ul li a, #footer, .sidebar{
-  background:#002949;
-   color: #E0C387;
-  text-shadow: 1px 1px 1px black;
+  background:#236477;
+  color:#cfdfda;
+  text-shadow: 1px 1px 1px #173042;
   font-weight:bold;
+
 }
 #header, .sidebar{
 width:100%;
@@ -33,15 +34,15 @@ width:100%;
  border-radius: 3px;
  box-shadow: 1px 2px 1px black;
  font-family: Arial;
- color: #002949;
- background: #E0C387;
- border: outset #E0C387 1px;
+ color: #236477;
+ background: #cfdfda;
+ border: outset #cfdfda 1px;
  font-weight: bold;
  padding:5px 10px 5px 10px;
 }
 .btn-main:hover, .navbar-nav li a:hover {
- background: #002949;
- color: #E0C387;
+ background: #236477;
+ color: #173042;
 }
 .sidebar{
 margin-top:-20px;
@@ -54,16 +55,14 @@ padding-top:5px;
 }
 
 .signout:hover{
-  color:rgba(249, 233, 184, 0.85);
+  color:#7cad3e;
 }
 
 .signout{
   padding-right:25px;
   z-index:2
 }
-#username, #password{
-  z-index:;
-}
+
 .table{
 margin-top: 55px;
 z-index:2;
@@ -72,8 +71,8 @@ z-index:2;
   z-index:3;
 }
 #arbithead th{
-  border-bottom: 3px solid #002949;
-  color:#002949;
+  border-bottom: 3px solid #236477;
+  color:#173042;
   padding:5px;
   z-index:2;
 }
@@ -82,16 +81,16 @@ z-index:2;
   font-size: 17px;
 }
 #arbitbody td{
-  border-bottom: 1px solid #002949;
-  color:#002949;
+  border-bottom: 1px solid #236477;
+  color:#173042;
 }
 #arbitbody tr:hover{
-   background:#E0C387;
-  box-shadow: 1px 1px 2px #002949;
+    background:#7cad3e;
+   box-shadow: 1px 1px 2px #236477;
 }
-#arbitbody td:hover{
-  text-shadow: .5px .5px 0px #002949;
- }
+/*#arbitbody td:hover{
+  text-shadow: .5px .5px 0px #236477;
+ }*/
 #footer ul{
   list-style-type:none;
   margin:5px;
@@ -103,27 +102,7 @@ ul{
 #footer li{
   padding:3px;
 }
-.polygon{
-  width:186.78px;
-  height;160.43px;
-position: absolute;
-background: rgba(249, 233, 184, 0.47);
--webkit-transform: skew(150deg); -moz-transform: skew(150deg); -o-transform: skew(150deg);
-  z-index:1;
-}
-#polygon1{
-left: 25.63%;
-right: -15.07%;
-top: -10.06%;
-bottom: -68.03%;
 
-}
-#polygon2{
-left: 30.63%;
-right: -15.07%;
-top: -10.06%;
-bottom: -68.03%;
-}
 /*will probably have to be changed when content is dynamic*/
 #footer{
    clear: both;
