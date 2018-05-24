@@ -18,6 +18,22 @@ sometimes take some time to verify your account, and if you have an account with
 coins in it be careful before running any methods that will make actual changes 
 to your account.  
 
+### Dependencies
+
+Before starting the application, you need to resolve the Binance dependency by building
+the maven artifact yourself. After that the dependency can be resolved through your 
+local maven repository. To do this you need to:
+
+1) Clone the binance-java-api git repo
+2) Change to that directory
+3) Issue a mvn install
+
+```
+git clone https://github.com/binance-exchange/binance-java-api.git
+cd binance-java-api
+mvn install
+```
+
 ## Indicators
 
 ```
