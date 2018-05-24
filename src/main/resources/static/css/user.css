@@ -1,22 +1,23 @@
 html, body{
-  background: rgba(249, 233, 184);
+ background-color:rgb(0, 41, 73);
   margin:0px;
   padding:0px;
 }
 
-#header, .navbar, .registration, ul li a, #footer{
+#header, .navbar, .signout, ul li a, #footer, .sidebar{
   background:#002949;
    color: #E0C387;
   text-shadow: 1px 1px 1px black;
   font-weight:bold;
 }
-#header{
+#header, .sidebar{
 width:100%;
 }
+
 .title{
   margin-top:4%;
 }
-.navbar, .registration{
+.navbar, .signout{
   border:none;
   border-bottom-width: 0px;
   border-radius:0px;
@@ -24,15 +25,10 @@ width:100%;
 }
 .container{
   width:100%;
+
 }
-form{
-  margin:10px;
-}
-input{
-  color:black;
-  background: rgba(249, 233, 184, 0.38);
-  margin:3px;
-}
+
+
 .btn-main {
  border-radius: 3px;
  box-shadow: 1px 2px 1px black;
@@ -47,15 +43,21 @@ input{
  background: #002949;
  color: #E0C387;
 }
+.sidebar{
+margin-top:-20px;
+padding-top:70px;
+height: 700px;
+}
+.sidebar li{
+padding-top:5px;
 
-.registration:hover{
+}
+
+.signout:hover{
   color:rgba(249, 233, 184, 0.85);
 }
-#login-btn{
-  margin-top:5px;
-  margin-left:3px;
-}
-.registration{
+
+.signout{
   padding-right:25px;
   z-index:2
 }
@@ -72,10 +74,11 @@ z-index:2;
 #arbithead th{
   border-bottom: 3px solid #002949;
   color:#002949;
+  padding:5px;
   z-index:2;
 }
 #arbithead th, #arbitbody td{
-  padding-left:30px;
+
   font-size: 17px;
 }
 #arbitbody td{
@@ -93,6 +96,9 @@ z-index:2;
   list-style-type:none;
   margin:5px;
   padding:15px;
+}
+ul{
+ list-style-type:none;
 }
 #footer li{
   padding:3px;
@@ -126,21 +132,10 @@ bottom: -68.03%;
     height: 170px;
     margin-top: -170px;
 }
-p{
-color:#002949;
-font-size:20px;
-}
-.border{
-border:30px solid #002949;
-
-}
-.img-komodo, .col-md-5{
-padding-left:0px;
-margin-left:-30px;
-}
-
 #main{
   min-height:100%;
+  margin:0px;
+  padding:0px;
   height:700px;
   z-index:3;
 }

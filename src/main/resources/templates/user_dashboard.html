@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Komodo Crypto</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/user.css}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="header">
+
+    <div class="row"> <div class="col-sm-9">
+        <h1 class="title" >KOMODO CRYPTO</h1></div> <div class="col-sm-3">
+
+
+
+
+    </div></div></div> <nav class="navbar  navbar-fixed">
+    <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li><a th:href="@{/komodo/home}">Home</a></li>
+            <li><a th:href="@{/komodo/services}">Services</a></li>
+            <li><a th:href="@{/komodo/about}">About</a></li>
+            <li><a th:href="@{/komodo/faq}">FAQ</a></li>
+        </ul>
+        <form method="get"> <!-- th:action="@{/end point here}">-->
+            <button class="navbar-right signout" type="Submit" th:action="@{/komodo/logout}" method="get">Sign out</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container" id="main">
+    <div class="row"> <div class="col-sm-3 sidebar">
+        <ul class="sidebar">
+            <li th:text="${userWelcome}"></li>
+            <li><a th:href="@{/komodo/user}">Dashboard</a></li>
+            <li><a th:href="@{/komodo/profile}">Profile</a></li>
+            <li><a th:href="@{/komodo/wallet}">Wallet</a></li>
+            <li><a th:href="@{/komodo/history}">Trade History</a></li>
+            <li><a th:href="@{/komodo/settings}">Settings</a></li>
+        </ul>
+
+    </div>
+        <div class=" col-sm-8 table-responsive">
+            <table class="table">
+                <thead id="arbithead">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Currency Pair</th>
+                    <th>Difference</th>
+                    <th>Low Ask</th>
+                    <th>Low Ask Exchange</th>
+                    <th>High Bid</th>
+                    <th>High Bid Exchange</th>
+
+                </tr>
+                </thead>
+                <tbody id="arbitbody"  th:block th:each="a : ${arbitrage}">
+                <tr>
+                    <td id="timestamp" th:text="${a.timestamp}"></td>
+                    <td id="currencyPair" th:text="${a.currencyPair}"> </td>
+                    <td id="difference" th:text="${a.difference}"></td>
+                    <td id = "lowAsk" th:text="${a.lowAsk}"> </td>
+                    <td id = "lowAskExchange" th:text="${a.lowAskExchange}"> </td>
+                    <td id = "highBid" th:text="${a.highBid}"> </td>
+                    <td id = "highBidExchange" th:text="${a.highBidExchange}"> </td>
+                </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div></div></div>
+<footer>
+    <div id="footer">
+        <ul>
+            <li>Terms of use</li>
+            <li>About Us</li>
+            <li>Services</li>
+            <li>Developer Tools</li>
+            <li>Contact Us</li>
+
+        </ul>
+    </div>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body style="background:#E0C387" class="border">
+<h1 id="errortitle" class="text-center" style="color:#002949">Exception Found</h1>
+<div class="container-fluid">
+    <div class="col-md-5"><img th:src="@{/images/komodo_error.jpg}" class="img-responsive center-block img-komodo"/></div>
+
+
+    <div class="col-sm-7">
+
+
+        <!--display error message in page using thymeleaf-->
+        <p  id="reason" th:text="${reason}" style="padding-top:100px"></p>
+        <p  id="message" th:text="${message}"></p>
+
+
+
+
+            <form th:action="@{/komodo/}" >
+
+                <button class="btn-main" type="submit" style="margin-top:100px" >Back to Homepage
+                </button>
+            </form>
+        </div>
+
+
+
+
+
+
+</body>
+</html>
