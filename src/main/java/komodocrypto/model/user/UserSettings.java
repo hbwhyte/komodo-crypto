@@ -1,4 +1,4 @@
-package komodocrypto.model.database;
+package komodocrypto.model.user;
 
 public class UserSettings {
 

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/komodo")
-public class UserController {
+public class UserControllerMVC {
+    
     @Autowired
     ArbitrageService arbitrageService;
 
