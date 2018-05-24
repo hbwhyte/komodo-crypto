@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserControllerAPI {
 
     @Autowired
     UserService userService;
@@ -22,11 +22,11 @@ public class UserController {
     }
 
     // Still in progress.
-//    @GetMapping("/")
-//    public User getUserByID(int user_id){
-//
-//        return userService.getUserByID(user_id);
-//    }
+    @GetMapping("/{user_id}")
+    public User getUserByID(@PathVariable int user_id){
+
+        return userService.getUserByID(user_id);
+    }
 
 
     @PostMapping
