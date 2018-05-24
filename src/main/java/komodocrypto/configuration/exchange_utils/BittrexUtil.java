@@ -32,5 +32,4 @@ public final class BittrexUtil {
         return ExchangeFactory.INSTANCE.createExchange(exSpec);
 
     }
-  
 }
