@@ -26,7 +26,13 @@ public class UserService {
         return userMapper.getUserByID(user_id);
     }
 
-    // Update still in progress.
+    public User deleteUser(int user_id) {
+
+        userMapper.deleteUser(user_id);
+
+        return getUserByID(user_id);
+    }
+
     public User updateUser(User user) throws UserException {
 
         if (validateUser(user)){

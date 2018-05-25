@@ -8,14 +8,16 @@ public class User {
     String password;
     String email;
     int userSettings_id;
+    boolean active;
 
-    public User(int user_id, String first_name, String last_name, String password, String email, int userSettings_id) {
+    public User(int user_id, String first_name, String last_name, String password, String email, int userSettings_id, boolean active) {
         this.user_id = user_id;
         this.first_name = first_name;
         this.last_name = last_name;
         this.password = password;
         this.email = email;
         this.userSettings_id = userSettings_id;
+        this.active = active;
     }
 
     public User() {
@@ -67,5 +69,13 @@ public class User {
 
     public void setUserSettings_id(int userSettings_id) {
         this.userSettings_id = userSettings_id;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
