@@ -31,7 +31,8 @@ An indicator can be the following:
 The trailing days must be between one and the historical daily data available.
 
 ## MVC Security
-The Komodo MVC is secured with OAuth2 Password Grants. 
+The Komodo MVC is secured with Basic Auth. You must register and obtain a valid username
+and password before you can use this application.
 
 ## API Security
 The Komodo API is secured with OAuth2 Client Credentials Grants. To access secure endpoints you need to exchange your client
