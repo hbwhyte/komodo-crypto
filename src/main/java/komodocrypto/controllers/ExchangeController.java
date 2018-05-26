@@ -9,12 +9,16 @@ import com.binance.api.client.domain.market.TickerPrice;
 import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import komodocrypto.model.RootResponse;
 import komodocrypto.model.exchanges.BitstampBalance;
+import komodocrypto.model.exchanges.KrakenBalance;
 import komodocrypto.services.exchanges.binance.BinanceAccount;
 import komodocrypto.services.exchanges.binance.BinanceTicker;
 import komodocrypto.services.exchanges.binance.BinanceTradeImpl;
 import komodocrypto.services.exchanges.bitstamp.BitstampAccount;
 import komodocrypto.services.exchanges.bitstamp.BitstampTicker;
 import komodocrypto.services.exchanges.bitstamp.BitstampTradeImpl;
+import komodocrypto.services.exchanges.kraken.KrakenAccount;
+import komodocrypto.services.exchanges.kraken.KrakenTicker;
+import komodocrypto.services.exchanges.kraken.KrakenTradeImpl;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -252,5 +256,117 @@ public class ExchangeController {
     public OpenOrders getBitstampOpenOrders()
             throws ExchangeConnectionException {
         return bitstampTradeImpl.getOpenOrders();
+    }
+
+    @Autowired
+    KrakenAccount krakenAccount;
+
+    @Autowired
+    KrakenTicker krakenTicker;
+
+    @Autowired
+    KrakenTradeImpl krakenTradeImpl;
+
+
+    /**
+     * Kraken: [GET] Account information from Kraken
+     *
+     * @return Account balance for a given asset in Kraken
+     */
+    @GetMapping("/kraken/balance")
+    public KrakenBalance getKrakenBalance(@RequestParam(value = "asset") Currency asset) throws ExchangeConnectionException {
+        System.out.println("yo slut");
+        return krakenAccount.getBalance(asset);
+    }
+
+    /**
+     * Kraken: [GET] Trade history from Kraken
+     *
+     * @return AccountInfo object (JSON)
+     */
+    @GetMapping("/kraken/mytrades")
+    public List<FundingRecord> getKrakenTradeHistory() throws ExchangeConnectionException {
+        return krakenAccount.getTradeHistory();
+    }
+
+
+    /**
+     * Kraken: [GET] Return deposit address for rebalancing
+     *
+     * @param asset Currency asset you want to deposit
+     * @return String of deposit address for the given asset
+     */
+    @GetMapping("/kraken/deposit")
+    public String getKrakenDepositInfo(@RequestParam(value = "asset") Currency asset)
+            throws ExchangeConnectionException {
+        return krakenAccount.getDepositAddress(asset);
+    }
+
+    /**
+     * Kraken: [POST] Withdraw funds
+     *
+     * @param asset   Currency asset symbol, case sensitive (e.g. ETH, BTC, LTC etc.)
+     * @param amount  BigDecimal amount of asset to be withdrawn
+     * @param address String wallet address to withdraw money into
+     * @return WithdrawResult. If no withdrawl, returns nothing
+     */
+    @PostMapping("/kraken/withdraw")
+    public String makeKrakenWithdrawl(@RequestParam(value = "asset") Currency asset,
+                                      @RequestParam(value = "address") String address,
+                                      @RequestParam(value = "amount") BigDecimal amount)
+            throws ExchangeConnectionException {
+        return krakenAccount.makeWithdrawl(asset, amount, address);
+    }
+
+    /**
+     * Kraken: [GET] Return latest ticker info for a specific asset pair on Kraken
+     *
+     * @param pair CurrencyPair asset symbol requested (ETH_BTC, XRP_BTC, LTC_BTC, BCH_BTC ONLY)
+     * @return Ticker object of the latest prices (JSON)
+     */
+    @GetMapping("/kraken/ticker")
+    public Ticker getKrakenTickerInfo(@RequestParam(value = "pair") CurrencyPair pair)
+            throws ExchangeConnectionException {
+        return krakenTicker.getTickerInfo(pair);
+    }
+
+    /**
+     * Kraken: [POST] Place market order
+     *
+     * @param type   OrderType (BID or ASK ONLY)
+     * @param amount BigDecimal amount of asset to be traded
+     * @param pair   CurrencyPair asset symbol to be traded (ETH_BTC, XRP_BTC, LTC_BTC, BCH_BTC ONLY)
+     * @return String or market order return value (needed to attempt cancellation)
+     */
+    @PostMapping("/kraken/market")
+    public String makeKrakenMarketOrder(@RequestParam(value = "type") Order.OrderType type,
+                                        @RequestParam(value = "amount") BigDecimal amount,
+                                        @RequestParam(value = "pair") CurrencyPair pair)
+            throws ExchangeConnectionException {
+        return krakenTradeImpl.placeMarketOrder(type, amount, pair);
+    }
+
+    /**
+     * Kraken: [DELETE] Cancel market order
+     *
+     * @param marketOrderReturnValue String identifying order to be cancelled,
+     *                               returned at time order is placed
+     * @return boolean if order was cancelled or not
+     */
+    @DeleteMapping("/kraken/market")
+    public Boolean cancelKrakenMarketOrder(@RequestParam(value = "id") String marketOrderReturnValue)
+            throws ExchangeConnectionException {
+        return krakenTradeImpl.cancelMarketOrder(marketOrderReturnValue);
+    }
+
+    /**
+     * Kraken: [GET] Get open order list from Kraken
+     *
+     * @return OpenOrders object (JSON)
+     */
+    @GetMapping("/kraken/orders")
+    public OpenOrders getKrakenOpenOrders()
+            throws ExchangeConnectionException {
+        return krakenTradeImpl.getOpenOrders();
     }
 }
