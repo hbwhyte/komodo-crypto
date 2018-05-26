@@ -1,24 +1,50 @@
 # Komodo Crypto
 
-
+Komodo Crypto integrates with the following exchanges:
+  - Binance
+  - Bitstamp
+  - Bittrex
+  - GDAX
+  - Kraken
+  
 ## Deployment
 
-Create a table to hold OAuth2 Client Credentials using the following SQL statement. 
+### API Keys
+
+In order to run Komodo Crypto, you will need verified accounts and API keys for 
+each of our integrated exchanges. You can enter your specific credentials into the 
+`application.properties` file in the `resources` directory. Please note, it can 
+sometimes take some time to verify your account, and if you have an account with 
+coins in it be careful before running any methods that will make actual changes 
+to your account.  
+
+### Dependencies
+
+Before starting the application, you need to resolve the Binance dependency by building
+the maven artifact yourself. After that the dependency can be resolved through your 
+local maven repository. To do this you need to:
+
+1) Clone the binance-java-api git repo
+2) Change to that directory
+3) Issue a mvn install
+
 ```
-create table oauth_client_details (
-  client_id VARCHAR(256) PRIMARY KEY,
-  resource_ids VARCHAR(256),
-  client_secret VARCHAR(256),
-  scope VARCHAR(256),
-  authorized_grant_types VARCHAR(256),
-  web_server_redirect_uri VARCHAR(256),
-  authorities VARCHAR(256),
-  access_token_validity INTEGER,
-  refresh_token_validity INTEGER,
-  additional_information VARCHAR(4096),
-  autoapprove VARCHAR(256)
-);
+git clone https://github.com/binance-exchange/binance-java-api.git
+cd binance-java-api
+mvn install
 ```
+
+## Indicators
+
+```
+/dailyindicator?type={INDICATOR}&fromcurrency={BASE_CURRENCY}&tocurrency={COUNTER_CURRENCY}&trailing={DAYS}
+```
+
+An indicator can be the following:
+* SMA - Simple Moving Average
+* EMA - Exponential Moving Average
+
+The trailing days must be between one and the historical daily data available.
 
 ## Security
 The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
