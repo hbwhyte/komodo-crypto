@@ -2,7 +2,6 @@ package komodocrypto.services.signals;
 
 import javafx.util.Pair;
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
-import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.cryptocompare.historical_data.Data;
 import org.slf4j.Logger;
