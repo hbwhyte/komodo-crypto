@@ -2,8 +2,11 @@ package komodocrypto.exceptions;
 
 
 import komodocrypto.exceptions.custom_exceptions.ClientException;
+import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+import komodocrypto.exceptions.custom_exceptions.InsufficientFundsException;
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.model.RootResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +20,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected @ResponseBody RootResponse clientError(ClientException ex) {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
+
+    @ExceptionHandler(value= IndicatorException.class)
+    protected @ResponseBody RootResponse indicatorError(IndicatorException ex) {
+        return new RootResponse(ex.getStatus(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(value=TableEmptyException.class)
+    protected @ResponseBody RootResponse tableEmptyError(TableEmptyException ex){
+        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
+    }
+
+//    @ExceptionHandler(value=InsufficientFundsException.class)
+//    protected @ResponseBody RootResponse insufficientFundsError(InsufficientFundsException ex) {
+//        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
+//    }
 
     /**
      * Generates a nicely formatted Custom Exception response
@@ -32,11 +50,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //        return c;
 //    }
 
-    @ExceptionHandler(TableEmptyException.class)
-    public @ResponseBody TableEmptyException tableEmpty(TableEmptyException e) {
-        TableEmptyException error = new TableEmptyException();
-        error.setMessage("No data found.");
-        error.setStatus(204);
-        return error;
-    }
 }

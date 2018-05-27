@@ -4,10 +4,7 @@ import komodocrypto.model.cryptocompare.historical_data.Data;
 import komodocrypto.model.cryptocompare.social_stats.Facebook;
 import komodocrypto.model.cryptocompare.social_stats.Reddit;
 import komodocrypto.model.cryptocompare.social_stats.Twitter;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface CryptoMapper {
@@ -47,6 +44,24 @@ public interface CryptoMapper {
             "UNION SELECT * FROM komodoDB.hourly WHERE fromCurrency = #{arg0} AND exchange = #{arg1}" +
             "UNION SELECT * FROM komodoDB.minutely WHERE fromCurrency = #{arg0} AND exchange = #{arg1};";
 
+
+    String SELECT_DATA_DAILY_BY_PAIR_SORTED = "SELECT * FROM komodoDB.daily WHERE fromCurrency = #{arg0} AND toCurrency= #{arg1} " +
+                                              "GROUP BY time ORDER BY time ASC ;";
+
+    String SELECT_MISSING_DAILY_BINANCE = "SELECT * FROM `komodoDB`.`daily` WHERE `open` = 0.0 AND `close` = 0.0 AND " +
+            "`high` = 0.0 AND `low` = 0.0 AND `exchange` = 'Binance' ORDER BY `time` DESC;";
+    String SELECT_MISSING_HOURLY_BINANCE = "SELECT * FROM `komodoDB`.`hourly` WHERE `open` = 0.0 AND `close` = 0.0 AND " +
+            "`high` = 0.0 AND `low` = 0.0 AND `exchange` = 'Binance' ORDER BY `time` DESC;";
+    String SELECT_MISSING_MINUTELY_BINANCE = "SELECT * FROM `komodoDB`.`minutely` WHERE `open` = 0.0 AND `close` = 0.0 AND " +
+            "`high` = 0.0 AND `low` = 0.0 AND `exchange` = 'Binance' ORDER BY `time` DESC;";
+
+    String UPDATE_DATA_DAILY = "UPDATE `komodoDB`.`daily` SET `open` = #{open}, `low` = #{low}, `high` = #{high}, " +
+            "`close` = #{close}, `average` = #{average} WHERE `time` = #{arg0};";
+    String UPDATE_DATA_HOURLY = "UPDATE `komodoDB`.`hourly` SET `open` = #{open}, `low` = #{low}, `high` = #{high}, " +
+            "`close` = #{close}, `average` = #{average} WHERE `time` = #{arg0};";
+    String UPDATE_DATA_MINUTELY = "UPDATE `komodoDB`.`minutely` SET `open` = #{open}, `low` = #{low}, `high` = #{high}, " +
+            "`close` = #{close}, `average` = #{average} WHERE `time` = #{arg0};";
+
     String SELECT_TIME_DAILY = "SELECT time FROM komodoDB.daily " +
             "WHERE fromCurrency = #{param1} AND toCurrency = #{param2} AND exchange = #{param3} " +
             "ORDER BY time ASC;";
@@ -64,7 +79,6 @@ public interface CryptoMapper {
     String COUNT_MINUTELY_RECORDS = "SELECT COUNT(id) FROM `komodoDB`.`minutely` " +
             "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Bitstamp';";
 
-
     String GET_LAST_TIMESTAMP_DAILY = "SELECT `time` FROM `komodoDB`.`daily` " +
             "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Binance' " +
             "ORDER BY `time` ASC LIMIT 1;";
@@ -74,7 +88,6 @@ public interface CryptoMapper {
     String GET_LAST_TIMESTAMP_MINUTELY = "SELECT `time` FROM `komodoDB`.`minutely` " +
             "WHERE `fromCurrency` = 'ETH' AND `toCurrency` = 'BTC' AND `exchange` = 'Binance' " +
             "ORDER BY `time` ASC LIMIT 1;";
-
 
     String INSERT_PRICE_AGGREGATED_WEEKLY = "INSERT IGNORE INTO komodoDB.weekly " +
             "(`time`, `fromCurrency`, `toCurrency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volumeFrom`, `volumeTo`) " +
@@ -217,7 +230,7 @@ public interface CryptoMapper {
     public komodocrypto.model.cryptocompare.news.Data[] getNewsByCategory(@Param("category") String category);
 
 
-
+    // Gets historical price data by various criteria
     @Select(SELECT_DATA_BY_CURRENCY)
     public Data[] getDataByCurrency(String currency);
 
@@ -244,4 +257,29 @@ public interface CryptoMapper {
 
     @Select(SELECT_DATA_BY_CURRENCY_AND_EXCHANGE)
     public Data[] getDataByCurrencyAndExchange(String currency, String exchange);
+
+    @Select(SELECT_DATA_DAILY_BY_PAIR_SORTED)
+    public Data[] getDataDailyByPairSorted(String fromCurrency, String toCurrency);
+
+
+    // Gets rows that are missing CryptoCompare data.
+    @Select(SELECT_MISSING_DAILY_BINANCE)
+    public Data[] getMissingDailyBinance(String fromCurrency, String toCurrency);
+
+    @Select(SELECT_MISSING_HOURLY_BINANCE)
+    public Data[] getMissingHourlyBinance(String fromCurrency, String toCurrency);
+
+    @Select(SELECT_MISSING_MINUTELY_BINANCE)
+    public Data[] getMissingMinutelyBinance(String fromCurrency, String toCurrency);
+
+
+    // Updates the database by time.
+    @Update(UPDATE_DATA_DAILY)
+    public int updateDataDaily(int time, Data entry);
+
+    @Update(UPDATE_DATA_HOURLY)
+    public int updateDataHourly(int time, Data entry);
+
+    @Update(UPDATE_DATA_MINUTELY)
+    public int updateDataMinutely(int time, Data entry);
 }

@@ -5,6 +5,11 @@ public class TableEmptyException extends Exception {
     int status;
     String message;
 
+    public TableEmptyException(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
     public int getStatus() {
         return status;
     }

@@ -1,5 +1,9 @@
 package komodocrypto.services.data_collection;
 
+import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.CandlestickInterval;
+import komodocrypto.configuration.exchange_utils.BinanceUtil;
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.RootResponse;
@@ -12,11 +16,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class CryptoCompareHistoricalService {
@@ -32,6 +36,9 @@ public class CryptoCompareHistoricalService {
 
     @Autowired
     private TaskExecutor taskExecutor;
+
+    @Autowired
+    BinanceUtil binanceUtil;
 
     // The list of trading pairs
     private static String[][] tradingPairs = {
@@ -312,6 +319,142 @@ public class CryptoCompareHistoricalService {
                 toCurrency, exchange);
     }
 
+    // Finds gaps in database where CryptoCompare has rows but only zero-value data for the Binance exchange.
+    public void findHistoricalGapsBinance(String period, String fromCurrency, String toCurrency) {
+
+        // The array of data objects containing no CryptoCompare data
+        Data[] missing;
+
+        int periodLength = 0;
+
+        if (period.equals("day")) missing = cryptoMapper.getMissingDailyBinance(fromCurrency, toCurrency);
+        else if (period.equals("hour")) missing = cryptoMapper.getMissingHourlyBinance(fromCurrency, toCurrency);
+        else if (period.equals("minute")) missing =  cryptoMapper.getMissingMinutelyBinance(fromCurrency, toCurrency);
+
+        switch (period) {
+
+            case "day":
+                missing = cryptoMapper.getMissingDailyBinance(fromCurrency, toCurrency);
+                periodLength = getPeriodLength(period);
+                break;
+            case "hour":
+                missing = cryptoMapper.getMissingHourlyBinance(fromCurrency, toCurrency);
+                periodLength = getPeriodLength(period);
+                break;
+            default:
+                missing = cryptoMapper.getMissingMinutelyBinance(fromCurrency, toCurrency);
+                periodLength = getPeriodLength(period);
+        }
+
+        /*  int start = 0;
+            cycle through timestamps from i = 1 until i = missing.length - 1 (to find gaps larger than the current period between them)
+                if missing[i] - missing[i-1] > length of period
+                    updateHistBinance(period, Arrays.copyOfRange(missing, start, i)
+                    start = i
+                if i = missing.length - 2
+                    updateHistBinance(period, missing)
+
+         */
+
+        // In case the missing timestamps are not sequential, breaks them into sequential bits, and feeds them to the
+        // method that gets the data. Doing this should reduce the number of calls to the Binance API.
+        int start = 0;
+
+        for (int i = 1; i < missing.length - 1; i++) {
+
+            // Detects breaks in a sequential series of timestamps and sends the latest detected sequential bit of the
+            // array to a new method.
+            if (missing[i].getTime() - missing[i - 1].getTime() > getPeriodLength(period)) {
+
+                updateHistDataBinance(period, Arrays.copyOfRange(missing, start, i));
+                start = i;
+            }
+
+            if (i == missing.length - 2) updateHistDataBinance(period, missing);
+        }
+    }
+
+    // Fills gaps in database where CryptoCompare has no historical data for the Binance exchange.
+    public RootResponse updateHistDataBinance(String period, Data[] missing) {
+
+        /*  get timestamps from data[]
+
+            fromToCurrencies = from + to
+            candlestick interval should depend on the time period
+            fromTime = (first timestamp - secInPeriod) * 1000 + 1L
+            toTime = last timestamp * 1000L
+            candlesticks = client.getcandlestickbars...
+         */
+        String fromToCurrencies = missing[0].getFromCurrency() + missing[0].getToCurrency();
+        long fromTime = (missing[0].getTime() - getPeriodLength(period)) * 1000 + 1l;
+        long toTime = missing[missing.length - 1].getTime() * 1000l;
+        List<Candlestick> candlesticks = new ArrayList<>();
+
+        // Connect to exchange
+        BinanceApiRestClient client = binanceUtil.createExchange();
+
+        // Specific candlestick bar
+        switch (period) {
+            case "day":
+                 candlesticks = client.getCandlestickBars(
+                        fromToCurrencies, CandlestickInterval.DAILY,500, fromTime, toTime);
+                break;
+            case "hour":
+                candlesticks = client.getCandlestickBars(
+                        fromToCurrencies, CandlestickInterval.HOURLY,500, fromTime, toTime);
+                break;
+            default:
+                candlesticks = client.getCandlestickBars(
+                        fromToCurrencies, CandlestickInterval.ONE_MINUTE,500, fromTime, toTime);
+        }
+
+        /*  for (int i = 0; i < candlesticks.size(); i++)
+                Data entry = new Data();
+                entry.setTime(missing[i].getTime())
+                entry.setFromCurrency(missing[i].fromCurrency())
+                entry.setToCurrency(missing[i].toCurrency())
+                entry.setExchange(missing[i].getExchange())
+                entry.setOpen(candlesticks.get(i).getOpen()
+                entry.setClose(candlesticks.get(i).getClose()
+                low, high
+                entry.setAverage(averagePriceHistorical(high, low)
+                entry.setVolumeFrom(
+                entry.setVolumeTo(
+
+                switch period
+                    cryptoMapper.updateDataDaily(entry)
+                    ...
+         */
+        // Maps each candlestick object to a data object which will be used to update the database.
+        // What if missing and candlesticks are different sizes?
+        for (int i = 0; i < candlesticks.size(); i++) {
+
+            Data entry = new Data();
+            Candlestick stick = candlesticks.get(i);
+
+            entry.setOpen(Double.parseDouble(stick.getOpen()));
+            entry.setClose(Double.parseDouble(stick.getClose()));
+            entry.setHigh(Double.parseDouble(stick.getHigh()));
+            entry.setClose(Double.parseDouble(stick.getClose()));
+            entry.setAverage(averagePriceHistorical(missing[i].getHigh(), missing[i].getLow()));
+            // volumefrom & to?
+
+            switch (period) {
+                case "day":
+                    cryptoMapper.updateDataDaily(missing[i].getTime(), entry);
+                    break;
+                case "hour":
+                    cryptoMapper.updateDataHourly(missing[i].getTime(), entry);
+                    break;
+                default:
+                    cryptoMapper.updateDataMinutely(missing[i].getTime(), entry);
+            }
+        }
+
+        return new RootResponse(HttpStatus.OK, "Query successful.", cryptoMapper.getPriceDaily());
+    }
+
+
     /**
      * Averages the high and low price.
      * @param high the highest trading price for a particular time interval
@@ -453,13 +596,12 @@ public class CryptoCompareHistoricalService {
         // Throws an exception if the news table is empty.
         if (cryptoMapper.getNews().length == 0) {
 
-            throw new TableEmptyException();
+            throw new TableEmptyException(204, "No data found");
 
         } else /*if (categories == null)*/{
 
             komodocrypto.model.cryptocompare.news.Data[] newsData = cryptoMapper.getNews();
             return new RootResponse(HttpStatus.OK, "News data successfully queried.", newsData);
-
 //        } else {
 //
 //            // Gets a list of news stories by each of the user-input categories.
@@ -571,6 +713,9 @@ public class CryptoCompareHistoricalService {
 
         return historicalData;
     }
+
+
+
 
     /**
      * Gets data from the appropriate database table depending on the specified period

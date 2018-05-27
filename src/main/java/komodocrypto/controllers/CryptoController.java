@@ -1,18 +1,20 @@
 package komodocrypto.controllers;
 
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
-import komodocrypto.model.GeneralResponse;
 import komodocrypto.model.RootResponse;
 import komodocrypto.services.data_collection.CryptoCompareHistoricalService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
 
 @RestController
 public class CryptoController {
 
     @Autowired
     CryptoCompareHistoricalService historicalService;
-
 
     // Gets historical data by period.
     @GetMapping("/historicaldata/byperiod/{period}")
@@ -61,12 +63,17 @@ public class CryptoController {
         return historicalService.getDataByCurrencyAndExchange(currency, exchange);
     }
 
+    @GetMapping("historicaldata/binance")
+    public RootResponse findHistoricalGapsBinance(@RequestParam("from") String fromCurrency,
+                                                  @RequestParam("to") String toCurrency) {
+        return historicalService.findHistoricalGapsBinance(fromCurrency, toCurrency);
+    }
 
     // Adds and retrieves social media data.
     @GetMapping("/socialdata")
     public RootResponse addSocialData() { return historicalService.addSocial(); }
 
-    
+
     // Adds news by category.
     @PostMapping(value = {"/news/{categories}", "/news/"})
     public RootResponse addNews(@PathVariable(value = "categories", required = false) String categories) {
@@ -79,4 +86,5 @@ public class CryptoController {
             throws TableEmptyException {
         return historicalService.getNews(categories);
     }
+
 }
