@@ -17,18 +17,56 @@ public class AssetTrackingService {
     //                    - the prices
     //                    - the buy/sell amounts
 
-    public void updateAssetsUnderManagement(int currency_id, Exchange exchange_name, double price, double amount, int signal){
+    public void recalculateBalance(int currency_pair_id, Exchange exchange, String transactionType){
 
-        /* signal determines buy, sell, or transfer
+        /* transactionType determines buy, sell, or transfer
                 if buy
-                    amount*price-exchangename.getBuy_fee
+                    buyAmount = amount*price-exchangename.getBuy_fee
                 if sell
-                    amount*price-exchangename.getSell_fee
+                    sellAmount = amount*price-exchangename.getSell_fee
                 if transfer
-                    amount*price-exchangename.getTransfer_fee
+                    transferAmount = amount*price-exchangename.getTransfer_fee
          */
 
+        /* recalculate balance after buy/sell transaction
+                check balance on the exchange wallet of the selected currency
+                total1 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol1
+                total2 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol2
+                newTotal1 = total1 - sellAmount
+                newTotal2 = total2 + buyAmount
+
+         */
+
+        /* recalculate balance after transfer
+
+         */
+
+    }
+
+    public void updateAssetsUnderManagement(int buy_exchange_id, int sell_exchange_id, Exchange exchange_name,
+                                            double price, double amount, int signal, String status, int currency_pair_id){
 
 
+        /* update the balance of both currencies where the exchange happens on the arbitrage_trade_history table
+                insert currency_pair_id
+                insert token_price
+                    arbitrageTradeHistory.setTokenPrice = price
+                insert token_amount
+                    arbitrageTradeHistory.setTokenAmount = buy/sell/transferAmount
+                insert order_status
+                    arbitrageTradeHistory.setOrderStatus = status
+                insert buy_exchange_id
+                insert sell_exchange_id
+         */
+
+        /* update the exchange wallet - assuming this is what is accessed to check the balance of each currency?
+                insert currency_id
+                insert deposit_address
+                insert total
+         */
+
+        /* update the balance in group_portfolio after transaction?
+                current_value = getTokenAmount * usdExchangeRate
+         */
     }
 }
