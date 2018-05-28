@@ -54,17 +54,17 @@ You can register client credentials by making a POST request to the Authorizatio
 client_id and a client_secret of your choosing.
 
 ```
-curl -X POST -H 'Content-Type: application/json' -d '{"client_id": "{YOUR_EMAIL_HERE}", "client_secret": "temp-secret", "authorized_grant_types":"client_credentials"}' http://localhost:8080/oauth/client
+curl -X POST -H 'Content-Type: application/json' -d '{"client_id": "YOUR_EMAIL_HERE", "client_secret": "YOUR_SECRET_HERE", "authorized_grant_types":"client_credentials"}' http://localhost:8080/oauth/client
 ```
 
 In order to obtain an access token
 you should make a POST request to the Authorization Server with your client credentials.
 ```
-curl -X POST --user '{YOUR_EMAIL_HERE}:temp-secret' -d 'grant_type=client_credentials' http://localhost:8080/oauth/token
+curl -X POST --user 'YOUR_EMAIL_HERE:YOUR_SECRET_HERE' -d 'grant_type=client_credentials' http://localhost:8080/oauth/token
 ```
 
 This will return an access token that will expire after the allotted time has passed.
 You can make a request to any endpoint using the access token in the authorization header.
 ```
-curl -X GET -H "Authorization: Bearer {access_token}" http://localhost:8080/test-security
+curl -X GET -H "Authorization: Bearer ACCESS_TOKEN_HERE" http://localhost:8080/test-security
 ```
