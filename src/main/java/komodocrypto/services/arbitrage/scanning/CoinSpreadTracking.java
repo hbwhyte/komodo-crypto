@@ -3,6 +3,7 @@ package komodocrypto.services.arbitrage.scanning;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,21 +27,9 @@ public class CoinSpreadTracking {
     }
 
 
-    private void ScanCoinBittrex(CurrencyPair currencyPair){
 
-    }
 
-    private void ScanETHBTC() {
-        CurrencyPair currencyPair = CurrencyPair.ETH_BTC;
-        try {
-            this.ETH_BTC = scannerService.getBestArbitrageExchangesForPair(scannerService.getDefaultExchangeList(), currencyPair);
-            if(validateArbitrageOpportunity(this.ETH_BTC, currencyPair)){
-            }
-        } catch (IOException e) {
-            System.out.println("IO Exception at ScanETHBTC()");
-            e.printStackTrace();
-        }
-    }
+
 
 
     private boolean validateArbitrageOpportunity(Exchange[] exchanges, CurrencyPair currencyPair) throws IOException {
@@ -53,6 +42,5 @@ public class CoinSpreadTracking {
         } else {
             return false;
         }
-
     }
 }
