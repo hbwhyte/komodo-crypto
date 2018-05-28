@@ -25,7 +25,11 @@
                 <h1>Registration Form</h1>
                 <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
                 ></label>
-                <input type="text" th:field="*{name}" placeholder="UserName"
+                <input type="text" th:field="*{first_name}" placeholder="First Name"
+                       class="form-control"/>
+                <input type="text" th:field="*{last_name}" placeholder="Last Name"
+                       class="form-control"/>
+                <input type="email" th:field="*{email}" placeholder="Email"
                        class="form-control"/>
 
 
