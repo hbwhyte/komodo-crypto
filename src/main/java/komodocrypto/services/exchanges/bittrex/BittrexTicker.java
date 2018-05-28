@@ -9,6 +9,7 @@ import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -16,24 +17,17 @@ import java.math.BigDecimal;
 @Service
 public class BittrexTicker {
 
+
     MarketDataService marketDataService;
 
-    @Autowired
-    BittrexMarketData bittrexMarketData;
 
-    public static void main(String[] args) throws IOException {
-
-        // Use the factory to get Bitstamp exchange API using default settings
+    /**
+     * Configures the MarketDataService setting it up to use the Bittrex exchange
+     */
+    @PostConstruct
+    public void setupMarketDataService(){
         Exchange bittrex = ExchangeFactory.INSTANCE.createExchange(BittrexExchange.class.getName());
-
-        // Interested in the public market data feed (no authentication required)
-        MarketDataService marketDataService = bittrex.getMarketDataService();
-        BittrexTicker bittrexTicker = new BittrexTicker();
-        bittrexTicker.getCurrencyPairTicker(CurrencyPair.ETH_BTC);
-    }
-
-    public BittrexTicker() {
-        this.marketDataService = bittrexMarketData.getDefaultMarketDataService();
+        this.marketDataService = bittrex.getMarketDataService();
     }
 
     /**

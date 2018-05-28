@@ -1,5 +1,8 @@
 package komodocrypto.services.arbitrage.scanning;
 
+import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
+import komodocrypto.services.exchanges.bitstamp.BitstampTicker;
+import komodocrypto.services.exchanges.bittrex.BittrexTicker;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.anx.v2.ANXExchange;
@@ -53,8 +56,41 @@ public class ArbitrageScannerService {
         this.allExchangesList = this.generateAllExchangesList();
     }
 
+    /**
+     * Queries the Bittrex exchange for the lastest data for the given currency pair
+     * @param currencyPair a Currency pair OBJ
+     * @return a Ticker obj containing the price info of the currency pair
+     */
+    @Async
+    public Ticker getTickerBittrex(CurrencyPair currencyPair){
+        BittrexTicker bittrexTicker = new BittrexTicker();
+        Ticker ticker = null;
+        try {
+            ticker = bittrexTicker.getCurrencyPairTicker(currencyPair);
+        } catch (IOException e) {
+            System.out.println("Unable to get ticker info for " + currencyPair.toString() + " from Bittrex");
+            e.printStackTrace();
+        }
+        return ticker;
+    }
 
-
+    /**
+     * Queries the Bitstamp exchange for the lastest data for the given currency pair
+     * @param currencyPair a Currency pair OBJ
+     * @return a Ticker obj containing the price info of the currency pair
+     */
+    @Async
+    public Ticker getTickerBitstamp(CurrencyPair currencyPair){
+        BitstampTicker bitstampTicker = new BitstampTicker();
+        Ticker ticker = null;
+        try {
+            ticker = bitstampTicker.getTickerInfo(currencyPair);
+        } catch (ExchangeConnectionException e) {
+            System.out.println("Exception while connecting to Bitstamp exchange");
+            e.printStackTrace();
+        }
+        return ticker;
+    }
 
 
     /**

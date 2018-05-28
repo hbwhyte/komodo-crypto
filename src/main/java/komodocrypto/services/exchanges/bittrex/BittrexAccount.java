@@ -7,13 +7,17 @@ import java.util.List;
 import komodocrypto.configuration.exchange_utils.BittrexUtil;
 import komodocrypto.services.exchanges.interfaces.ExchangeAccountService;
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.bittrex.dto.account.BittrexBalance;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Example showing the following:
@@ -30,57 +34,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class BittrexAccount implements ExchangeAccountService{
 
+
     private AccountService accountService;
     private AccountInfo accountInfo;
 
-    public BittrexAccount() {
-        this.accountService = setupAccountService();
-        try {
-            this.accountInfo = accountService.getAccountInfo();
-        } catch (IOException e) {
-            System.out.println("IOException at BittrexAccount()");
-            e.printStackTrace();
-        }
-    }
+    @Autowired
+    private BittrexUtil bittrexUtil;
 
-    public static void main(String[] args) throws IOException {
-        BittrexAccount bittrexAccount = new BittrexAccount();
-        System.out.println("Username: " + bittrexAccount.getUsername() );
-        System.out.println("Deposit Address for BTC: " + bittrexAccount.getDepositAddress(Currency.BTC));
-        System.out.println("Trading fee: " + bittrexAccount.getTradingFee());
-        //bittrexAccount.generic(bittrexAccount.setupAccountService());
-        System.out.println("USDT Balance : " + bittrexAccount.getCurrencyBalance(Currency.USDT));
-    }
 
     /**
-     * Creates an AccountService object of an exchange with the credentials used by the BittrexUtil
-     * @return an AccountService obj.
+     * Configures the accountService to be used setting it up with the credentials for the account
+     * defined for the Bittrex exchange.
      */
-    public AccountService setupAccountService(){
-        BittrexUtil bittrexUtil = new BittrexUtil();
+    @PostConstruct
+    public void setupAccountServiceAndInfo() throws IOException{
         Exchange bittrex = bittrexUtil.createExchange();
-        AccountService accountService = bittrex.getAccountService();
+        //AccountService accountService = bittrex.getAccountService();
+        this.accountService = bittrex.getAccountService();
+        this.accountInfo = accountService.getAccountInfo();
 
-        return accountService;
+        //return accountService;
     }
 
-    /**
-     * Creates an AccountInfo object of an exchange with the credential used in setupAccountService()
-     * @return an AccountInfo obj
-     * @throws IOException
-     */
-    public AccountInfo accountInfo() throws IOException {
-        AccountService accountService = setupAccountService();
-        return accountService.getAccountInfo();
-    }
+//    /**
+//     * Creates an AccountInfo object of an exchange with the credential used in setupAccountService()
+//     * @return an AccountInfo obj
+//     * @throws IOException
+//     */
+//    @PostConstruct
+//    public void accountInfo() throws IOException {
+//        AccountService accountService = setupAccountService();
+//        return accountService.getAccountInfo();
+//    }
 
 
     public String getUsername() throws IOException {
-        String username = this.accountInfo.getUsername();
+        //String username = this.accountInfo.getUsername();
+        String username = this.getAccountInfo().getUsername();
         return username;
     }
 
     public BigDecimal getTradingFee() throws IOException {
+        //BigDecimal tradingFee = this.accountInfo.getTradingFee();
         BigDecimal tradingFee = this.accountInfo.getTradingFee();
         return tradingFee;
     }
