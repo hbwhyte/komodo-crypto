@@ -28,6 +28,5 @@ public class BittrexUtil {
         exSpec.setApiKey(apiKey);
         exSpec.setSecretKey(secretKey);
         return ExchangeFactory.INSTANCE.createExchange(exSpec);
-
     }
 }
