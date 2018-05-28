@@ -1,14 +1,16 @@
 package komodocrypto.exceptions.custom_exceptions;
 
-
 import org.springframework.http.HttpStatus;
 
-public class UserException extends Exception {
+/**
+ * Exception thrown when unable to connect to the Exchange
+ */
+public class ExchangeConnectionException extends Exception {
 
     private String message;
     private HttpStatus status;
 
-    public UserException(String message, HttpStatus status) {
+    public ExchangeConnectionException (String message, HttpStatus status) {
         this.message = message;
         this.status = status;
     }
