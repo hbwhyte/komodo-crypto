@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public interface ArbitrageMapper {
 
     /*table has fake data for now but will be replaced with the main DB when data is ready*/
-    String GET_DATA = "SELECT * FROM `KomodoDB`.arbitrage";
+    String GET_DATA = "SELECT * FROM `komodoDB`.arbitrage";
 
 
     @Select(GET_DATA)
