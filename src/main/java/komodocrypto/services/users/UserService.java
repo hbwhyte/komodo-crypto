@@ -1,7 +1,7 @@
 package komodocrypto.services.users;
 
 import komodocrypto.exceptions.custom_exceptions.UserException;
-import komodocrypto.mappers.user.UserMapper;
+import komodocrypto.mappers.UserMapper;
 import komodocrypto.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
