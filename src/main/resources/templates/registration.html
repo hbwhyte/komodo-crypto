@@ -23,8 +23,7 @@
 
 
                 <h1>Registration Form</h1>
-                <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-                ></label>
+
                 <input type="text" th:field="*{first_name}" placeholder="First Name"
                        class="form-control"/>
                 <input type="text" th:field="*{last_name}" placeholder="Last Name"
@@ -37,7 +36,7 @@
 
                 <input type="password" th:field="*{password}"
                        placeholder="Password" class="form-control"/> <label
-                    th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                     th:field="*{password}"
             ></label>
 
 
@@ -54,7 +53,7 @@
                 <button class="btn btn-warning btn-block" type="Submit">Go To Login Page</button>
             </form>
             <!--if you have a success message:-->
-            <span class="text-center" th:utext="${successMessage}"></span>
+            <!--<span class="text-center" th:utext="${successMessage}"></span>-->
 
         </div>
     </div>

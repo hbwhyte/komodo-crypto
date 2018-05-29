@@ -7,8 +7,14 @@ html, body{
 #header, .navbar, .signout, ul li a, #footer, .sidebar{
   background:#236477;
   color:#cfdfda;
-  text-shadow: 1px 1px 1px #173042;
   font-weight:bold;
+
+}
+
+#header, .navbar, ul li a, #footer, .sidebar{
+
+  text-shadow: 1px 1px 1px #173042;
+
 
 }
 #header, .sidebar{
