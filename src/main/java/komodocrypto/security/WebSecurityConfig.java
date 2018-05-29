@@ -1,5 +1,6 @@
 package komodocrypto.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
 
 /**
  * Configuration for User Filter (Komodo MVC)
@@ -26,25 +29,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${komodo.password}")
     private String komodo_password;
 
+    @Autowired
+    DataSource dataSource;
+
     /**
      * Configure endpoints that require user authentication
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.csrf().disable().authorizeRequests()
 
                 // secure endpoints
-                .antMatchers("/user-dashboard").authenticated()
+                .antMatchers("/komodo/user").authenticated()
 
                 // enable basic auth
                 .and().httpBasic()
 
                 // enable login
-                .and().formLogin().permitAll()
+                .and().formLogin().loginPage("/komodo/home").defaultSuccessUrl("/komodo/user").permitAll()
 
                 // enable logout
                 .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/").and().exceptionHandling();
+                .logoutSuccessUrl("/komodo/home").and().exceptionHandling();
     }
 
     /**
@@ -52,8 +58,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser(komodo_username).password(passwordEncoder().encode(komodo_password)).roles("USER");
+        auth.jdbcAuthentication().dataSource(dataSource)
+            .passwordEncoder(passwordEncoder())
+            .usersByUsernameQuery("SELECT email as username, password, active FROM users WHERE email=?")
+            .authoritiesByUsernameQuery("SELECT email, 'default' FROM users WHERE email=?");
     }
 
     /**

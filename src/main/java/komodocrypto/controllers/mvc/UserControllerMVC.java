@@ -19,14 +19,6 @@ public class UserControllerMVC {
     @Autowired
     ArbitrageService arbitrageService;
 
-    @RequestMapping(value={"/login"}, method = RequestMethod.GET)
-    public ModelAndView login(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        return modelAndView;
-    }
-
-
     @RequestMapping(value ={"/", "/home"}, method = RequestMethod.GET)
     public String home(Model model){
 /*        ArbitrageModel am = arbitrageService.getArbitrageOps();
