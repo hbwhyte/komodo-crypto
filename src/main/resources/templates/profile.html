@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Komodo Crypto</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/user.css}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container" id="header">
+
+    <div class="row"> <div class="col-sm-9">
+        <h1 class="title" >KOMODO CRYPTO</h1></div> <div class="col-sm-3">
+
+
+
+
+    </div></div></div> <nav class="navbar  navbar-fixed">
+    <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li><a th:href="@{/komodo/home}">Home</a></li>
+            <li><a th:href="@{/komodo/services}">Services</a></li>
+            <li><a th:href="@{/komodo/about}">About</a></li>
+            <li><a th:href="@{/komodo/faq}">FAQ</a></li>
+        </ul>
+        <form method="get"> <!-- th:action="@{/end point here}">-->
+            <button class="navbar-right signout" type="Submit" th:action="@{/komodo/logout}" method="get">Sign out</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container" id="main">
+    <div class="row"> <div class="col-sm-3 sidebar">
+        <ul class="sidebar">
+            <li th:text="${userWelcome}"></li>
+            <li><a th:href="@{/komodo/user}">Dashboard</a></li>
+            <li><a th:href="@{/komodo/profile}">Profile</a></li>
+            <li><a th:href="@{/komodo/wallet}">Wallet</a></li>
+            <li><a th:href="@{/komodo/history}">Trade History</a></li>
+            <li><a th:href="@{/komodo/settings}">Settings</a></li>
+        </ul>
+
+    </div>
+<div class="col-sm-8" th:object="${user}">
+    <h3>Full Name: <span th:text="*{first_name}"></span>&nbsp<span th:text="*{last_name}"></span>
+
+    </h3>
+    <h3>Email: <span th:text="*{email}"></span></h3>
+    <h3>Password: <span th:text="*{password}"></span></h3></br>
+
+    <button class="btn-main signout">Update Account</button>
+    <button class="btn-main signout">Delete Account</button>
+
+        </div></div></div>
+<footer>
+    <div id="footer">
+        <ul>
+            <li>Terms of use</li>
+            <li>About Us</li>
+            <li>Services</li>
+            <li>Developer Tools</li>
+            <li>Contact Us</li>
+
+        </ul>
+    </div>
+</footer>
+</div>
+</body>
+</html>

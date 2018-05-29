@@ -51,8 +51,9 @@ public class UserControllerMVC {
         ArrayList<ArbitrageModel> arbitrage = arbitrageService.getArbitrageData();
         modelAndView.addObject("arbitrage", arbitrage);
         /*will need to work with ouath to get username*/
+        User user = arbitrageService.tempUser();
         String username= "imaginary temp user";
-        modelAndView.addObject("userWelcome", "Welcome " + username);
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
     }
@@ -63,6 +64,18 @@ public class UserControllerMVC {
         User user = new User();
         modelAndView.addObject("user", user);
         modelAndView.setViewName("registration");
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ModelAndView profile() {
+        ModelAndView modelAndView = new ModelAndView();
+        //for when oath is added use:
+        //User user = new User();
+        User user = arbitrageService.tempUser();
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("profile");
 
         return modelAndView;
     }
@@ -88,4 +101,5 @@ public class UserControllerMVC {
         }
         return modelAndView;
     }
+
 }
