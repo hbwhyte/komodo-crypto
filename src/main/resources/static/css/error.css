@@ -1,0 +1,15 @@
+h1, p{
+color:#002949;
+}
+.img-responsive{
+margin-left:-30px;
+}
+
+.border{
+border:30px solid #236477;
+
+}
+html{
+ border:30px solid rgba(35, 100, 119, 50%);
+ background-color:rgb(124, 173, 62);
+}
