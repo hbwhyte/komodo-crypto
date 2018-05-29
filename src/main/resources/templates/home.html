@@ -37,8 +37,8 @@
                     <li><a th:href="@{/komodo/about}">About</a></li>
                     <li><a th:href="@{/komodo/faq}">FAQ</a></li>
                 </ul>
-                <form method="get"> <!-- th:action="@{/end point here}">-->
-                <button class="navbar-right registration" type="Submit" th:action="@{/komodo/registration}" method="get">Don't have an Account? Register Here</button>
+                <form method="get" th:action="@{/komodo/registration}">
+                <button class="navbar-right registration" type="Submit" >Don't have an Account? Register Here</button>
                 </form>
             </div>
         </nav>
