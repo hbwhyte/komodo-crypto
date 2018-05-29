@@ -1,5 +1,5 @@
 html, body{
-  background-color:#cfdfda !important;
+  background-color:#cfdfda ;
   margin:0px;
   padding:0px;
 }
@@ -24,7 +24,7 @@ width:100%;
   border-top-left-radius: 0px;
 }
 .navbar{
-border-bottom:5px solid #7cad3e;
+border-bottom:10px solid #7cad3e;
 }
 .container{
   width:100%;
@@ -42,13 +42,16 @@ input{
  box-shadow: 1px 2px 1px black;
  font-family: Arial;
  color:#173042;
- background: #cfdfda;
- border: outset #cfdfda 1px;
+ border: outset #236477 2px;
  font-weight: bold;
  padding:5px 10px 5px 10px;
 }
-.btn-main:hover, .navbar-nav li a:hover {
- background: #7cad3e;
+.navbar-nav li a:hover, .btn-main, #footer li a:hover {
+background: #7cad3e;
+text-shadow:none;
+}
+.btn-main:hover  {
+ background: #cfdfda;
  color: #173042;
 }
 
@@ -101,6 +104,7 @@ z-index:2;
 #footer li{
   padding:3px;
 }
+
 
 /*will probably have to be changed when content is dynamic*/
 #footer{
