@@ -1,14 +1,22 @@
 package komodocrypto.services.asset_tracking;
 
-import komodocrypto.mappers.GroupPortfolioMapper;
+import komodocrypto.mappers.database.GroupPortfolioMapper;
+import komodocrypto.mappers.database.TransactionLogMapper;
+import komodocrypto.model.database.Currency;
 import komodocrypto.model.database.Exchange;
-import komodocrypto.model.database.GroupPortfolio;
+import komodocrypto.model.database.TransactionLog;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
 
 public class AssetTrackingService {
 
     @Autowired
     GroupPortfolioMapper groupPortfolioMapper;
+
+    @Autowired
+    TransactionLogMapper transactionLogMapper;
+
 
     //updateAssetsUnderManagement() - this method will be called when the Ivan's trade executes
     // - he can pass this method any/all information he has about that trade:
@@ -17,16 +25,44 @@ public class AssetTrackingService {
     //                    - the prices
     //                    - the buy/sell amounts
 
-    public void recalculateBalance(int currency_pair_id, Exchange exchange, String transactionType){
 
-        /* transactionType determines buy, sell, or transfer
-                if buy
-                    buyAmount = amount*price-exchangename.getBuy_fee
-                if sell
-                    sellAmount = amount*price-exchangename.getSell_fee
-                if transfer
-                    transferAmount = amount*price-exchangename.getTransfer_fee
-         */
+
+    public TransactionLog recalculateBalance(Exchange exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm){
+
+        TransactionLog tldata = new TransactionLog();
+
+        int currencyId = currency.getCurrency_id();
+        int exchangeId = exchange.getExchange_id();
+        BigDecimal fee = BigDecimal.valueOf(0);
+        switch (transactionType){
+            case "buy":
+                fee = exchange.getBuy_fee();
+                break;
+            case "sell":
+                fee = exchange.getSell_fee();
+                break;
+            case "transfer":
+                fee = exchange.getTransfer_fee();
+                break;
+        }
+        BigDecimal feeAmount = amount.multiply(fee);
+        BigDecimal balanceBefore = transactionLogMapper.getBalanceBeforeTransaction(exchangeId, currencyId);
+        if (balanceBefore == null){
+            tldata.setBalance_before_transaction(BigDecimal.valueOf(0));
+        }else {
+            tldata.setBalance_before_transaction(balanceBefore);
+        }
+
+
+        BigDecimal balanceAfterTransaction = balanceBefore.subtract(feeAmount);
+
+        tldata.setCurrency_id(currencyId);
+        tldata.setExchange_id(exchangeId);
+        tldata.setTransaction_type(transactionType);
+        tldata.setTransaction_amount(amount.subtract(fee));
+        tldata.setTransaction_fee(feeAmount);
+        tldata.setAlgorithm(algorithm);
+        tldata.setBalance_after_transaction(balanceAfterTransaction);
 
        /* recalculate balance after buy/sell transaction
                 check balance on the exchange wallet of the selected currency
@@ -40,7 +76,7 @@ public class AssetTrackingService {
         /* recalculate balance after transfer
                 will have to take in the 2 exchanges where the money is transferred from and to
          */
-
+        return tldata;
     }
 
     public void updateAssetsUnderManagement(int buy_exchange_id, int sell_exchange_id, Exchange exchange_name,
