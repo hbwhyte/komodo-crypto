@@ -3,7 +3,7 @@ package komodocrypto.model.database;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class TransactionLog {
+public class Transaction {
 
     private int transaction_id;
 

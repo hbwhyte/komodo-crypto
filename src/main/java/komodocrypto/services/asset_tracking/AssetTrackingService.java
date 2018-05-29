@@ -1,10 +1,10 @@
 package komodocrypto.services.asset_tracking;
 
+import komodocrypto.mappers.database.ArbitrageTradeHistoryMapper;
 import komodocrypto.mappers.database.GroupPortfolioMapper;
-import komodocrypto.mappers.database.TransactionLogMapper;
 import komodocrypto.model.database.Currency;
 import komodocrypto.model.database.Exchange;
-import komodocrypto.model.database.TransactionLog;
+import komodocrypto.model.database.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ public class AssetTrackingService {
     GroupPortfolioMapper groupPortfolioMapper;
 
     @Autowired
-    TransactionLogMapper transactionLogMapper;
+    ArbitrageTradeHistoryMapper arbitrageTradeHistoryMapper;
 
 
     //updateAssetsUnderManagement() - this method will be called when the Ivan's trade executes
@@ -27,49 +27,12 @@ public class AssetTrackingService {
 
 
 
-    public TransactionLog recalculateBalance(Exchange exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm){
+    public Transaction updateBalance(Exchange[] exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm){
 
-        TransactionLog tldata = new TransactionLog();
+        Transaction tldata = new Transaction();
 
-        int currencyId = currency.getCurrency_id();
-        int exchangeId = exchange.getExchange_id();
-        BigDecimal fee = BigDecimal.valueOf(0);
-        switch (transactionType){
-            case "buy":
-                fee = exchange.getBuy_fee();
-                break;
-            case "sell":
-                fee = exchange.getSell_fee();
-                break;
-            case "transfer":
-                fee = exchange.getTransfer_fee();
-                break;
-        }
-        BigDecimal feeAmount = amount.multiply(fee);
-        BigDecimal balanceBefore = transactionLogMapper.getBalanceBeforeTransaction(exchangeId, currencyId);
-        if (balanceBefore == null){
-            tldata.setBalance_before_transaction(BigDecimal.valueOf(0));
-        }else {
-            tldata.setBalance_before_transaction(balanceBefore);
-        }
-
-
-        BigDecimal balanceAfterTransaction = balanceBefore.subtract(feeAmount);
-
-        tldata.setCurrency_id(currencyId);
-        tldata.setExchange_id(exchangeId);
-        tldata.setTransaction_type(transactionType);
-        tldata.setTransaction_amount(amount.subtract(fee));
-        tldata.setTransaction_fee(feeAmount);
-        tldata.setAlgorithm(algorithm);
-        tldata.setBalance_after_transaction(balanceAfterTransaction);
-
-       /* recalculate balance after buy/sell transaction
-                check balance on the exchange wallet of the selected currency
-                total1 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol1
-                total2 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol2
-                newTotal1 = total1 - sellAmount
-                newTotal2 = total2 + buyAmount
+       /* insert new balance after buy/sell transaction
+                api call to related exchanges
 
          */
 
@@ -80,7 +43,7 @@ public class AssetTrackingService {
     }
 
     public void updateAssetsUnderManagement(int buy_exchange_id, int sell_exchange_id, Exchange exchange_name,
-                                            double price, double amount, int signal, String status, int currency_pair_id){
+                                            double price, double amount, String status, int currency_pair_id){
 
         /* transactionType determines buy, sell, or transfer
                 if buy
