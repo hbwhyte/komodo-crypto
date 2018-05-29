@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registration Form</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row"> <div class="col-sm-3">
+    </div>
+        <div class="col-md-6">
+            <!--change th:action location for oauth if needed-->
+            <form autocomplete="off" action="#" th:action="@{/komodo/registration}"
+                  th:object="${user}" method="post" class="form-horizontal"
+                  role="form">
+
+
+
+                <h1>Registration Form</h1>
+
+                <input type="text" th:field="*{first_name}" placeholder="First Name"
+                       class="form-control"/>
+                <input type="text" th:field="*{last_name}" placeholder="Last Name"
+                       class="form-control"/>
+                <input type="email" th:field="*{email}" placeholder="Email"
+                       class="form-control"/>
+
+
+
+
+                <input type="password" th:field="*{password}"
+                       placeholder="Password" class="form-control"/> <label
+                     th:field="*{password}"
+            ></label>
+
+
+
+                <button type="submit" class="btn btnprimary btn-block">Register User</button>
+
+
+
+
+            </form>
+
+
+            <form th:action="@{/komodo/}" method="get">
+                <button class="btn btn-warning btn-block" type="Submit">Go To Login Page</button>
+            </form>
+            <!--if you have a success message:-->
+            <!--<span class="text-center" th:utext="${successMessage}"></span>-->
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
