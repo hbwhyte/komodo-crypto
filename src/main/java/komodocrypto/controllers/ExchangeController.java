@@ -19,6 +19,10 @@ import komodocrypto.services.exchanges.bitstamp.BitstampTradeImpl;
 import komodocrypto.services.exchanges.kraken.KrakenAccount;
 import komodocrypto.services.exchanges.kraken.KrakenTicker;
 import komodocrypto.services.exchanges.kraken.KrakenTradeImpl;
+import komodocrypto.services.exchanges.bittrex.BittrexAccount;
+import komodocrypto.services.exchanges.bittrex.BittrexTicker;
+import komodocrypto.services.exchanges.bittrex.BittrexTradeImpl;
+import org.knowm.xchange.bittrex.dto.account.BittrexBalance;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -369,4 +373,35 @@ public class ExchangeController {
             throws ExchangeConnectionException {
         return krakenTradeImpl.getOpenOrders();
     }
+
+    //=========================== Bittrex exchange ==============================
+
+    @Autowired
+    BittrexAccount bittrexAccount;
+
+    @Autowired
+    BittrexTicker bittrexTicker;
+
+    @Autowired
+    BittrexTradeImpl bittrexTrade;
+
+    /**
+     * Bittrex: [GET] Account information from Bittrex
+     *
+     * @return Account balance for a given asset in Bittrex
+     */
+    @GetMapping("/bittrex/balance")
+    public Balance getBittrexBalance(@RequestParam(value = "asset") Currency asset) throws ExchangeConnectionException {
+        return bittrexAccount.getCurrencyBalance(asset);
+    }
+
+/**
+ * * Bittrex: [GET] Return deposit address for rebalancing
+ */
+@GetMapping("/bittrex/deposit")
+public String getBittrexDepositInfo(@RequestParam(value = "asset") Currency asset)
+        throws ExchangeConnectionException {
+    return bittrexAccount.getDepositAddress(asset);
+    }
+
 }
