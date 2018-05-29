@@ -2,10 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Komodo Crypto</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/user.css}"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/user.css}"/>
 </head>
 <body>
 
@@ -35,7 +36,7 @@
 <div class="container" id="main">
     <div class="row"> <div class="col-sm-3 sidebar">
         <ul class="sidebar">
-            <li th:text="${userWelcome}"></li>
+            <li class="welcome"  th:text="${userWelcome}"></li>
             <li><a th:href="@{/komodo/user}">Dashboard</a></li>
             <li><a th:href="@{/komodo/profile}">Profile</a></li>
             <li><a th:href="@{/komodo/wallet}">Wallet</a></li>
@@ -44,15 +45,15 @@
         </ul>
 
     </div>
-<div class="col-sm-8" th:object="${user}">
+<div class="col-sm-8" id="profile" th:object="${user}">
     <h3>Full Name: <span th:text="*{first_name}"></span>&nbsp<span th:text="*{last_name}"></span>
 
     </h3>
     <h3>Email: <span th:text="*{email}"></span></h3>
     <h3>Password: <span th:text="*{password}"></span></h3></br>
 
-    <button class="btn-main signout">Update Account</button>
-    <button class="btn-main signout">Delete Account</button>
+    <button class="btn-main">Update Account</button>
+    <button class="btn-main">Delete Account</button>
 
         </div></div></div>
 <footer>

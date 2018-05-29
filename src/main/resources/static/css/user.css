@@ -1,67 +1,46 @@
-html, body{
- background-color:rgb(0, 41, 73);
-  margin:0px;
-  padding:0px;
-}
 
-#header, .navbar, .signout, ul li a, #footer, .sidebar{
+
+.signout, .sidebar{
   background:#236477;
   color:#cfdfda;
   font-weight:bold;
-
 }
 
-#header, .navbar, ul li a, #footer, .sidebar{
-
+.sidebar{
   text-shadow: 1px 1px 1px #173042;
-
-
-}
-#header, .sidebar{
-width:100%;
 }
 
-.title{
-  margin-top:4%;
-}
-.navbar, .signout{
+.signout{
   border:none;
   border-bottom-width: 0px;
   border-radius:0px;
   border-top-left-radius: 0px;
 }
-.container{
-  width:100%;
-
-}
 
 
-.btn-main {
- border-radius: 3px;
- box-shadow: 1px 2px 1px black;
- font-family: Arial;
- color: #236477;
- background: #cfdfda;
- border: outset #cfdfda 1px;
- font-weight: bold;
- padding:5px 10px 5px 10px;
-}
-.btn-main:hover, .navbar-nav li a:hover {
- background: #236477;
- color: #173042;
-}
 .sidebar{
-margin-top:-20px;
-padding-top:70px;
+margin-top:-15px;
+padding-top:50px;
 height: 700px;
 }
+.col-sm-3{
+border-right:15px solid rgb(124, 173, 62);
+}
 .sidebar li{
-padding-top:5px;
+padding:5px;
+font-size:20px;
+
+}
+.sidebar li a:hover{
+text-decoration:none;
+color: #7cad3e;
+text-shadow: 1px 1px .5px black;
 
 }
 
 .signout:hover{
   color:#7cad3e;
+  text-shadow: 1px 1px .5px black;
 }
 
 .signout{
@@ -69,34 +48,43 @@ padding-top:5px;
   z-index:2
 }
 
-.table{
-margin-top: 55px;
+.col-sm-8{
+margin-left: 55px;
 z-index:2;
+overflow: scroll;
 }
-.table-responsive{
-  z-index:3;
+#profile{
+margin-top:50px;
+margin-left: 95px;
+}
+
+h3{
+color:#173042;
+
 }
 #arbithead th{
   border-bottom: 3px solid #236477;
-  color:#173042;
   padding:5px;
   z-index:2;
 }
 #arbithead th, #arbitbody td{
 
   font-size: 17px;
+   color:#173042;
 }
-#arbitbody td{
+#arbitbody td, {
   border-bottom: 1px solid #236477;
-  color:#173042;
+
 }
 #arbitbody tr:hover{
     background:#7cad3e;
    box-shadow: 1px 1px 2px #236477;
 }
-/*#arbitbody td:hover{
-  text-shadow: .5px .5px 0px #236477;
- }*/
+
+.welcome{
+color:rgb(124, 173, 62);
+text-shadow: 1px 1px .5px black;
+}
 #footer ul{
   list-style-type:none;
   margin:5px;
@@ -121,8 +109,9 @@ ul{
   min-height:100%;
   margin:0px;
   padding:0px;
-  height:700px;
+  height:650px;
   z-index:3;
+
 }
 /*for smaller screens*/
 @media only screen and (max-width: 950px){
