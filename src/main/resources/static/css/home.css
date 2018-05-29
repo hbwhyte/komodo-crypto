@@ -58,6 +58,7 @@ text-shadow:none;
 
 .registration:hover{
   color:#7cad3e;
+  text-shadow: 1px 1px .5px black;
 }
 #login-btn{
   margin-top:5px;
@@ -114,6 +115,7 @@ z-index:2;
     z-index: 10;
     height: 170px;
     margin-top: -170px;
+    border-top:15px solid rgb(124, 173, 62);
 }
 p{
 color:#236477;
@@ -127,6 +129,7 @@ font-size:20px;
   height:700px;
   z-index:3;
   border-top:15px solid rgba(124, 173, 62, 50%);
+
 }
 /*for smaller screens*/
 @media only screen and (max-width: 950px){

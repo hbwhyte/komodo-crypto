@@ -19,9 +19,12 @@
 
 
 .sidebar{
-margin-top:0px;
+margin-top:-15px;
 padding-top:50px;
 height: 700px;
+}
+.col-sm-3{
+border-right:15px solid rgb(124, 173, 62);
 }
 .sidebar li{
 padding:5px;
@@ -31,11 +34,13 @@ font-size:20px;
 .sidebar li a:hover{
 text-decoration:none;
 color: #7cad3e;
+text-shadow: 1px 1px .5px black;
 
 }
 
 .signout:hover{
   color:#7cad3e;
+  text-shadow: 1px 1px .5px black;
 }
 
 .signout{
@@ -75,9 +80,11 @@ color:#173042;
     background:#7cad3e;
    box-shadow: 1px 1px 2px #236477;
 }
-/*#arbitbody td:hover{
-  text-shadow: .5px .5px 0px #236477;
- }*/
+
+.welcome{
+color:rgb(124, 173, 62);
+text-shadow: 1px 1px .5px black;
+}
 #footer ul{
   list-style-type:none;
   margin:5px;
