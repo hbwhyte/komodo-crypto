@@ -3,6 +3,7 @@ package komodocrypto.exceptions;
 
 import komodocrypto.exceptions.custom_exceptions.ClientException;
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+import komodocrypto.exceptions.custom_exceptions.InsufficientFundsException;
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.exceptions.custom_exceptions.UserException;
 import komodocrypto.model.RootResponse;
@@ -16,23 +17,31 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value=ClientException.class)
-    protected @ResponseBody RootResponse clientError(ClientException ex) {
+    @ExceptionHandler(value = ClientException.class)
+    protected @ResponseBody
+    RootResponse clientError(ClientException ex) {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value= IndicatorException.class)
-    protected @ResponseBody RootResponse indicatorError(IndicatorException ex) {
+    @ExceptionHandler(value = IndicatorException.class)
+    protected @ResponseBody
+    RootResponse indicatorError(IndicatorException ex) {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value=TableEmptyException.class)
-    protected @ResponseBody RootResponse tableEmptyError(TableEmptyException ex){
+    @ExceptionHandler(value = TableEmptyException.class)
+    protected @ResponseBody
+    RootResponse tableEmptyError(TableEmptyException ex) {
         return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value=UserException.class)
-    protected @ResponseBody RootResponse userException(UserException ex){
+//    @ExceptionHandler(value=InsufficientFundsException.class)
+//    protected @ResponseBody RootResponse insufficientFundsError(InsufficientFundsException ex) {
+//        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
+
+    @ExceptionHandler(value = UserException.class)
+    protected @ResponseBody
+    RootResponse userException(UserException ex) {
         return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
     }
 
@@ -58,5 +67,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //        c.setReason(e.getMessage());
 //        return c;
 //    }
-
 }

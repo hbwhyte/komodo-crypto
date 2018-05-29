@@ -50,6 +50,17 @@ public class ExchangeController {
     @Autowired
     BinanceTradeImpl binanceTrade;
 
+
+    @Autowired
+    BitstampAccount bitstampAccount;
+
+    @Autowired
+    BitstampTicker bitstampTicker;
+
+    @Autowired
+    BitstampTradeImpl bitstampTradeImpl;
+
+
     /**
      * Binance: [GET] Return account info
      *
@@ -149,16 +160,6 @@ public class ExchangeController {
     }
 
     //=========================== Bitstamp exchange ==============================
-
-    @Autowired
-    BitstampAccount bitstampAccount;
-
-    @Autowired
-    BitstampTicker bitstampTicker;
-
-    @Autowired
-    BitstampTradeImpl bitstampTradeImpl;
-
 
     /**
      * Bitstamp: [GET] Account information from Bitstamp

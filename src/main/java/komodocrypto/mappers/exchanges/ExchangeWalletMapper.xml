@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Defines the result map that links database table column names with POJO instance variables. -->
+
+<mapper namespace="komodocrypto.mappers.exchanges.ExchangeWalletMapper">
+
+    <resultMap id="ExchangeWallet" type="komodocrypto.model.exchanges.ExchangeWallet">
+        <id property="exchangeWalletId" column="exchange_wallet_id" />
+        <result property="currencyId" column="currency_id" />
+        <result property="depositAddress" column="deposit_address" />
+        <result property="portfolioId" column="portfolio_id" />
+        <result property="exchangeId" column="exchange_id" />
+    </resultMap>
+
+</mapper>

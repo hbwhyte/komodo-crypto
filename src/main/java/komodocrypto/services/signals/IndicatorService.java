@@ -1,10 +1,10 @@
 package komodocrypto.services.signals;
 
-import javafx.util.Pair;
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.mappers.CryptoMapper;
 import komodocrypto.model.cryptocompare.historical_data.Data;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.ta4j.core.*;
 import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.volume.NVIIndicator;
+import org.ta4j.core.indicators.volume.PVIIndicator;
 
 import java.time.*;
 
@@ -26,13 +28,17 @@ public class IndicatorService {
     CryptoMapper cryptoMapper;
 
     /**
-     * @param type         the indicator ("SMA" for Simple Moving Average, "EMA" for Exponential Moving Average)
+     * @param type         the indicator
+     *                     "SMA" for Simple Moving Average
+     *                     "EMA" for Exponential Moving Average
+     *                     "NVI" for Negative Volume Indicator
+     *                     "PVI" for Positive Volume Indicator
      * @param toCurrency   the base currency ("BTC")
      * @param fromCurrency the counter currency ("ETH")
      * @param trailing     the number of trailing days
      * @return a pair with the indicator type and the calculated indicator as Decimal
      */
-    public Pair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
+    public ImmutablePair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
             throws IndicatorException {
 
         TimeSeries series = buildDailySeries(fromCurrency, toCurrency);
@@ -57,6 +63,14 @@ public class IndicatorService {
                 indicator = new EMAIndicator(last, trailing);
                 break;
 
+            case "NVI":
+                indicator = new NVIIndicator(series);
+                break;
+
+            case "PVI":
+                indicator = new PVIIndicator(series);
+                break;
+
             default:
                 logger.error(type + " is an invalid indicator type");
                 throw new IndicatorException(type + " is an invalid indicator type", HttpStatus.BAD_REQUEST);
@@ -65,7 +79,7 @@ public class IndicatorService {
         Decimal output = indicator.getValue(series.getEndIndex());
 
         logger.info("type + indicator for " + series.getName() + " is " + output);
-        return new Pair<>(type, output);
+        return new ImmutablePair<>(type, output);
     }
 
     private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws IndicatorException {

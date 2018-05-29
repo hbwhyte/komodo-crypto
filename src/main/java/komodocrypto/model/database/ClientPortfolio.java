@@ -3,16 +3,25 @@ package komodocrypto.model.database;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class GroupPortfolio {
+public class ClientPortfolio {
 
-    int group_portfolio_id;
+    int client_portfolio_id;
+    int user_id;
     BigDecimal deposit_value;
     BigDecimal current_value;
-    int num_investors;
+    double percentage_ownership;
     Timestamp timestamp;
 
-    public int getGroup_portfolio_id() {
-        return group_portfolio_id;
+    public int getClient_portfolio_id() {
+        return client_portfolio_id;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public BigDecimal getDeposit_value() {
@@ -31,12 +40,12 @@ public class GroupPortfolio {
         this.current_value = current_value;
     }
 
-    public int getNum_investors() {
-        return num_investors;
+    public double getPercentage_ownership() {
+        return percentage_ownership;
     }
 
-    public void setNum_investors(int num_investors) {
-        this.num_investors = num_investors;
+    public void setPercentage_ownership(double percentage_ownership) {
+        this.percentage_ownership = percentage_ownership;
     }
 
     public Timestamp getTimestamp() {

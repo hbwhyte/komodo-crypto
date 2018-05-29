@@ -83,30 +83,4 @@ public class BinanceTicker {
             System.out.println(e.getError().getMsg());  // Invalid symbol
         }
     }
-
-    /**
-     * Temp method to test the backfill data.
-     *
-     * @param pair String of asset pair to be traded e.g. BTCLTC, BTCETH, ETHBTC (order matters)
-     * @return List of candlestick tickers
-     */
-    public List<Candlestick> getHistorical(String pair) {
-        // Connect to exchange
-        BinanceApiRestClient client = binanceUtil.createExchange();
-
-
-        // Weekly candlestick bars for a symbol
-        List<Candlestick> candlesticks = client.getCandlestickBars(pair, CandlestickInterval.DAILY);
-        System.out.println(candlesticks);
-
-        // Specific candlestick bar
-        List<Candlestick> specific = client.getCandlestickBars(
-                "ETHBTC", CandlestickInterval.DAILY,500,1499990400000L,1501199999999L);
-
-        System.out.println(specific);
-
-
-        return candlesticks;
-    }
-
 }
