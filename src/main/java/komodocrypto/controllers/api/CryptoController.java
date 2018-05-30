@@ -1,4 +1,4 @@
-package komodocrypto.controllers;
+package komodocrypto.controllers.api;
 
 import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.model.RootResponse;
@@ -64,9 +64,10 @@ public class CryptoController {
     }
 
     @GetMapping("historicaldata/binance")
-    public RootResponse findHistoricalGapsBinance(@RequestParam("from") String fromCurrency,
+    public RootResponse findHistoricalGapsBinance(@RequestParam("period") String period,
+                                                  @RequestParam("from") String fromCurrency,
                                                   @RequestParam("to") String toCurrency) {
-        return historicalService.findHistoricalGapsBinance(fromCurrency, toCurrency);
+        return historicalService.findHistoricalGapsBinance(period, fromCurrency, toCurrency);
     }
 
     // Adds and retrieves social media data.
