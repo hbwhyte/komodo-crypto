@@ -3,7 +3,9 @@ package komodocrypto.controllers.api;
 
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
 import komodocrypto.model.RootResponse;
+import komodocrypto.model.signals.Signal;
 import komodocrypto.services.signals.IndicatorService;
+import komodocrypto.services.signals.SignalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,28 @@ public class SignalController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
+    SignalService signalService;
+
+    @Autowired
     IndicatorService indicatorService;
+
+    /** TODO
+     * Retrieves the most recent signals from the DB
+     * @return an ArrayList of Signal Objects
+     */
+    @GetMapping("/recentsignals")
+    public RootResponse recentSignals() {
+        return new RootResponse(HttpStatus.OK, "OK", null);
+    }
+
+    /** CRON JOB
+     * Scans the currency pairs and determines any buy/sell signals
+     * @return an ArrayList of Signal Objects
+     */
+    @GetMapping("/scansignals")
+    public RootResponse scanSignals() throws IndicatorException {
+        return new RootResponse(HttpStatus.OK, "OK", signalService.scanSignals());
+    }
 
     /**
      * Calculates daily technical indicator
@@ -29,7 +52,7 @@ public class SignalController {
      * @return a pair with the indicator type and the calculated indicator as Decimal
      */
     @GetMapping("/dailyindicator")
-    public RootResponse indicator(@RequestParam(value="type") String type,
+    public RootResponse dailyIndicator(@RequestParam(value="type") String type,
                                   @RequestParam(value="fromcurrency") String fromCurrency,
                                   @RequestParam(value="tocurrency") String toCurrency,
                                   @RequestParam(value="trailing") int trailing) throws IndicatorException {
