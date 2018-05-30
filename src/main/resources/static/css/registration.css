@@ -1,0 +1,9 @@
+body, html{
+  background-color:#236477;
+  color:#cfdfda;
+  text-shadow: 1px 1px 1px #173042;
+  font-weight:bold;
+}
+.form-control{
+margin:5px;
+}

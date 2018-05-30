@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Komodo Crypto</title>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -37,7 +36,7 @@
 <div class="container" id="main">
     <div class="row"> <div class="col-sm-3 sidebar">
         <ul class="sidebar">
-            <li class="welcome" th:text="${userWelcome}"></li>
+            <li class="welcome"  th:text="${userWelcome}"></li>
             <li><a th:href="@{/komodo/user}">Dashboard</a></li>
             <li><a th:href="@{/komodo/profile}">Profile</a></li>
             <li><a th:href="@{/komodo/wallet}">Wallet</a></li>
@@ -46,33 +45,16 @@
         </ul>
 
     </div>
-        <div class=" col-sm-8 table-responsive">
-            <table class="table">
-                <thead id="arbithead">
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Currency Pair</th>
-                    <th>Difference</th>
-                    <th>Low Ask</th>
-                    <th>Low Ask Exchange</th>
-                    <th>High Bid</th>
-                    <th>High Bid Exchange</th>
+<div class="col-sm-8" id="profile" th:object="${user}">
+    <h3>Full Name: <span th:text="*{first_name}"></span>&nbsp<span th:text="*{last_name}"></span>
 
-                </tr>
-                </thead>
-                <tbody id="arbitbody"  th:block th:each="a : ${arbitrage}">
-                <tr>
-                    <td id="timestamp" th:text="${a.timestamp}"></td>
-                    <td id="currencyPair" th:text="${a.currencyPair}"> </td>
-                    <td id="difference" th:text="${a.difference}"></td>
-                    <td id = "lowAsk" th:text="${a.lowAsk}"> </td>
-                    <td id = "lowAskExchange" th:text="${a.lowAskExchange}"> </td>
-                    <td id = "highBid" th:text="${a.highBid}"> </td>
-                    <td id = "highBidExchange" th:text="${a.highBidExchange}"> </td>
-                </tr>
-                </th:block>
-                </tbody>
-            </table>
+    </h3>
+    <h3>Email: <span th:text="*{email}"></span></h3>
+    <h3>Password: <span th:text="*{password}"></span></h3></br>
+
+    <button class="btn-main">Update Account</button>
+    <button class="btn-main">Delete Account</button>
+
         </div></div></div>
 <footer>
     <div id="footer">

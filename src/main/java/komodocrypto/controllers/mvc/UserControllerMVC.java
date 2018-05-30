@@ -1,6 +1,7 @@
 package komodocrypto.controllers.mvc;
 
 import komodocrypto.model.arbitrage.ArbitrageModel;
+import komodocrypto.model.user.User;
 import komodocrypto.services.arbitrage.ArbitrageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,9 +52,53 @@ public class UserControllerMVC {
         ArrayList<ArbitrageModel> arbitrage = arbitrageService.getArbitrageData();
         modelAndView.addObject("arbitrage", arbitrage);
         /*will need to work with ouath to get username*/
-        String username= "imaginary temp user";
-        modelAndView.addObject("userWelcome", "Welcome " + username);
+        User user = arbitrageService.tempUser();
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
     }
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    public ModelAndView registration() {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = new User();
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("registration");
+
+        return modelAndView;
+    }
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ModelAndView profile() {
+        ModelAndView modelAndView = new ModelAndView();
+        //for when oath is added use:
+        //User user = new User();
+        User user = arbitrageService.tempUser();
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
+        modelAndView.setViewName("profile");
+
+        return modelAndView;
+    }
+
+    /* For Oauth...
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+        ModelAndView modelAndView = new ModelAndView();
+        User userExists =
+        if (userExists != null) {
+            bindingResult
+                    .rejectValue("name", "error.user",
+                            "There is already a user registered with that name");
+        }
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("registration");
+        } else {
+            .saveUser(user);
+            modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.addObject("user", new User());
+            modelAndView.setViewName("registration");
+
+        }
+        return modelAndView;
+    }*/
 }

@@ -12,8 +12,10 @@ import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.service.trade.TradeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,18 +25,19 @@ public class BittrexTradeImpl {
 
     TradeService bittrexTradeService;
 
-    public static void main(String[] args) {
-        BittrexTradeImpl bittrexTradeImpl = new BittrexTradeImpl();
-        bittrexTradeImpl.placeBuyLimitOrder(0.001, CurrencyPair.BTC_USDT, 7000, "1");
-        bittrexTradeImpl.placeSellLimitOrder(0.05, CurrencyPair.ETH_BTC, .1, "1");
-        bittrexTradeImpl.cancelAllOrders();
-    }
-    public BittrexTradeImpl() {
-        BittrexUtil bittrexUtil = new BittrexUtil();
-        Exchange bittrexExchange = bittrexUtil.createExchange();
-        bittrexTradeService = bittrexExchange.getTradeService();
-    }
+    @Autowired
+    BittrexUtil bittrexUtil;
 
+
+    /**
+     * Configures the accountService to be used setting it up with the credentials for the account
+     * defined for the Bittrex exchange.
+     */
+    @PostConstruct
+    private void setBittrexTradeService(){
+        Exchange bittrexExchange = bittrexUtil.createExchange();
+        this.bittrexTradeService = bittrexExchange.getTradeService();
+    }
 
     /**
      * Buying order (the trader is providing the counter currency)

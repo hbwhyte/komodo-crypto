@@ -11,7 +11,8 @@ public interface CryptoMapper {
 
     String fieldsValuesPeriodData =
             "(`time`, `fromCurrency`, `toCurrency`, `exchange`, `open`, `low`, `high`, `close`, `average`, `volumeFrom`, `volumeTo`) " +
-            "VALUES (#{time}, #{fromCurrency}, #{toCurrency}, #{exchange}, #{open}, #{low}, #{high}, #{close}, #{average}, #{volumeFrom}, #{volumeTo});";
+            "VALUES (#{time}, #{fromCurrency}, #{toCurrency}, #{exchange}, #{open}, #{low}, #{high}, #{close}, #{average}, #{volumeFrom}, #{volumeTo}) " +
+            "LIMIT 50;";
 
     String INSERT_PRICE_DAILY = "INSERT IGNORE INTO `komodoDB`.`daily` " + fieldsValuesPeriodData;
     String INSERT_PRICE_HOURLY = "INSERT IGNORE INTO `komodoDB`.`hourly` " + fieldsValuesPeriodData;
