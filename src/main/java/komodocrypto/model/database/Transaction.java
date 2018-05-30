@@ -6,19 +6,14 @@ import java.sql.Timestamp;
 public class Transaction {
 
     private int transaction_id;
-
-    //potentially fk from Exchange
-    private int exchange_id;
-    //potentially fk from Exchange
-    private int currency_id;
-    //possible values are inTransfer, outTransfer, sell, buy, deposit, withdrawal
-    private String transaction_type;
+    private int exchange_id; //potentially fk from Exchange
+    private int currency_pair_id; //fk from currency_pair
+    private String transaction_type; //possible values are inTransfer, outTransfer, sell, buy, deposit, withdrawal
     private BigDecimal transaction_amount;
     private BigDecimal transaction_fee;
     private BigDecimal balance_before_transaction;
     private BigDecimal balance_after_transaction;
-    //determine the method used that made the transaction happen
-    private String algorithm;
+    private String algorithm; //determine the method used that made the transaction happen
     private Timestamp timestamp;
 
     public int getTransaction_id() {
@@ -37,12 +32,12 @@ public class Transaction {
         this.exchange_id = exchange_id;
     }
 
-    public int getCurrency_id() {
-        return currency_id;
+    public int getCurrency_pair_id() {
+        return currency_pair_id;
     }
 
-    public void setCurrency_id(int currency_id) {
-        this.currency_id = currency_id;
+    public void setCurrency_pair_id(int currency_pair_id) {
+        this.currency_pair_id = currency_pair_id;
     }
 
     public String getTransaction_type() {
