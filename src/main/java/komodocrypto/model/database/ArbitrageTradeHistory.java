@@ -6,8 +6,9 @@ import java.sql.Timestamp;
 public class ArbitrageTradeHistory{
 
     int arbitrage_id;
-    int transaction_id;
     int currency_pair_id;
+    int buy_transaction_id;
+    int sell_transaction_id;
     BigDecimal sell_price;
     BigDecimal sell_amount;
     BigDecimal buy_price;
@@ -25,20 +26,28 @@ public class ArbitrageTradeHistory{
         this.arbitrage_id = arbitrage_id;
     }
 
-    public int getTransaction_id() {
-        return transaction_id;
-    }
-
-    public void setTransaction_id(int transaction_id) {
-        this.transaction_id = transaction_id;
-    }
-
     public int getCurrency_pair_id() {
         return currency_pair_id;
     }
 
     public void setCurrency_pair_id(int currency_pair_id) {
         this.currency_pair_id = currency_pair_id;
+    }
+
+    public int getBuy_transaction_id() {
+        return buy_transaction_id;
+    }
+
+    public void setBuy_transaction_id(int buy_transaction_id) {
+        this.buy_transaction_id = buy_transaction_id;
+    }
+
+    public int getSell_transaction_id() {
+        return sell_transaction_id;
+    }
+
+    public void setSell_transaction_id(int sell_transaction_id) {
+        this.sell_transaction_id = sell_transaction_id;
     }
 
     public BigDecimal getSell_price() {
