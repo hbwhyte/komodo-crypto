@@ -1,22 +1,20 @@
 
-        package komodocrypto.services.signals;
+package komodocrypto.services.signals;
 
-//        import javafx.util.Pair;
-        import komodocrypto.exceptions.custom_exceptions.IndicatorException;
-        import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
-        import komodocrypto.mappers.CryptoMapper;
-        import komodocrypto.model.cryptocompare.historical_data.Data;
-        import org.slf4j.Logger;
-        import org.slf4j.LoggerFactory;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.http.HttpStatus;
-        import org.springframework.stereotype.Service;
-        import org.ta4j.core.*;
-        import org.ta4j.core.indicators.EMAIndicator;
-        import org.ta4j.core.indicators.SMAIndicator;
-        import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+import komodocrypto.mappers.CryptoMapper;
+import komodocrypto.model.cryptocompare.historical_data.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.ta4j.core.*;
+import org.ta4j.core.indicators.EMAIndicator;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
-        import java.time.*;
+import java.time.*;
 
 @Service
 public class IndicatorService {
@@ -25,7 +23,6 @@ public class IndicatorService {
 
     @Autowired
     CryptoMapper cryptoMapper;
-    /*
 
     /**
      * @param type         the indicator ("SMA" for Simple Moving Average, "EMA" for Exponential Moving Average)
@@ -33,11 +30,11 @@ public class IndicatorService {
      * @param fromCurrency the counter currency ("ETH")
      * @param trailing     the number of trailing days
      * @return a pair with the indicator type and the calculated indicator as Decimal
-     */ /*
-   public Pair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
+     */
+    public Decimal calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
             throws IndicatorException {
 
-        TimeSeries series = buildDailySeries(fromCurrency, toCurrency);
+        TimeSeries series = buildDailySeries(fromCurrency.toUpperCase(), toCurrency.toUpperCase());
 
         // not enough data trailing data
         if (series.getBarCount() < trailing) {
@@ -67,8 +64,8 @@ public class IndicatorService {
         Decimal output = indicator.getValue(series.getEndIndex());
 
         logger.info("type + indicator for " + series.getName() + " is " + output);
-        return new Pair<>(type, output);
-    }*/
+        return output;
+    }
 
     private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws IndicatorException {
 
@@ -85,7 +82,7 @@ public class IndicatorService {
         for (Data data : dataArray) {
 
             // ensure correct currency pair
-            if (data.getToCurrency().equals(toCurrency)) {
+            if (data.getToCurrency().toUpperCase().equals(toCurrency)) {
 
                 // convert data
                 long epoch = data.getTime();

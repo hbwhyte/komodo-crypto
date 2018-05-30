@@ -1,8 +1,7 @@
-/*
+
 package komodocrypto.controllers.api;
 
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
-import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
 import komodocrypto.model.RootResponse;
 import komodocrypto.services.signals.IndicatorService;
 import org.slf4j.Logger;
@@ -21,16 +20,14 @@ public class SignalController {
     @Autowired
     IndicatorService indicatorService;
 
-    */
-/**
+    /**
      * Calculates daily technical indicator
      * @param type the indicator ("SMA" for Simple Moving Average, "EMA" for Exponential Moving Average)
      * @param fromCurrency the base currency
      * @param toCurrency the counter currency
      * @param trailing the number of trailing days
      * @return a pair with the indicator type and the calculated indicator as Decimal
-     *//*
-
+     */
     @GetMapping("/dailyindicator")
     public RootResponse indicator(@RequestParam(value="type") String type,
                                   @RequestParam(value="fromcurrency") String fromCurrency,
@@ -50,4 +47,4 @@ public class SignalController {
     }
 
 }
-*/
+
