@@ -93,18 +93,14 @@ text-shadow: 1px 1px .5px black;
 ul{
  list-style-type:none;
 }
-#footer li{
-  padding:3px;
+footer{
+margin-top:35px;
+background:rgba(124, 173, 62, 50%);
 }
 
+
 /*will probably have to be changed when content is dynamic*/
-#footer{
-   clear: both;
-    position: relative;
-    z-index: 10;
-    height: 170px;
-    margin-top: -170px;
-}
+
 #main{
   min-height:100%;
   margin:0px;

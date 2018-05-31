@@ -79,26 +79,15 @@ public class UserControllerMVC {
         return modelAndView;
     }
 
-    /* For Oauth...
+
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+    public ModelAndView createNewUser() {
         ModelAndView modelAndView = new ModelAndView();
-        User userExists =
-        if (userExists != null) {
-            bindingResult
-                    .rejectValue("name", "error.user",
-                            "There is already a user registered with that name");
-        }
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
-        } else {
-            .saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("registration");
 
+            modelAndView.addObject("successMessage", "User registered go to the homepage to login");
+
+            modelAndView.setViewName("registration");
+            return modelAndView;
         }
-        return modelAndView;
-    }*/
 }

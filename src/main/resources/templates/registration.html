@@ -12,8 +12,26 @@
 
 </head>
 <body>
+<div class="container" id="header">
 
-<div class="container">
+    <div class="row"> <div class="col-sm-9">
+        <h1 class="title" >KOMODO CRYPTO</h1></div> <div class="col-sm-3">
+</div></div></div> <nav class="navbar  navbar-fixed">
+    <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li><a th:href="@{/komodo/home}">Home</a></li>
+            <li><a th:href="@{/komodo/services}">Services</a></li>
+            <li><a th:href="@{/komodo/about}">About</a></li>
+            <li><a th:href="@{/komodo/faq}">FAQ</a></li>
+        </ul>
+       <!-- <form method="get"> &lt;!&ndash; th:action="@{/end point here}">&ndash;&gt;
+            <button class="navbar-right signout" type="Submit" th:action="@{/komodo/logout}" method="get">Sign out</button>
+        </form>-->
+    </div>
+</nav>
+
+<div class="container" id="centerForm">
     <div class="row"> <div class="col-sm-3">
     </div>
         <div class="col-md-6">
@@ -54,11 +72,23 @@
             <form th:action="@{/komodo/}" method="get">
                 <button class="btn-main btn-block" type="Submit">Go To Login Page</button>
             </form>
-            <!--if you have a success message:-->
-            <!--<span class="text-center" th:utext="${successMessage}"></span>-->
+            <span class="text-center" th:utext="${successMessage}"></span>
 
         </div>
     </div>
 </div>
+<footer>
+    <div id="footer">
+        <ul>
+            <li><a th:href="@{/komodo/terms}">Terms of use</a></li>
+            <li><a th:href="@{/komodo/about}">About Us</a></li>
+            <li><a th:href="@{/komodo/services}">Services</a></li>
+            <li><a th:href="@{/komodo/tools}">Developer Tools</a></li>
+            <li><a th:href="@{/komodo/contact}">Contact Us</a></li>
+
+        </ul>
+    </div>
+</footer>
+
 </body>
 </html>

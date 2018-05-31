@@ -1,9 +1,9 @@
-body, html{
-  background-color:#236477;
-  color:#cfdfda;
-  text-shadow: 1px 1px 1px #173042;
-  font-weight:bold;
-}
+
 .form-control{
 margin:5px;
+}
+#centerForm{
+border-top:15px solid rgba(124, 173, 62,50%);
+border-bottom:15px solid rgba(124, 173, 62,50%);
+padding:25px;
 }

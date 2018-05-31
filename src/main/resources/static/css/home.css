@@ -47,9 +47,19 @@ input{
  font-weight: bold;
  padding:5px 10px 5px 10px;
 }
-.navbar-nav li a:hover, .btn-main, #footer li a:hover {
+.navbar-nav li a:hover, .btn-main{
 background: #7cad3e;
 text-shadow:none;
+}
+footer{
+
+background:rgba(124, 173, 62, 50%);
+}
+
+#footer li a:hover{
+text-decoration:none;
+color: #7cad3e;
+text-shadow: 1px 1px .5px black;
 }
 .btn-main:hover  {
  background: #cfdfda;
@@ -113,9 +123,16 @@ z-index:2;
    clear: both;
     position: relative;
     z-index: 10;
-    height: 170px;
-    margin-top: -170px;
+    height: 185px;
+    margin-top: -185px;
     border-top:15px solid rgb(124, 173, 62);
+}
+#bar{
+
+ border-top:rgba(124, 173, 62, 50%);
+ height:15px;
+ z-index:11;
+
 }
 p{
 color:#236477;
