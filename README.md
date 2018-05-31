@@ -23,6 +23,24 @@ to your account.
 Before starting the application, you need to resolve the Binance dependency by
 running `mvn clean` from the main directory. 
 
+## Signals
+```
+/recentsignals?days={DAYS}
+```
+Pulls the most recent signals found for the given number of days
+
+```
+/scansignals
+```
+
+Scans currency pairs Komodo Crypto is tracking and determines buy/sell signals
+
+Current signals include:
+* Simple Trend (current price related to 50 Day Simple Moving Average)
+* Golden Cross / Death Cross
+* Cross of Moving Average Convergence Divergence (MACD)
+
+
 ## Indicators
 
 ```
