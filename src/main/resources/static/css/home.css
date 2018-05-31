@@ -1,5 +1,5 @@
 html, body{
-  background-color:#cfdfda !important;
+  background-color:#cfdfda ;
   margin:0px;
   padding:0px;
 }
@@ -24,7 +24,8 @@ width:100%;
   border-top-left-radius: 0px;
 }
 .navbar{
-border-bottom:5px solid #7cad3e;
+border-bottom:15px solid #7cad3e;
+margin-bottom:0px;
 }
 .container{
   width:100%;
@@ -42,18 +43,22 @@ input{
  box-shadow: 1px 2px 1px black;
  font-family: Arial;
  color:#173042;
- background: #cfdfda;
- border: outset #cfdfda 1px;
+ border: outset #236477 2px;
  font-weight: bold;
  padding:5px 10px 5px 10px;
 }
-.btn-main:hover, .navbar-nav li a:hover {
- background: #7cad3e;
+.navbar-nav li a:hover, .btn-main, #footer li a:hover {
+background: #7cad3e;
+text-shadow:none;
+}
+.btn-main:hover  {
+ background: #cfdfda;
  color: #173042;
 }
 
 .registration:hover{
   color:#7cad3e;
+  text-shadow: 1px 1px .5px black;
 }
 #login-btn{
   margin-top:5px;
@@ -102,6 +107,7 @@ z-index:2;
   padding:3px;
 }
 
+
 /*will probably have to be changed when content is dynamic*/
 #footer{
    clear: both;
@@ -109,24 +115,21 @@ z-index:2;
     z-index: 10;
     height: 170px;
     margin-top: -170px;
+    border-top:15px solid rgb(124, 173, 62);
 }
 p{
 color:#236477;
 font-size:20px;
 }
-.border{
-border:30px solid #236477;
 
-}
-.img-komodo, .col-md-5{
-padding-left:0px;
-margin-left:-30px;
-}
+
 
 #main{
   min-height:100%;
   height:700px;
   z-index:3;
+  border-top:15px solid rgba(124, 173, 62, 50%);
+
 }
 /*for smaller screens*/
 @media only screen and (max-width: 950px){

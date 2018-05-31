@@ -52,7 +52,6 @@ public class UserControllerMVC {
         modelAndView.addObject("arbitrage", arbitrage);
         /*will need to work with ouath to get username*/
         User user = arbitrageService.tempUser();
-        String username= "imaginary temp user";
         modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
@@ -75,6 +74,7 @@ public class UserControllerMVC {
         //User user = new User();
         User user = arbitrageService.tempUser();
         modelAndView.addObject("user", user);
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("profile");
 
         return modelAndView;

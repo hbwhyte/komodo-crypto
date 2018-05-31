@@ -3,10 +3,12 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Registration Form</title>
-    <link rel="stylesheet" th:href="@{/css/home.css}">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
 
 </head>
 <body>
@@ -34,12 +36,12 @@
                     th:field="*{password}"
             ></label>
 
-                <button type="submit" class="btn btnprimary btn-block">Register User</button>
+                <button type="submit" class="btn-main btn-block">Register User</button>
 
             </form>
 
             <form th:action="@{/komodo/}" method="get">
-                <button class="btn btn-warning btn-block" type="Submit">Go To Login Page</button>
+                <button class="btn-main btn-block" type="Submit">Go To Login Page</button>
             </form>
 
             <!--if you have a success message:-->
