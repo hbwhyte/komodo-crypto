@@ -2,6 +2,7 @@
 package komodocrypto.controllers.api;
 
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+import komodocrypto.mappers.SignalMapper;
 import komodocrypto.model.RootResponse;
 import komodocrypto.model.signals.Signal;
 import komodocrypto.services.signals.IndicatorService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+
 @RestController
 public class SignalController {
 
@@ -25,13 +28,23 @@ public class SignalController {
     @Autowired
     IndicatorService indicatorService;
 
-    /** TODO
-     * Retrieves the most recent signals from the DB
+    @Autowired
+    SignalMapper signalMapper;
+
+    /**
+     * Retrieves the most recent signals for the given number of days from the DB
      * @return an ArrayList of Signal Objects
      */
     @GetMapping("/recentsignals")
-    public RootResponse recentSignals() {
-        return new RootResponse(HttpStatus.OK, "OK", null);
+    public RootResponse recentSignals(@RequestParam(value="days") int days) {
+
+        // calculate oldest day: today - days requested
+        long time = (System.currentTimeMillis() / 1000) - (days * 86400);
+
+        // pull signals from DB
+        ArrayList<Signal> signals = signalMapper.getRecentSignals(time);
+
+        return new RootResponse(HttpStatus.OK, "OK", signals);
     }
 
     /** CRON JOB

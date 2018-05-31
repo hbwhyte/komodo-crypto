@@ -1,6 +1,7 @@
 package komodocrypto.services.signals;
 
 import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+import komodocrypto.mappers.SignalMapper;
 import komodocrypto.model.signals.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,10 @@ public class SignalService {
 
     @Autowired
     IndicatorService indicatorService;
+
+    @Autowired
+    SignalMapper signalMapper;
+
 
     final String[][] TRACKING = {{"ETH", "BTC"},
                                  {"BCH", "BTC"},
@@ -37,40 +42,48 @@ public class SignalService {
                 String name = (rating > 0) ? "Golden Cross" : "Death Cross";
 
                 Signal s = new Signal();
-                s.setName(name);
+                s.setDescription(name);
+                s.setTime(System.currentTimeMillis() / 1000);
                 s.setFromCurrency(pair[0]);
                 s.setToCurrency(pair[1]);
                 s.setSell_neutral_buy(rating);
+
                 signals.add(s);
+                signalMapper.insertSignal(s);
             }
 
             if ((rating = crossMACD(pair[0], pair[1])) != 0) {
                 String name = (rating > 0) ? "Bullish MACD" : "Bearish MACD";
 
                 Signal s = new Signal();
-                s.setName(name);
+                s.setDescription(name);
+                s.setTime(System.currentTimeMillis() / 1000);
                 s.setFromCurrency(pair[0]);
                 s.setToCurrency(pair[1]);
                 s.setSell_neutral_buy(rating);
+
                 signals.add(s);
+                signalMapper.insertSignal(s);
             }
 
             if ((rating = simpleTrend(pair[0], pair[1])) != 0) {
                 String name = (rating > 0) ? "Potential Bullish" : "Potential Bearish";
 
                 Signal s = new Signal();
-                s.setName(name);
+                s.setDescription(name);
+                s.setTime(System.currentTimeMillis() / 1000);
                 s.setFromCurrency(pair[0]);
                 s.setToCurrency(pair[1]);
                 s.setSell_neutral_buy(rating);
+
                 signals.add(s);
+                signalMapper.insertSignal(s);
             }
 
         }
 
         return signals;
     }
-
 
     /**
      * Determines if there is a buy/sell signal based on current price compared to fifty day simple moving average

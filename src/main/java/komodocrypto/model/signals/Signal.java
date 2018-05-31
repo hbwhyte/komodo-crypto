@@ -2,17 +2,26 @@ package komodocrypto.model.signals;
 
 public class Signal {
 
-    private String name;
+    private String description;
+    private long time;
     private String fromCurrency;
     private String toCurrency;
     private float sell_neutral_buy;
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public String getFromCurrency() {
