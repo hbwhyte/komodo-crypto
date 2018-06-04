@@ -20,7 +20,7 @@ BEGIN
 					(SELECT `symbol` FROM `komodoDB`.`currency` WHERE `currency_id` = @j)
 					);
 			END IF;
-            SET @j := @j + 1;
+        	    SET @j := @j + 1;
 		END WHILE;
 		SET @i := @i + 1;
 	END WHILE;
