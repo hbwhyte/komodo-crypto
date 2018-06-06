@@ -23,25 +23,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value = IndicatorException.class)
-    protected @ResponseBody
-    RootResponse indicatorError(IndicatorException ex) {
+    @ExceptionHandler(value=UserException.class)
+    protected @ResponseBody RootResponse userError(UserException ex) {
+        return new RootResponse(ex.getStatus(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(value= IndicatorException.class)
+    protected @ResponseBody RootResponse indicatorError(IndicatorException ex) {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
     @ExceptionHandler(value = TableEmptyException.class)
     protected @ResponseBody
     RootResponse tableEmptyError(TableEmptyException ex) {
-        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
-    }
-
-//    @ExceptionHandler(value=InsufficientFundsException.class)
-//    protected @ResponseBody RootResponse insufficientFundsError(InsufficientFundsException ex) {
-//        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
-
-    @ExceptionHandler(value = UserException.class)
-    protected @ResponseBody
-    RootResponse userException(UserException ex) {
         return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
     }
 

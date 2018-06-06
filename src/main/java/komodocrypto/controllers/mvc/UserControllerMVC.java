@@ -1,14 +1,19 @@
 package komodocrypto.controllers.mvc;
 
+import komodocrypto.exceptions.custom_exceptions.UserException;
 import komodocrypto.model.arbitrage.ArbitrageModel;
+import komodocrypto.model.user.User;
 import komodocrypto.services.arbitrage.ArbitrageService;
+import komodocrypto.services.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -19,13 +24,8 @@ public class UserControllerMVC {
     @Autowired
     ArbitrageService arbitrageService;
 
-    @RequestMapping(value={"/login"}, method = RequestMethod.GET)
-    public ModelAndView login(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("login");
-        return modelAndView;
-    }
-
+    @Autowired
+    UserService userService;
 
     @RequestMapping(value ={"/", "/home"}, method = RequestMethod.GET)
     public String home(Model model){
@@ -51,9 +51,55 @@ public class UserControllerMVC {
         ArrayList<ArbitrageModel> arbitrage = arbitrageService.getArbitrageData();
         modelAndView.addObject("arbitrage", arbitrage);
         /*will need to work with ouath to get username*/
-        String username= "imaginary temp user";
-        modelAndView.addObject("userWelcome", "Welcome " + username);
+        User user = arbitrageService.tempUser();
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
     }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    public ModelAndView registration() {
+        ModelAndView modelAndView = new ModelAndView();
+        User user = new User();
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("registration");
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ModelAndView profile() {
+        ModelAndView modelAndView = new ModelAndView();
+        //for when oath is added use:
+        //User user = new User();
+        User user = arbitrageService.tempUser();
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
+        modelAndView.setViewName("profile");
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) throws UserException {
+        ModelAndView modelAndView = new ModelAndView();
+
+        User userExists = userService.getUserByID(user.getUser_id());
+        if (userExists != null) {
+            bindingResult
+                    .rejectValue("name", "error.user",
+                            "There is already a user registered with that name");
+        }
+
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("registration");
+        } else {
+            userService.createUser(user);
+            modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.addObject("user", new User());
+            modelAndView.setViewName("registration");
+        }
+        return modelAndView;
+    }
+
 }

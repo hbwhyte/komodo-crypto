@@ -1,23 +1,21 @@
-package komodocrypto.services.signals;
+        package komodocrypto.services.signals;
 
-import komodocrypto.exceptions.custom_exceptions.IndicatorException;
-import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
-import komodocrypto.mappers.CryptoMapper;
-import komodocrypto.model.cryptocompare.historical_data.Data;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.ta4j.core.*;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.SMAIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.volume.NVIIndicator;
-import org.ta4j.core.indicators.volume.PVIIndicator;
+//        import javafx.util.Pair;
+        import komodocrypto.exceptions.custom_exceptions.IndicatorException;
+        import komodocrypto.exceptions.custom_exceptions.TableEmptyException;
+        import komodocrypto.mappers.CryptoMapper;
+        import komodocrypto.model.cryptocompare.historical_data.Data;
+        import org.slf4j.Logger;
+        import org.slf4j.LoggerFactory;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.http.HttpStatus;
+        import org.springframework.stereotype.Service;
+        import org.ta4j.core.*;
+        import org.ta4j.core.indicators.EMAIndicator;
+        import org.ta4j.core.indicators.SMAIndicator;
+        import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
-import java.time.*;
+        import java.time.*;
 
 @Service
 public class IndicatorService {
@@ -26,6 +24,7 @@ public class IndicatorService {
 
     @Autowired
     CryptoMapper cryptoMapper;
+    /*
 
     /**
      * @param type         the indicator
@@ -37,8 +36,9 @@ public class IndicatorService {
      * @param fromCurrency the counter currency ("ETH")
      * @param trailing     the number of trailing days
      * @return a pair with the indicator type and the calculated indicator as Decimal
-     */
-    public ImmutablePair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
+     */ /*
+   public Pair<String, Decimal> calculateDailyIndicator(String type, String fromCurrency, String toCurrency, int trailing)
+
             throws IndicatorException {
 
         TimeSeries series = buildDailySeries(fromCurrency, toCurrency);
@@ -79,8 +79,9 @@ public class IndicatorService {
         Decimal output = indicator.getValue(series.getEndIndex());
 
         logger.info("type + indicator for " + series.getName() + " is " + output);
-        return new ImmutablePair<>(type, output);
-    }
+
+        return new Pair<>(type, output);
+    }*/
 
     private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws IndicatorException {
 
@@ -125,3 +126,4 @@ public class IndicatorService {
     }
 
 }
+

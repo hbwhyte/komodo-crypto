@@ -8,6 +8,7 @@ public class User {
     String password;
     String email;
     int userSettings_id;
+    int active;
 
     public User(int user_id, String first_name, String last_name, String password, String email, int userSettings_id) {
         this.user_id = user_id;
@@ -16,6 +17,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.userSettings_id = userSettings_id;
+        active = 1;
     }
 
     public User() {
@@ -68,4 +70,13 @@ public class User {
     public void setUserSettings_id(int userSettings_id) {
         this.userSettings_id = userSettings_id;
     }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
 }

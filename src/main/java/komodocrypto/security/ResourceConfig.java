@@ -1,6 +1,7 @@
-package komodocrypto.security.oauth2;
+package komodocrypto.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
  */
 @Configuration
 @EnableResourceServer
+@Order(1)
 public class ResourceConfig extends ResourceServerConfigurerAdapter {
 
     /**
@@ -18,11 +20,12 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            // disable cross site risk forgery (vulnerability for now)
-            .csrf().disable()
+                // disable cross site risk forgery (vulnerability for now)
+                .csrf().disable()
 
-            // determine security for endpoints
-            .authorizeRequests()
-                .antMatchers("/test-security").authenticated();
+                // secure endpoints
+                .antMatcher("/test-security").authorizeRequests().anyRequest().authenticated();
+
     }
+
 }

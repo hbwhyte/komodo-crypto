@@ -1,9 +1,7 @@
-package komodocrypto.security.oauth2;
+package komodocrypto.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -23,6 +21,9 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     /**
      * Configure client credentials
      */
@@ -34,7 +35,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
                 .jdbc(dataSource)
 
                 // encode with BCrypt
-                .passwordEncoder(passwordEncoder());
+                .passwordEncoder(passwordEncoder);
     }
 
     /**
@@ -42,14 +43,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.passwordEncoder(passwordEncoder());
+        security.passwordEncoder(passwordEncoder);
     }
 
-    /**
-     * Encoder bean used for client secrets
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

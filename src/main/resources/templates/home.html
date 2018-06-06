@@ -2,10 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Komodo Crypto</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+
 </head>
 <body>
     <div class="container" id="header">
@@ -14,9 +16,9 @@
                 <h1 class="title" >KOMODO CRYPTO</h1>
             </div>
             <div class="col-sm-3 login">
-                <form method="POST" class="form-signin" > <!-- th:action="@{/end point here}">-->
-                    <input type="text" id="username" placeholder="Username"/>
-                    <input type="password" id="password" placeholder="Password" />
+                <form method="POST" class="form-signin">
+                    <input type="text" id="username" name="username" placeholder="Username"/>
+                    <input type="password" id="password" name="password" placeholder="Password" />
 
         <!-- error messaage for when oauth is added
 <div align="center" th:if="${param.error}">
@@ -37,8 +39,8 @@
                     <li><a th:href="@{/komodo/about}">About</a></li>
                     <li><a th:href="@{/komodo/faq}">FAQ</a></li>
                 </ul>
-                <form method="get"> <!-- th:action="@{/end point here}">-->
-                <button class="navbar-right registration" type="Submit" th:action="@{/komodo/registration}" method="get">Don't have an Account? Register Here</button>
+                <form method="get" th:action="@{/komodo/registration}">
+                <button class="navbar-right registration" type="Submit" >Don't have an Account? Register Here</button>
                 </form>
             </div>
         </nav>

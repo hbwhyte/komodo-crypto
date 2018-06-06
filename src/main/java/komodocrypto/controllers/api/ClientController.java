@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class SecurityController {
+public class ClientController {
 
     @Autowired
     ClientMapper clientMapper;
