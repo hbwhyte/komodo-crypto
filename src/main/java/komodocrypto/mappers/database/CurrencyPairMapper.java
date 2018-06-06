@@ -15,5 +15,5 @@ public interface CurrencyPairMapper {
 
     @Select(GET_CURRENCY_ID)
     public int getCurrencyPairId(String symbol1, String symbol2);
-    
+
 }

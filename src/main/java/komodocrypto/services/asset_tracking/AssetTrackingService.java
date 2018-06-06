@@ -63,7 +63,7 @@ public class AssetTrackingService {
 
         BigDecimal balanceAfterTransaction = balanceBefore.subtract(feeAmount);
 
-        tldata.setCurrency_id(currencyId);
+        tldata.setCurrency_pair_id(currencyId);
         tldata.setExchange_id(exchangeId);
         tldata.setTransaction_type(transactionType);
         tldata.setTransaction_amount(amount.subtract(fee));
@@ -78,6 +78,7 @@ public class AssetTrackingService {
                 newTotal1 = total1 - sellAmount
                 newTotal2 = total2 + buyAmount
             */
+        return tldata;
     }
 
 
