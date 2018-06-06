@@ -1,3 +1,4 @@
+
         package komodocrypto.services.signals;
 
 //        import javafx.util.Pair;
@@ -16,7 +17,6 @@
         import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
         import java.time.*;
-
 @Service
 public class IndicatorService {
 
@@ -83,7 +83,8 @@ public class IndicatorService {
         return new Pair<>(type, output);
     }*/
 
-    private TimeSeries buildDailySeries(String fromCurrency, String toCurrency) throws IndicatorException {
+
+    private TimeSeries buildDailySeries (String fromCurrency, String toCurrency) throws IndicatorException {
 
         Data[] dataArray = cryptoMapper.getDataDailyByPairSorted(fromCurrency, toCurrency);
 
@@ -118,12 +119,10 @@ public class IndicatorService {
                 series.addBar(bar);
 
             }
-
         }
 
         logger.info("timeseries built for " + series.getName());
         return series;
     }
-
 }
 

@@ -1,11 +1,12 @@
 package komodocrypto.model.arbitrage;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 public class ArbitrageModel {
 
     private int id;
-    private int timestamp;
+    private Timestamp timestamp;
     private String currencyPair;
     private BigDecimal difference;
     private BigDecimal lowAsk;
@@ -21,11 +22,11 @@ public class ArbitrageModel {
         this.id = id;
     }
 
-    public int getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

@@ -320,7 +320,7 @@ public class CryptoCompareHistoricalService {
     }
 
     // Finds gaps in database where CryptoCompare has rows but only zero-value data for the Binance exchange.
-    public void findHistoricalGapsBinance(String period, String fromCurrency, String toCurrency) {
+    public RootResponse findHistoricalGapsBinance(String period, String fromCurrency, String toCurrency) {
 
         // The array of data objects containing no CryptoCompare data
         Data[] missing;
@@ -372,6 +372,8 @@ public class CryptoCompareHistoricalService {
 
             if (i == missing.length - 2) updateHistDataBinance(period, missing);
         }
+
+        return new RootResponse(HttpStatus.OK, "Query successful.", getResponseData());
     }
 
     // Fills gaps in database where CryptoCompare has no historical data for the Binance exchange.

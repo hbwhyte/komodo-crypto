@@ -1,4 +1,4 @@
-package komodocrypto.model.database;
+package komodocrypto.model.arbitrage;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
