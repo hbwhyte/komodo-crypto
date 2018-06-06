@@ -30,6 +30,10 @@ public class KomodoAccountInfo {
             case "binance" : {
 
             }
+
+            case "bittrex" : {
+
+            }
             default:
                 throw new ExchangeConnectionException("Invalid Exchange", HttpStatus.BAD_REQUEST);
         }
