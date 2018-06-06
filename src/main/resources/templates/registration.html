@@ -22,8 +22,6 @@
                   th:object="${user}" method="post" class="form-horizontal"
                   role="form">
 
-
-
                 <h1>Registration Form</h1>
 
                 <input type="text" th:field="*{first_name}" placeholder="First Name"
@@ -33,29 +31,22 @@
                 <input type="email" th:field="*{email}" placeholder="Email"
                        class="form-control"/>
 
-
-
-
                 <input type="password" th:field="*{password}"
                        placeholder="Password" class="form-control"/> <label
-                     th:field="*{password}"
+                    th:field="*{password}"
             ></label>
-
-
 
                 <button type="submit" class="btn-main btn-block">Register User</button>
 
-
-
-
             </form>
-
 
             <form th:action="@{/komodo/}" method="get">
                 <button class="btn-main btn-block" type="Submit">Go To Login Page</button>
             </form>
+
             <!--if you have a success message:-->
-            <!--<span class="text-center" th:utext="${successMessage}"></span>-->
+            <span class="text-center" th:utext="${successMessage}"></span>
+
 
         </div>
     </div>
