@@ -1,20 +1,24 @@
 package komodocrypto.exceptions.custom_exceptions;
 
+
+import org.springframework.http.HttpStatus;
+
 public class UserException extends Exception {
 
-    int status;
+    private String message;
+    private HttpStatus status;
 
-    public UserException(String message) {
-        super(message);
-        this.status = 400;
+    public UserException(String message, HttpStatus status) {
+        this.message = message;
+        this.status = status;
     }
 
     @Override
-    public String toString() {
-        return "UserException{} " + super.getMessage();
+    public String getMessage() {
+        return message;
     }
 
-    public int getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 }
