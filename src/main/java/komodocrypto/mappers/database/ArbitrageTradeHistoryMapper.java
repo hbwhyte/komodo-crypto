@@ -1,6 +1,6 @@
 package komodocrypto.mappers.database;
 
-import komodocrypto.model.database.ArbitrageTradeHistory;
+import komodocrypto.model.arbitrage.ArbitrageTradeHistory;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
