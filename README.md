@@ -35,8 +35,12 @@ An indicator can be the following:
 
 The trailing days must be between one and the historical daily data available.
 
-## Security
-The Komodo API is secured with OAuth2. To access secure endpoints you need to exchange your client
+## MVC Security
+The Komodo MVC is secured with Basic Auth. You must register and obtain a valid username
+and password before you can use this application.
+
+## API Security
+The Komodo API is secured with OAuth2 Client Credentials Grants. To access secure endpoints you need to exchange your client
 credentials for an access token.
 
 You can register client credentials by making a POST request to the Authorization Server with your email as the

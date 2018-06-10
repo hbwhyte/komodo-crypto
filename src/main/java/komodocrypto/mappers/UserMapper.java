@@ -1,4 +1,4 @@
-package komodocrypto.mappers.user;
+package komodocrypto.mappers;
 
 import komodocrypto.model.user.User;
 import org.apache.ibatis.annotations.*;

@@ -41,6 +41,7 @@ public class ExchangeService {
             String exchangeName = ei.getExchangeName();
 
             try {
+                // Use the factory to get exchange API using default settings.
                 exchange = ExchangeFactory.INSTANCE.createExchange(exchangeName);
             } catch (Exception e) {
                 exchange = null;

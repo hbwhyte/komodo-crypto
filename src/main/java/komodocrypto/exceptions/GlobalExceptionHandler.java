@@ -23,9 +23,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
-    @ExceptionHandler(value = IndicatorException.class)
-    protected @ResponseBody
-    RootResponse indicatorError(IndicatorException ex) {
+    @ExceptionHandler(value=UserException.class)
+    protected @ResponseBody RootResponse userError(UserException ex) {
+        return new RootResponse(ex.getStatus(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(value= IndicatorException.class)
+    protected @ResponseBody RootResponse indicatorError(IndicatorException ex) {
         return new RootResponse(ex.getStatus(), ex.getMessage(), null);
     }
 
@@ -34,25 +38,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     RootResponse tableEmptyError(TableEmptyException ex) {
         return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
     }
-
-//    @ExceptionHandler(value=InsufficientFundsException.class)
-//    protected @ResponseBody RootResponse insufficientFundsError(InsufficientFundsException ex) {
-//        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
-
-    @ExceptionHandler(value = UserException.class)
-    protected @ResponseBody
-    RootResponse userException(UserException ex) {
-        return new RootResponse(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null);
-    }
-
-//    @ExceptionHandler(TableEmptyException.class)
-//    public @ResponseBody
-//    TableEmptyException tableEmpty(TableEmptyException e) {
-//        TableEmptyException error = new TableEmptyException();
-//        error.setMessage("No data found.");
-//        error.setStatus(204);
-//        return error;
-//    }
 
     /**
      * Generates a nicely formatted Custom Exception response

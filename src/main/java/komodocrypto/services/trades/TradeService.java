@@ -53,7 +53,7 @@ public class TradeService {
     // Builds a TradeData object, containing the information needed to execute a trade and persist its data.
     // NOTE: May need to overload this method or something when doing manual trades.
     // TODO Look into how to loosely couple the TradeData object with the classes where it's used.
-    public void buildTradeData(Exchange[] exchanges, CurrencyPair currencyPair, Timestamp timeArbOppIdentified) throws InsufficientFundsException {
+    public void buildTradeModel(Exchange[] exchanges, CurrencyPair currencyPair, Timestamp timeArbOppIdentified) throws InsufficientFundsException {
 
         logger.info("Building trade model...");
 

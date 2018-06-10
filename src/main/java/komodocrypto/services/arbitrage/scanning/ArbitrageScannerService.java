@@ -74,7 +74,7 @@ public class ArbitrageScannerService {
 
             // Creates and begins initializing the values of the TradeData object containing the data to make a trade
             // and persist the data.
-            tradeService.buildTradeData(exchanges, cp, timestamp);
+            tradeService.buildTradeModel(exchanges, cp, timestamp);
 
             // Executes the mock trade.
             String fromCurrency = pairString.substring(0, pairString.indexOf("/"));
