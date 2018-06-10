@@ -163,7 +163,7 @@ public class ArbitrageScannerService {
     }
 
     /**
-     * Returns a boolean value indicating if the given exchange suuports the given currency pair.
+     * Returns a boolean value indicating if the given exchange supports the given currency pair.
      * @param ex - An exchange object
      * @param currencyPair - A currency pair object
      * @return true if the currency pair is supported, false if it is not
