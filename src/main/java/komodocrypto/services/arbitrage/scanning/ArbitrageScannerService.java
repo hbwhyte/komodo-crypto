@@ -1,10 +1,13 @@
 package komodocrypto.services.arbitrage.scanning;
 
 import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
+import komodocrypto.mappers.ArbitrageMapper;
+import komodocrypto.model.arbitrage.ArbitrageModel;
 import komodocrypto.services.exchanges.ExchangeService;
 import komodocrypto.services.exchanges.binance.BinanceTicker;
 import komodocrypto.services.exchanges.bitstamp.BitstampTicker;
 import komodocrypto.services.exchanges.bittrex.BittrexTicker;
+import komodocrypto.services.trades.TradeService;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.binance.BinanceExchange;
@@ -20,11 +23,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
+@Service
 public class ArbitrageScannerService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -33,20 +39,49 @@ public class ArbitrageScannerService {
     ExchangeService exchangeService;
 
     @Autowired
+    TradeService tradeService;
+
+    @Autowired
+    ArbitrageMapper arbitrageMapper;
+
+    @Autowired
     CoinSpreadTracking coinSpreadTracking;
 
-    // Cycles through each currency pair every minute and finds the two most ideal exchanges for an arbitrage trade.
-    @Scheduled(fixedRate = 60000)
-    public void scanExchangesByPair() throws IOException {
+    // Cycles through each currency pair one second after the previous execution has finished and finds the two most
+    // ideal exchanges for an arbitrage trade.
+    // For testing purposes, this method also indicates how long the scanning service takes to complete.
+    @Scheduled(fixedDelay = 1000)
+    public void scanExchangesByPair() throws Exception {
 
         ArrayList<CurrencyPair> pairsList = exchangeService.generateCurrencyPairList();
 
         for (CurrencyPair cp : pairsList) {
 
+            String pairString = cp.toString();
+            logger.info("Starting arbitrage service for pair " + pairString + ".");
+            long startTimeArbitrageScanner = System.currentTimeMillis();
+
             Exchange[] exchanges = getBestArbitrageExchangesForPair(cp);
+            // Get timestamp, pair, difference, low ask, high bid
+
+
+            long endTimeArbitrageScanner = System.currentTimeMillis();
+            Timestamp timestamp = new Timestamp(endTimeArbitrageScanner);
+            long timeElapsedArbitrageScanner = endTimeArbitrageScanner - startTimeArbitrageScanner;
+            logger.info("Arbitrage opportunity for pair " + pairString + " identified at " + timestamp.toString() + ".");
+            logger.info("Arbitrage service for pair " + pairString + " took " + timeElapsedArbitrageScanner +
+                    " ms to complete.");
+
+            // Creates and begins initializing the values of the TradeData object containing the data to make a trade
+            // and persist the data.
+            tradeService.buildTradeData(exchanges, cp, timestamp);
+
+            // Executes the mock trade.
+            String fromCurrency = pairString.substring(0, pairString.indexOf("/"));
+            tradeService.executeTrade();
+
+            logger.info("Finishing arbitrage service for pair " + pairString + ".");
         }
-
-
     }
 
     /**
@@ -67,6 +102,7 @@ public class ArbitrageScannerService {
         Ticker currentTicker = null;
         BigDecimal lowestAsk = null;
         BigDecimal highestBid = null;
+        String cp = currencyPair.toString();
 
         for (Exchange ex : exchangesList) {
 
@@ -74,7 +110,7 @@ public class ArbitrageScannerService {
             if (!exchangeSupportsCurrency(ex, currencyPair)) continue;
 
             logger.info("Scanning " + ex.getExchangeSpecification().getExchangeName()
-                    + " for " + currencyPair.toString() + " . . . ");
+                    + " for " + cp + " . . . ");
 
             try {
 
@@ -104,6 +140,19 @@ public class ArbitrageScannerService {
                 continue;
             }
         }
+
+        // Creates arbitrage model object and persists arbitrage data into the database.
+        // POSSIBLE TIME WASTING BOTTLENECK HERE!
+        Timestamp ts = new Timestamp(currentTicker.getTimestamp().getTime());
+
+        ArbitrageModel arbitrageData = new ArbitrageModel();
+        arbitrageData.setTimestamp(ts);
+        arbitrageData.setCurrencyPair(cp);
+        arbitrageData.setHighBid(highestBid);
+        arbitrageData.setLowAsk(lowestAsk);
+        arbitrageData.setDifference(highestBid.subtract(lowestAsk));
+
+        arbitrageMapper.addArbitrageData(arbitrageData);
 
         logger.info("Highest priced bid -> " + exchangeArray[0].getExchangeSpecification().getExchangeName()
                 + ": " + exchangeArray[0].getMarketDataService().getTicker(currencyPair).getBid());

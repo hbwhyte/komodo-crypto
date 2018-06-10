@@ -8,10 +8,13 @@ import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class ExchangeService {
 
     @Autowired
@@ -21,14 +24,14 @@ public class ExchangeService {
     CurrencyPairsMapper currencyPairsMapper;
 
     // Generates a list of exchanges from the database that the application is using.
+    @Cacheable("Exchanges")
     public ArrayList<Exchange> generateDefaultExchangeList() {
 
         // The list of Exchange objects to return
         ArrayList<Exchange> exchangesList = new ArrayList<>();
 
         // The list of exchanges from the database
-        List<ExchangeInfo> exchangeInfos = new ArrayList<>();
-        exchangeInfos = exchangeInfoMapper.getExchanges();
+        List<ExchangeInfo> exchangeInfos = exchangeInfoMapper.getExchanges();
 
         // Tries to create a new Exchange object and add it to the list to be returned for each exchange found in the
         // database.
@@ -50,14 +53,14 @@ public class ExchangeService {
     }
 
     // Generates a list of currency pairs from the database that the application is using.
+    @Cacheable("CurrencyPairs")
     public ArrayList<CurrencyPair> generateCurrencyPairList() {
 
         // The list of CurrencyPair objects to return
         ArrayList<CurrencyPair> pairsList = new ArrayList<>();
 
         // The list of pairs in the database
-        List<CurrencyPairs> currencyPairs = new ArrayList<>();
-        currencyPairs = currencyPairsMapper.getAllCurrencyPairs();
+        List<CurrencyPairs> currencyPairs = currencyPairsMapper.getAllCurrencyPairs();
 
         // Creates and adds a new CurrencyPair object to the list to be returned.
         for (CurrencyPairs cp : currencyPairs) {

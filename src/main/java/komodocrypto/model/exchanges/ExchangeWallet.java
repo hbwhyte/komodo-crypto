@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 public class ExchangeWallet {
 
     int exchangeWalletId;
+    int exchangeId;
     int currencyId;
+    int ClientPortfolioId;
     String depositAddress;
     BigDecimal total;
     BigDecimal available;
@@ -14,11 +16,17 @@ public class ExchangeWallet {
     BigDecimal loaned;
     BigDecimal withdrawing;
     BigDecimal depositing;
-    int portfolioId;
-    int exchangeId;
 
     public int getExchangeWalletId() {
         return exchangeWalletId;
+    }
+
+    public int getExchangeId() {
+        return exchangeId;
+    }
+
+    public void setExchangeId(int exchangeId) {
+        this.exchangeId = exchangeId;
     }
 
     public int getCurrencyId() {
@@ -27,6 +35,14 @@ public class ExchangeWallet {
 
     public void setCurrencyId(int currencyId) {
         this.currencyId = currencyId;
+    }
+
+    public int getClientPortfolioId() {
+        return ClientPortfolioId;
+    }
+
+    public void setClientPortfolioId(int clientPortfolioId) {
+        ClientPortfolioId = clientPortfolioId;
     }
 
     public String getDepositAddress() {
@@ -91,21 +107,5 @@ public class ExchangeWallet {
 
     public void setDepositing(BigDecimal depositing) {
         this.depositing = depositing;
-    }
-
-    public int getPortfolioId() {
-        return portfolioId;
-    }
-
-    public void setPortfolioId(int portfolioId) {
-        this.portfolioId = portfolioId;
-    }
-
-    public int getExchangeId() {
-        return exchangeId;
-    }
-
-    public void setExchangeId(int exchangeId) {
-        this.exchangeId = exchangeId;
     }
 }

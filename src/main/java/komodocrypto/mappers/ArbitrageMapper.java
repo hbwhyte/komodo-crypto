@@ -12,9 +12,12 @@ public interface ArbitrageMapper {
 
     /*table has fake data for now but will be replaced with the main DB when data is ready*/
     String GET_DATA = "SELECT * FROM `komodoDB`.arbitrage";
-
+    String PERSIST_ARBITRAGE_OPP = "";
 
     @Select(GET_DATA)
     public ArrayList<ArbitrageModel> getData();
+
+    @Insert(PERSIST_ARBITRAGE_OPP)
+    public int addArbitrageData(ArbitrageModel arbitrageOppData);
     
 }

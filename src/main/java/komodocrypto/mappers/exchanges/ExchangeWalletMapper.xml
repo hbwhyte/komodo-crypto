@@ -8,7 +8,7 @@
         <id property="exchangeWalletId" column="exchange_wallet_id" />
         <result property="currencyId" column="currency_id" />
         <result property="depositAddress" column="deposit_address" />
-        <result property="portfolioId" column="portfolio_id" />
+        <result property="clientPortfolioId" column="client_portfolio_id" />
         <result property="exchangeId" column="exchange_id" />
     </resultMap>
 
