@@ -1,19 +1,17 @@
-package komodocrypto.services.arbitrage.scanning;
+package komodocrypto.services.arbitrage;
 
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.logging.Logger;
 
 public class CoinSpreadTracking {
 
 
     @Autowired
-    private ArbitrageScannerService scannerService;
+    private ArbitrageScanningService scannerService;
 
     private Exchange[] ETH_BTC;
     private Exchange[] LTC_BTC;

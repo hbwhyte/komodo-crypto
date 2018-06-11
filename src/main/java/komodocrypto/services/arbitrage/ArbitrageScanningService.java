@@ -1,22 +1,12 @@
-package komodocrypto.services.arbitrage.scanning;
+package komodocrypto.services.arbitrage;
 
-import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import komodocrypto.mappers.ArbitrageMapper;
 import komodocrypto.model.arbitrage.ArbitrageModel;
 import komodocrypto.services.exchanges.ExchangeService;
-import komodocrypto.services.exchanges.binance.BinanceTicker;
-import komodocrypto.services.exchanges.bitstamp.BitstampTicker;
-import komodocrypto.services.exchanges.bittrex.BittrexTicker;
 import komodocrypto.services.trades.TradeService;
 import org.knowm.xchange.Exchange;
-import org.knowm.xchange.ExchangeFactory;
-import org.knowm.xchange.binance.BinanceExchange;
-import org.knowm.xchange.bitstamp.BitstampExchange;
-import org.knowm.xchange.bittrex.BittrexExchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
-import org.knowm.xchange.gdax.GDAXExchange;
-import org.knowm.xchange.kraken.KrakenExchange;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 @Service
-public class ArbitrageScannerService {
+public class ArbitrageScanningService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -74,7 +64,7 @@ public class ArbitrageScannerService {
 
             // Creates and begins initializing the values of the TradeData object containing the data to make a trade
             // and persist the data.
-            tradeService.buildTradeModel(exchanges, cp, timestamp);
+            tradeService.buildTradeModel(exchanges, cp);
 
             // Executes the mock trade.
             String fromCurrency = pairString.substring(0, pairString.indexOf("/"));

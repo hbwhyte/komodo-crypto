@@ -31,7 +31,7 @@ import java.util.List;
 import static com.binance.api.client.domain.account.NewOrder.marketBuy;
 
 @Service
-public class ArbitrageService {
+public class ArbitrageTradingService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -50,7 +50,7 @@ public class ArbitrageService {
     }
 
     //    creates a fake user so mvc views can work
-    public User tempUser() {
+    public User createTempUser() {
         User user = new User();
         user.setFirst_name("Unicorn");
         user.setLast_name("Badger");

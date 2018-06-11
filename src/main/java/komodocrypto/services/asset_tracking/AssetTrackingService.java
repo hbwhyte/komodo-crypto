@@ -6,11 +6,11 @@ import komodocrypto.mappers.database.ClientPortfolioMapper;
 import komodocrypto.mappers.database.GroupPortfolioMapper;
 import komodocrypto.mappers.database.TransactionMapper;
 import komodocrypto.mappers.exchanges.ExchangeWalletMapper;
-import komodocrypto.mappers.user.UserMapper;
 import komodocrypto.model.TradeData;
 import komodocrypto.model.database.Currency;
 import komodocrypto.model.database.GroupPortfolio;
 import komodocrypto.model.database.Transaction;
+import komodocrypto.model.exchanges.ExchangeInfo;
 import komodocrypto.model.exchanges.ExchangeWallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +21,6 @@ import java.util.List;
 
 @Service
 public class AssetTrackingService {
-
-    @Autowired
-    UserMapper userMapper;
 
     @Autowired
     TransactionMapper transactionMapper;
@@ -61,23 +58,23 @@ public class AssetTrackingService {
     //                    - the buy/sell amounts
 
 
-    public Transaction recalculateBalance(Exchange exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm) {
+    public Transaction recalculateBalance(ExchangeInfo exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm) {
 
         Transaction transaction = new Transaction();
 
         int currencyId = currency.getCurrency_id();
-        int exchangeId = exchange.getExchange_id();
+        int exchangeId = exchange.getExchangeId();
         BigDecimal fee = BigDecimal.valueOf(0);
 
         switch (transactionType) {
             case "buy":
-                fee = exchange.getBuy_fee();
+                fee = exchange.getBuyFee();
                 break;
             case "sell":
-                fee = exchange.getSell_fee();
+                fee = exchange.getSellFee();
                 break;
             case "transfer":
-                fee = exchange.getTransfer_fee();
+                fee = exchange.getTransferFee();
                 break;
         }
 
@@ -94,7 +91,7 @@ public class AssetTrackingService {
 
         BigDecimal balanceAfterTransaction = balanceBefore.subtract(feeAmount);
 
-        transaction.setCurrency_id(currencyId);
+        transaction.setCurrency_pair_id(currencyId);
         transaction.setExchange_id(exchangeId);
         transaction.setTransaction_type(transactionType);
         transaction.setTransaction_amount(amount.subtract(fee));
@@ -109,6 +106,8 @@ public class AssetTrackingService {
                 newTotal1 = total1 - sellAmount
                 newTotal2 = total2 + buyAmount
             */
+
+        return transaction;
     }
 
 
@@ -127,7 +126,7 @@ public class AssetTrackingService {
         return tldata;
     }
 
-    public void updateAssetsUnderManagement(int buy_exchange_id, int sell_exchange_id, Exchange exchange_name,
+    public void updateAssetsUnderManagement(int buy_exchange_id, int sell_exchange_id, ExchangeInfo exchange_name,
                                             double price, double amount, String status, int currency_pair_id){
 
         /* transactionType determines buy, sell, or transfer

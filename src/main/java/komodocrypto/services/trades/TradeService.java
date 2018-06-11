@@ -15,10 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+@Service
 public class TradeService {
 
     /*  This class should serve as an intermediary between the arbitrage scanning service and the asset tracking
@@ -53,7 +55,7 @@ public class TradeService {
     // Builds a TradeData object, containing the information needed to execute a trade and persist its data.
     // NOTE: May need to overload this method or something when doing manual trades.
     // TODO Look into how to loosely couple the TradeData object with the classes where it's used.
-    public void buildTradeModel(Exchange[] exchanges, CurrencyPair currencyPair, Timestamp timeArbOppIdentified) throws InsufficientFundsException {
+    public void buildTradeModel(Exchange[] exchanges, CurrencyPair currencyPair) throws InsufficientFundsException {
 
         logger.info("Building trade model...");
 
@@ -101,8 +103,6 @@ public class TradeService {
             throw new InsufficientFundsException("Insufficient funds to trade in exchange " +
                     exchanges[1].getExchangeSpecification().getExchangeName() + ".", HttpStatus.OK);
         }
-
-        tradeData.setTimeArbOppIdentified(timeArbOppIdentified);
 
         logger.info("Finished building trade model.");
     }

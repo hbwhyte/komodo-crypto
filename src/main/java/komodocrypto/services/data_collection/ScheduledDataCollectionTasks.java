@@ -8,7 +8,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 @Service
-public class ScheduledTasks {
+public class ScheduledDataCollectionTasks {
 
     @Autowired
     CryptoCompareHistoricalService historicalService;

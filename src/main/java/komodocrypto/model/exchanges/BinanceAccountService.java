@@ -1,4 +1,4 @@
-package komodocrypto.model.exchanges.binance;
+package komodocrypto.model.exchanges;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;

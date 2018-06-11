@@ -3,7 +3,7 @@ package komodocrypto.controllers.mvc;
 import komodocrypto.exceptions.custom_exceptions.UserException;
 import komodocrypto.model.arbitrage.ArbitrageModel;
 import komodocrypto.model.user.User;
-import komodocrypto.services.arbitrage.ArbitrageService;
+import komodocrypto.services.arbitrage.ArbitrageTradingService;
 import komodocrypto.services.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,14 +22,14 @@ import java.util.ArrayList;
 public class UserControllerMVC {
     
     @Autowired
-    ArbitrageService arbitrageService;
+    ArbitrageTradingService arbitrageTradingService;
 
     @Autowired
     UserService userService;
 
     @RequestMapping(value ={"/", "/home"}, method = RequestMethod.GET)
     public String home(Model model){
-/*        ArbitrageModel am = arbitrageService.getArbitrageOps();
+/*        ArbitrageModel am = arbitrageTradingService.getArbitrageOps();
             am.getCurrencyPair() will replace the attribute value on the addAttribute method
 
  */
@@ -48,10 +48,10 @@ public class UserControllerMVC {
     @RequestMapping(value={"/user"}, method = RequestMethod.GET)
     public ModelAndView user(){
         ModelAndView modelAndView = new ModelAndView();
-        ArrayList<ArbitrageModel> arbitrage = arbitrageService.getArbitrageData();
+        ArrayList<ArbitrageModel> arbitrage = arbitrageTradingService.getArbitrageData();
         modelAndView.addObject("arbitrage", arbitrage);
         /*will need to work with ouath to get username*/
-        User user = arbitrageService.tempUser();
+        User user = arbitrageTradingService.tempUser();
         modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("user_dashboard");
         return modelAndView;
@@ -72,7 +72,7 @@ public class UserControllerMVC {
         ModelAndView modelAndView = new ModelAndView();
         //for when oath is added use:
         //User user = new User();
-        User user = arbitrageService.tempUser();
+        User user = arbitrageTradingService.tempUser();
         modelAndView.addObject("user", user);
         modelAndView.addObject("userWelcome", "Welcome " + user.getFirst_name());
         modelAndView.setViewName("profile");

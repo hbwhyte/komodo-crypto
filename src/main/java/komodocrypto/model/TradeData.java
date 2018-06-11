@@ -24,8 +24,6 @@ public class TradeData {
     int idToCurrency;
     int idCurrencyPair;
 
-    Timestamp timeArbOppIdentified;
-
     public Exchange getFromExchange() {
         return fromExchange;
     }
@@ -104,13 +102,5 @@ public class TradeData {
 
     public void setIdCurrencyPair(int idCurrencyPair) {
         this.idCurrencyPair = idCurrencyPair;
-    }
-
-    public Timestamp getTimeArbOppIdentified() {
-        return timeArbOppIdentified;
-    }
-
-    public void setTimeArbOppIdentified(Timestamp timeArbOppIdentified) {
-        this.timeArbOppIdentified = timeArbOppIdentified;
     }
 }
