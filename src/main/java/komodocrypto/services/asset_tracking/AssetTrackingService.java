@@ -4,6 +4,7 @@ import komodocrypto.mappers.database.ArbitrageTradeHistoryMapper;
 import komodocrypto.mappers.database.GroupPortfolioMapper;
 import komodocrypto.mappers.database.TransactionMapper;
 import komodocrypto.model.database.Currency;
+import komodocrypto.model.database.CurrencyPairs;
 import komodocrypto.model.database.Exchange;
 import komodocrypto.model.database.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,57 +30,35 @@ public class AssetTrackingService {
     //                    - the prices
     //                    - the buy/sell amounts
 
-
-    public Transaction recalculateBalance(Exchange exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm) {
-
+    public void mockBuy(Exchange exchange, CurrencyPairs currencyPairs, BigDecimal price, BigDecimal amount, String algorithm){
         Transaction tldata = new Transaction();
 
-        int currencyId = currency.getCurrency_id();
-        int exchangeId = exchange.getExchange_id();
-        BigDecimal fee = BigDecimal.valueOf(0);
+        //buy 1 BTC at the price of
 
-        switch (transactionType) {
-            case "buy":
-                fee = exchange.getBuy_fee();
-                break;
-            case "sell":
-                fee = exchange.getSell_fee();
-                break;
-            case "transfer":
-                fee = exchange.getTransfer_fee();
-                break;
-        }
+        BigDecimal buyFee = exchange.getBuy_fee().multiply(amount).multiply(price);
+        BigDecimal buyAmount = amount.multiply(price).subtract(buyFee);
 
-        BigDecimal feeAmount = amount.multiply(fee);
-        BigDecimal balanceBefore = transactionMapper.getBalanceBeforeTransaction(exchangeId, currencyId);
-        if (balanceBefore == null) {
+        Currency currency1 = new Currency();
+        currency1.setSymbol(currencyPairs.getSymbol1());
+        Currency currency2 = new Currency();
+        currency2.setSymbol(currencyPairs.getSymbol2());
 
-            tldata.setBalance_before_transaction(BigDecimal.valueOf(0));
+        BigDecimal prevBalance1 = transactionMapper.getLatestBalance(exchange.getExchange_id(), currency1.getCurrency_id());
+        BigDecimal prevBalance2 = transactionMapper.getLatestBalance(exchange.getExchange_id(), currency2.getCurrency_id());
 
-        } else {
-            tldata.setBalance_before_transaction(balanceBefore);
+        BigDecimal newBalance1 = prevBalance1.add(amount);
+        BigDecimal newBalance2 = prevBalance2.subtract(buyAmount);
 
-        }
-
-        BigDecimal balanceAfterTransaction = balanceBefore.subtract(feeAmount);
-
-        tldata.setCurrency_pair_id(currencyId);
-        tldata.setExchange_id(exchangeId);
-        tldata.setTransaction_type(transactionType);
-        tldata.setTransaction_amount(amount.subtract(fee));
-        tldata.setTransaction_fee(feeAmount);
+        tldata.setCurrency_pair_id(currencyPairs.getCurrencyPairId());
         tldata.setAlgorithm(algorithm);
-        tldata.setBalance_after_transaction(balanceAfterTransaction);
-
-        /* recalculate balance after buy/sell transaction
-                check balance on the exchange wallet of the selected currency
-                total1 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol1
-                total2 = select total where exchange_id = exchange_name.getExchange_id and currency_id = currency_pair_id.getSymbol2
-                newTotal1 = total1 - sellAmount
-                newTotal2 = total2 + buyAmount
-            */
-        return tldata;
+        tldata.setBalance_currency2(newBalance2);
+        tldata.setBalance_currency1(newBalance1);
+        tldata.setTransaction_amount(amount);
+        tldata.setTransaction_fee(buyFee);
+        tldata.setTransaction_type("Buy");
     }
+
+
 
 
     public Transaction updateBalance(Exchange[] exchange, Currency currency, BigDecimal amount, String transactionType, String algorithm){

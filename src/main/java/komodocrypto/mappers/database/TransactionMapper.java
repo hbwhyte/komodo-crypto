@@ -13,6 +13,6 @@ public interface TransactionMapper {
                     "WHERE `exchange_id` = #{args0}, `currency_id` = #{args1} ORDER BY `transaction_id` DESC LIMIT = 1";
 
     @Select(GET_BALANCE_EXCHANGE_CURRENCY)
-    BigDecimal getBalanceBeforeTransaction(int exchange_id, int currency_id);
+    BigDecimal getLatestBalance(int exchange_id, int currency_id);
 
 }
