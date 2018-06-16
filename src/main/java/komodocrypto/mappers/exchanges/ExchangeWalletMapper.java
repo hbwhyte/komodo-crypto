@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -19,6 +20,9 @@ public interface ExchangeWalletMapper {
     String INSERT_NEW_DATA = "INSERT INTO `komodoDB`.`exchange_wallet` " +
             "(`currency_id`, `deposit_address`, `total`, `available`, `frozen`, `borrowed`, `loaned`, `withdrawing`, `depositing`, `portfolio_id`, `exchange_id`) " +
             "VALUES (#{currency_id}, #{deposit_address}, #{total}, #{available}, #{frozen}, #{borrowed}, #{loaned}, #{withdrawing}, #{depositing}, #{portfolio_id}, #{exchange_id};";
+    String GET_LATEST_AVAILABLE_BALANCE = "SELECT `available` FROM `komodoDB`.`exchange_wallet` " +
+            "WHERE `currency_id` = #{args0} AND `exchange_id` = #{args1} AND `deposit_address` = #{args2}" +
+            "ORDER BY `timestamp` DESC LIMIT = 1;";
 
     @Select(SELECT_ALL_EXCHANGE_WALLETS)
     @ResultMap("ExchangeWallet")
@@ -32,6 +36,9 @@ public interface ExchangeWalletMapper {
 
     @Select(SELECT_BY_EXCHANGE_AND_CURRENCY_ID)
     public List<ExchangeWallet> getAllDataByExchangeAndCurrencyId(int exchange_id, int currency_id);
+
+    @Select(GET_LATEST_AVAILABLE_BALANCE)
+    public BigDecimal getLatestAvailableBalance(int currency_id, int exchange_id, String deposit_address);
 
     @Insert(INSERT_NEW_DATA)
     public List<ExchangeWallet> insertNewData(ExchangeWallet exchangeWallet);

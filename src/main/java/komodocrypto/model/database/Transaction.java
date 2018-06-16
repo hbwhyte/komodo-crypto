@@ -11,8 +11,8 @@ public class Transaction {
     private String transaction_type; //possible values are inTransfer, outTransfer, sell, buy, deposit, withdrawal
     private BigDecimal transaction_amount;
     private BigDecimal transaction_fee;
-    private BigDecimal balance_currency1;
-    private BigDecimal balance_currency2;
+    private BigDecimal balance_before_transaction;
+//    private BigDecimal balance_currency2;
     private String algorithm; //determine the method used that made the transaction happen
     private Timestamp timestamp;
 
@@ -64,21 +64,21 @@ public class Transaction {
         this.transaction_fee = transaction_fee;
     }
 
-    public BigDecimal getBalance_currency1() {
-        return balance_currency1;
+    public BigDecimal getBalance_before_transaction() {
+        return balance_before_transaction;
     }
 
-    public void setBalance_currency1(BigDecimal balance_currency1) {
-        this.balance_currency1 = balance_currency1;
+    public void setBalance_before_transaction(BigDecimal balance_before_transaction) {
+        this.balance_before_transaction = balance_before_transaction;
     }
 
-    public BigDecimal getBalance_currency2() {
-        return balance_currency2;
-    }
-
-    public void setBalance_currency2(BigDecimal balance_currency2) {
-        this.balance_currency2 = balance_currency2;
-    }
+//    public BigDecimal getBalance_currency2() {
+//        return balance_currency2;
+//    }
+//
+//    public void setBalance_currency2(BigDecimal balance_currency2) {
+//        this.balance_currency2 = balance_currency2;
+//    }
 
     public String getAlgorithm() {
         return algorithm;

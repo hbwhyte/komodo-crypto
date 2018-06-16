@@ -3,10 +3,12 @@ package komodocrypto.services.asset_tracking;
 import komodocrypto.mappers.database.ArbitrageTradeHistoryMapper;
 import komodocrypto.mappers.database.GroupPortfolioMapper;
 import komodocrypto.mappers.database.TransactionMapper;
+import komodocrypto.mappers.exchanges.ExchangeWalletMapper;
 import komodocrypto.model.database.Currency;
 import komodocrypto.model.database.CurrencyPairs;
 import komodocrypto.model.database.Exchange;
 import komodocrypto.model.database.Transaction;
+import komodocrypto.model.exchanges.ExchangeWallet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -22,6 +24,9 @@ public class AssetTrackingService {
     @Autowired
     TransactionMapper transactionMapper;
 
+    @Autowired
+    ExchangeWalletMapper exchangeWalletMapper;
+
 
     //updateAssetsUnderManagement() - this method will be called when the Ivan's trade executes
     // - he can pass this method any/all information he has about that trade:
@@ -30,32 +35,42 @@ public class AssetTrackingService {
     //                    - the prices
     //                    - the buy/sell amounts
 
-    public void mockBuy(Exchange exchange, CurrencyPairs currencyPairs, BigDecimal price, BigDecimal amount, String algorithm){
+    public void mockBuy(Exchange exchange, CurrencyPairs currencyPairs, BigDecimal price, BigDecimal amount, String algorithm, String depositAddress){
         Transaction tldata = new Transaction();
-
-        //buy 1 BTC at the price of
 
         BigDecimal buyFee = exchange.getBuy_fee().multiply(amount).multiply(price);
         BigDecimal buyAmount = amount.multiply(price).subtract(buyFee);
+
+        tldata.setExchange_id(exchange.getExchange_id());
+        tldata.setCurrency_pair_id(currencyPairs.getCurrencyPairId());
+        tldata.setAlgorithm(algorithm);
+        tldata.setTransaction_amount(amount);
+        tldata.setTransaction_fee(buyFee);
+        tldata.setTransaction_type("Buy");
+
+        transactionMapper.insertNewData(tldata);
 
         Currency currency1 = new Currency();
         currency1.setSymbol(currencyPairs.getSymbol1());
         Currency currency2 = new Currency();
         currency2.setSymbol(currencyPairs.getSymbol2());
 
-        BigDecimal prevBalance1 = transactionMapper.getLatestBalance(exchange.getExchange_id(), currency1.getCurrency_id());
-        BigDecimal prevBalance2 = transactionMapper.getLatestBalance(exchange.getExchange_id(), currency2.getCurrency_id());
+        BigDecimal prevBalance1 = exchangeWalletMapper.getLatestAvailableBalance(currency1.getCurrency_id(), exchange.getExchange_id(), depositAddress);
+        BigDecimal prevBalance2 = exchangeWalletMapper.getLatestAvailableBalance(currency2.getCurrency_id(), exchange.getExchange_id(), depositAddress);
 
         BigDecimal newBalance1 = prevBalance1.add(amount);
         BigDecimal newBalance2 = prevBalance2.subtract(buyAmount);
 
-        tldata.setCurrency_pair_id(currencyPairs.getCurrencyPairId());
-        tldata.setAlgorithm(algorithm);
-        tldata.setBalance_currency2(newBalance2);
-        tldata.setBalance_currency1(newBalance1);
-        tldata.setTransaction_amount(amount);
-        tldata.setTransaction_fee(buyFee);
-        tldata.setTransaction_type("Buy");
+        ExchangeWallet wallet1 = new ExchangeWallet();
+        wallet1.setAvailable(newBalance1);
+        wallet1.setDepositAddress(depositAddress);
+        exchangeWalletMapper.insertNewData(wallet1);
+
+        ExchangeWallet wallet2 = new ExchangeWallet();
+        wallet2.setAvailable(newBalance2);
+        wallet2.setDepositAddress(depositAddress);
+        exchangeWalletMapper.insertNewData(wallet2);
+
     }
 
 

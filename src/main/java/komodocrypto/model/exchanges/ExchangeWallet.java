@@ -1,6 +1,7 @@
 package komodocrypto.model.exchanges;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 public class ExchangeWallet {
 
@@ -16,6 +17,7 @@ public class ExchangeWallet {
     BigDecimal depositing;
     int portfolioId;
     int exchangeId;
+    Timestamp timestamp;
 
     public int getExchangeWalletId() {
         return exchangeWalletId;
@@ -107,5 +109,13 @@ public class ExchangeWallet {
 
     public void setExchangeId(int exchangeId) {
         this.exchangeId = exchangeId;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
