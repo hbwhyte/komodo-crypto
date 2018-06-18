@@ -73,6 +73,43 @@ public class AssetTrackingService {
 
     }
 
+    public void mockSell(Exchange exchange, CurrencyPairs currencyPairs, BigDecimal price, BigDecimal amount, String algorithm, String depositAddress){
+        Transaction tldata = new Transaction();
+
+        BigDecimal sellFee = exchange.getSell_fee().multiply(amount).multiply(price);
+        BigDecimal sellAmount = amount.multiply(price).add(sellFee);
+
+        tldata.setExchange_id(exchange.getExchange_id());
+        tldata.setCurrency_pair_id(currencyPairs.getCurrencyPairId());
+        tldata.setAlgorithm(algorithm);
+        tldata.setTransaction_amount(amount);
+        tldata.setTransaction_fee(sellFee);
+        tldata.setTransaction_type("Sell");
+
+        transactionMapper.insertNewData(tldata);
+
+        Currency currency1 = new Currency();
+        currency1.setSymbol(currencyPairs.getSymbol1());
+        Currency currency2 = new Currency();
+        currency2.setSymbol(currencyPairs.getSymbol2());
+
+        BigDecimal prevBalance1 = exchangeWalletMapper.getLatestAvailableBalance(currency1.getCurrency_id(), exchange.getExchange_id(), depositAddress);
+        BigDecimal prevBalance2 = exchangeWalletMapper.getLatestAvailableBalance(currency2.getCurrency_id(), exchange.getExchange_id(), depositAddress);
+
+        BigDecimal newBalance1 = prevBalance1.subtract(sellAmount);
+        BigDecimal newBalance2 = prevBalance2.add(amount);
+
+        ExchangeWallet wallet1 = new ExchangeWallet();
+        wallet1.setAvailable(newBalance1);
+        wallet1.setDepositAddress(depositAddress);
+        exchangeWalletMapper.insertNewData(wallet1);
+
+        ExchangeWallet wallet2 = new ExchangeWallet();
+        wallet2.setAvailable(newBalance2);
+        wallet2.setDepositAddress(depositAddress);
+        exchangeWalletMapper.insertNewData(wallet2);
+
+    }
 
 
 
