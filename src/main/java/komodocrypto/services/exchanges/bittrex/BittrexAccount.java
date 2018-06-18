@@ -52,7 +52,6 @@ public class BittrexAccount implements ExchangeAccountService{
         //AccountService accountService = bittrex.getAccountService();
         this.accountService = bittrex.getAccountService();
         this.accountInfo = accountService.getAccountInfo();
-
         //return accountService;
     }
 
@@ -67,16 +66,21 @@ public class BittrexAccount implements ExchangeAccountService{
 //        return accountService.getAccountInfo();
 //    }
 
-
     public String getUsername() throws IOException {
         //String username = this.accountInfo.getUsername();
         String username = this.getAccountInfo().getUsername();
         return username;
     }
 
-    public BigDecimal getTradingFee() throws IOException {
-        //BigDecimal tradingFee = this.accountInfo.getTradingFee();
-        BigDecimal tradingFee = this.accountInfo.getTradingFee();
+
+    /**
+     * Returns the trading fee for the Bittrex exchange.
+     * Currently the XChange API returns null for Bittrex, so the value is hardcoded for now.
+     * @return Bittrex fee percentage
+     */
+    public BigDecimal getTradingFee() {
+       // BigDecimal tradingFee = this.accountInfo.getTradingFee(); // Currently returns null
+        BigDecimal tradingFee = new BigDecimal(0.25);
         return tradingFee;
     }
 

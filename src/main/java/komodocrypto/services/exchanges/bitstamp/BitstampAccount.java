@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 
 @Service
 public class BitstampAccount {
@@ -138,6 +140,30 @@ public class BitstampAccount {
             return depositAddress;
         } catch (IOException e) {
             throw new ExchangeConnectionException("Unable to generate deposit address", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    /**
+     * Returns the trading fee for the Bitstamp exchange.
+     * @return a BigDecimila with the trading fee percentage.
+     * @throws IOException
+     * @throws ExchangeConnectionException
+     */
+    public BigDecimal getTradingFee() throws IOException, ExchangeConnectionException {
+        //Create Exchange
+        Exchange bitstamp = bitstampUtil.createExchange();
+        //Connect to account
+        AccountService accountService = bitstamp.getAccountService();
+
+        // Return deposit address for given asset
+        logger.info("Requesting Bitstamp trading fee...");
+        try {
+            BigDecimal tradingFee = accountService.getAccountInfo().getTradingFee();
+            logger.info("Trading fee retrieved = " + tradingFee);
+            return tradingFee;
+        } catch (IOException e) {
+            throw new ExchangeConnectionException("Unable to get trading fee", HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -9,10 +9,13 @@ import com.binance.api.client.domain.account.Trade;
 
 import com.binance.api.client.domain.account.WithdrawResult;
 import komodocrypto.configuration.exchange_utils.BinanceUtil;
+import komodocrypto.exceptions.custom_exceptions.ExchangeConnectionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -121,6 +124,18 @@ public class BinanceAccount {
         client.getAccount((Account response) -> System.out.println("GUT: " + response.getUpdateTime()));
         client.getAccount((Account response) -> System.out.println("GMC: " + response.getMakerCommission()));
         client.getAccount((Account response) -> System.out.println("GTC: " + response.getTakerCommission()));
+    }
+
+    /**
+     * Returns the trading fee for the Binance exchange.
+     * @return a BigDecimila with the trading fee percentage.
+     * @throws IOException
+     * @throws ExchangeConnectionException
+     */
+    public BigDecimal getTradingFee(){
+        BinanceApiRestClient client = binanceUtil.createExchange();
+        BigDecimal tradingFee = new BigDecimal(client.getAccount().getTakerCommission()/100);
+        return tradingFee;
     }
 
 }
